@@ -8,17 +8,11 @@ namespace client {
     private:
         std::string name;
         std::string surname;
+        std::string phone;
+        std::string email;
 
     public:
-        Client(std::string name_, std::string surname_);
-
-        [[nodiscard]] std::string getName() const;
-
-        [[nodiscard]] std::string getSurname() const;
-
-        void setName(std::string name_);
-
-        void setSurname(std::string surname_);
+        Client(std::string name_, std::string surname_, std::string phone_, std::string email_);
     };
 }// namespace client
 
