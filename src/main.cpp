@@ -21,16 +21,16 @@ void addClientWindow() {
     std::cout << "Input your surname, skip: -" << '\n';
     std::string surname;
     std::cin >> surname;
-    std::cout << "Input your phone" << '\n';
+    std::cout << "Input your phone, skip: -" << '\n';
     std::string phone;
     std::cin >> phone;
-    std::cout << "Input your email" << '\n';
+    std::cout << "Input your email, skip: -" << '\n';
     std::string email;
     std::cin >> email;
     std::ofstream file;
-    file.open("clientFile.txt");
+    file.open("clientsFile.txt");
     if (file.is_open()) {
-        file << name << surname << phone << email << '\n';
+        file << name << ' ' << surname << ' ' << phone << ' ' << email << '\n';
         file.close();
     }
     std::cout << "Ready? - 1" << '\n';
@@ -73,7 +73,7 @@ void loginWindow() {
     std::cout << "Here is a login window. To exit: 0 0. Input login and password" << '\n';
     std::string login, password;
     std::cin >> login >> password;
-    if (login == password && password == "0") {
+    if (login == "0" && password == "0") {
         enterWindow();
     }
     if (passwords.find({login, password}) != passwords.end()) {
@@ -90,14 +90,14 @@ void registrationWindow() {
     std::cout << "Here is a registration window. To exit: 0 0. Input login and password" << '\n';
     std::string login, password;
     std::cin >> login >> password;
-    if (login == password && password == "0") {
+    if (login == "0" && password == "0") {
         enterWindow();
     }
     passwords.insert({password, login});
     std::ofstream file;
     file.open("passwords.txt");
     if (file.is_open()) {
-        file << login << password << '\n';
+        file << login << ' ' << password << '\n';
         file.close();
     }
     std::cout << "Welcome" << '\n';
@@ -109,7 +109,6 @@ void preparation() {
     //    Filling lists here.
     //    It is really bad realization, we will use it only in the MVP.
     std::ifstream passwordsFile;
-    //    TODO: I can't open this file, WTF???
     passwordsFile.open("passwords.txt");
     if (passwordsFile.is_open()) {
         std::string line;
@@ -121,9 +120,7 @@ void preparation() {
         }
         passwordsFile.close();
     }
-
     std::ifstream clientsFile;
-    //    TODO: I can't open this file, WTF???
     clientsFile.open("clientsList.txt");
     if (clientsFile.is_open()) {
         std::string line;
@@ -138,7 +135,6 @@ void preparation() {
 }
 
 void enterWindow() {
-    preparation();
     // open window
     std::cout << "Log In - 0, register - 1" << '\n';
     int number;
@@ -171,5 +167,6 @@ void generalWindow() {
 }
 
 int main() {
+    preparation();
     enterWindow();
 }
