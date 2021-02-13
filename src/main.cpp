@@ -1,59 +1,61 @@
-#include "client.h"
-#include <fstream>
+#include "people.h"
+#include <cassert>
 #include <iostream>
 #include <set>
-#include <sstream>
 #include <string>
 #include <vector>
 
-std::vector<client::Client> clients;
+std::vector<people::Manager> managers;
 std::set<std::pair<std::string, std::string>> passwords;
+static const std::string CLIENTSFILE = "clients.txt";
+static const std::string MANAGERFILE = "managers.txt";
 
-void generalWindow();
-void cilentsWindow();
+void generalWindow(people::Manager &manager);
+void cilentsWindow(people::Manager &manager);
 void enterWindow();
 
-void addClientWindow() {
+void addClientWindow(people::Manager &manager) {
     // open window
-    std::cout << "Input your name, skip: -" << '\n';
-    std::string name;
+    std::string name, phone, email;
+    std::cout << "Input your name, skip: ~" << '\n';
     std::cin >> name;
-    std::cout << "Input your surname, skip: -" << '\n';
-    std::string surname;
-    std::cin >> surname;
-    std::cout << "Input your phone, skip: -" << '\n';
-    std::string phone;
+    std::cout << "Input your phone, skip: ~" << '\n';
     std::cin >> phone;
-    std::cout << "Input your email, skip: -" << '\n';
-    std::string email;
+    std::cout << "Input your email, skip: ~" << '\n';
     std::cin >> email;
-    std::ofstream file;
-    file.open("clientsFile.txt");
-    if (file.is_open()) {
-        file << name << ' ' << surname << ' ' << phone << ' ' << email << '\n';
-        file.close();
-    }
+    people::Client client(name, phone, email);
+    manager.my_clients.push_back(client);
+    std::ofstream file(CLIENTSFILE);
+    assert(file);
+    file << client;
+    file << manager;
+    file.close();
     std::cout << "Ready? - 1" << '\n';
     int number;
     std::cin >> number;
-    cilentsWindow();
+    assert(number == 1);
+    cilentsWindow(manager);
 }
 
-void managerWindow() {
+void managerWindow(people::Manager &manager) {
     // open window
-    //    TODO: I'll do it in Sunday
     std::cout << "Here is a manager window. Here are some options:" << '\n';
+    std::cout << manager;
     std::cout << "1. Exit" << '\n';
     int number;
     std::cin >> number;
     if (number == 1) {
-        generalWindow();
+        generalWindow(manager);
     }
+    assert(false);
 }
 
-void cilentsWindow() {
+void cilentsWindow(people::Manager &manager) {
     // open window
-    std::cout << "Here is a clients list: Look (turn on your imagination):" << '\n';
+    std::cout << "Here is a clients list:" << '\n';
+    for (const people::Client &i : manager.my_clients) {
+        std::cout << i;
+    }
     std::cout << "Here is a clients window. Here are some options:" << '\n';
     std::cout << "1. Change someone (I can realize it only with buttons)" << '\n';
     std::cout << "2. Add someone (button)" << '\n';
@@ -61,24 +63,31 @@ void cilentsWindow() {
     int number;
     std::cin >> number;
     if (number == 2) {
-        addClientWindow();
+        addClientWindow(manager);
     }
     if (number == 3) {
-        generalWindow();
+        generalWindow(manager);
     }
+    assert(false);
 }
 
 void loginWindow() {
     // open window
     std::cout << "Here is a login window. To exit: 0 0. Input login and password" << '\n';
-    std::string login, password;
-    std::cin >> login >> password;
-    if (login == "0" && password == "0") {
+    std::string login, pass;
+    std::cin >> login >> pass;
+    //    TODO after Qt: no spaces in login and password
+    if (login == "0" && pass == "0") {
         enterWindow();
     }
-    if (passwords.find({login, password}) != passwords.end()) {
+    if (passwords.find({login, pass}) != passwords.end()) {
         std::cout << "Welcome" << '\n';
-        generalWindow();
+        for (people::Manager &i : managers) {
+            if (i.get_password() == pass && i.get_login() == login) {
+                generalWindow(i);
+            }
+        }
+        assert(false);
     } else {
         std::cout << "Try again" << '\n';
         loginWindow();
@@ -87,51 +96,46 @@ void loginWindow() {
 
 void registrationWindow() {
     // open window
-    std::cout << "Here is a registration window. To exit: 0 0. Input login and password" << '\n';
-    std::string login, password;
-    std::cin >> login >> password;
-    if (login == "0" && password == "0") {
-        enterWindow();
+    std::cout << "Here is a registration window. Input name, phone, email, login, password" << '\n';
+    //    TODO have to fix input after Qt
+    //    TODO add exit
+    std::string name, phone, email, login, pass;
+    std::cin >> name >> phone >> email >> login >> pass;
+    people::Manager manager(name, phone, email, login, pass);
+    if (passwords.find({login, pass}) != passwords.end()) {
+        std::cout << "We have already have these" << '\n';
+        registrationWindow();
     }
-    passwords.insert({password, login});
-    std::ofstream file;
-    file.open("passwords.txt");
-    if (file.is_open()) {
-        file << login << ' ' << password << '\n';
-        file.close();
-    }
+    passwords.insert({login, pass});
+    std::ofstream file(MANAGERFILE);
+    assert(file.is_open());
+    file << manager;
+    file.close();
     std::cout << "Welcome" << '\n';
-    generalWindow();
+    generalWindow(manager);
 }
 
 void preparation() {
-    //    It is not a window!!!
-    //    Filling lists here.
-    //    It is really bad realization, we will use it only in the MVP.
-    std::ifstream passwordsFile;
-    passwordsFile.open("passwords.txt");
-    if (passwordsFile.is_open()) {
-        std::string line;
-        while (getline(passwordsFile, line)) {
-            std::string login, password;
-            std::istringstream iss(line);
-            iss >> login >> password;
-            passwords.insert({login, password});
-        }
-        passwordsFile.close();
+    std::ifstream managersFile(MANAGERFILE);
+    assert(managersFile.is_open());
+    while (!managersFile.eof()) {
+        people::Manager manager;
+        managersFile >> manager;
+        managers.push_back(manager);
+        passwords.insert({manager.get_login(), manager.get_password()});
     }
-    std::ifstream clientsFile;
-    clientsFile.open("clientsList.txt");
-    if (clientsFile.is_open()) {
-        std::string line;
-        while (getline(clientsFile, line)) {
-            std::string name, surname, phone, email;
-            std::istringstream iss(line);
-            iss >> surname >> name >> phone >> email;
-            clients.emplace_back(surname, name, phone, email);
-        }
-        clientsFile.close();
+    managersFile.close();
+    std::ifstream dataFile(CLIENTSFILE);
+    assert(dataFile.is_open());
+    std::string line;
+    while (!dataFile.eof()) {
+        people::Client client;
+        people::Manager manager;
+        dataFile >> client;
+        dataFile >> manager;
+        manager.my_clients.push_back(client);
     }
+    dataFile.close();
 }
 
 void enterWindow() {
@@ -141,12 +145,14 @@ void enterWindow() {
     std::cin >> number;
     if (number == 0) {
         loginWindow();
-    } else {
+    }
+    if (number == 1) {
         registrationWindow();
     }
+    assert(false);
 }
 
-void generalWindow() {
+void generalWindow(people::Manager &manager) {
     // open window
     std::cout << "Here is a general window. Here are some options:" << '\n';
     std::cout << "1. Go to your manager account (button) " << '\n';
@@ -156,14 +162,15 @@ void generalWindow() {
     int number;
     std::cin >> number;
     if (number == 1) {
-        managerWindow();
+        managerWindow(manager);
     }
     if (number == 2) {
-        cilentsWindow();
+        cilentsWindow(manager);
     }
     if (number == 4) {
         enterWindow();
     }
+    assert(false);
 }
 
 int main() {
