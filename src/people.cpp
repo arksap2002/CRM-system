@@ -21,35 +21,40 @@ namespace people {
         return is;
     }
 
-    people::Manager::Manager(std::string name_, std::string phone_, std::string email_,
-                             std::string password_, std::string login_)
-        : name(std::move(name_)), phone(std::move(phone_)), email(std::move(email_)),
-          password(std::move(password_)), login(std::move(login_)) {
+    people::Manager::Manager(std::string name_, std::string phone_,
+                             std::string email_, std::string password_)
+        : name(std::move(name_)), phone(std::move(phone_)), email(std::move(email_)), password(std::move(password_)) {
     }
 
     std::ostream &operator<<(std::ostream &os, const Manager &manager) {
         std::string name = manager.name;
         std::replace(name.begin(), name.end(), ' ', '~');
-        return os << name << ' ' << manager.phone << ' ' << manager.email << '\n';
+        return os << name << ' ' << manager.phone << ' ' << manager.email << ' ' << manager.password << '\n';
     }
 
     std::ifstream &operator>>(std::ifstream &is, Manager &manager) {
-        std::string name, email, phone, login, password;
-        is >> name >> phone >> email >> login >> password;
+        std::string name, email, phone, password;
+        is >> name >> phone >> email >> password;
         std::replace(name.begin(), name.end(), '~', ' ');
-        manager.name = name;
-        manager.phone = phone;
-        manager.email = email;
-        manager.login = login;
-        manager.password = password;
+        Manager inputManager(name, phone, email, password);
+        manager = inputManager;
         return is;
     }
+
+    //    std::cin &operator>>(std::cin &is, Manager &manager) {
+    //        std::string name, email, phone, login, password;
+    //        is >> name >> phone >> email >> login >> password;
+    //        std::replace(name.begin(), name.end(), '~', ' ');
+    //        Manager inputManager(name, phone, email, login, password);
+    //        manager = inputManager;
+    //        return is;
+    //    }
 
     std::string Manager::get_password() const {
         return password;
     }
 
     std::string Manager::get_login() const {
-        return login;
+        return email;
     }
 }// namespace people

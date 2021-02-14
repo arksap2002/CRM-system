@@ -3,6 +3,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 #ifndef CRM_SYSTEM_MANAGER_H
 #define CRM_SYSTEM_MANAGER_H
@@ -32,12 +33,11 @@ namespace people {
         std::string phone;
         std::string email;
         std::string password;
-        std::string login;
 
     public:
         std::vector<Client> my_clients{};
 
-        Manager(std::string, std::string, std::string, std::string, std::string);
+        Manager(std::string, std::string, std::string, std::string);
         Manager() = default;
         [[nodiscard]] std::string get_password() const;
         [[nodiscard]] std::string get_login() const;

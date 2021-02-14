@@ -7,14 +7,15 @@
 
 std::vector<people::Manager> managers;
 std::set<std::pair<std::string, std::string>> passwords;
+std::set<std::string> managerEmails;
 static const std::string CLIENTSFILE = "clients.txt";
 static const std::string MANAGERFILE = "managers.txt";
 
-void generalWindow(people::Manager &manager);
-void cilentsWindow(people::Manager &manager);
-void enterWindow();
+void general_window(people::Manager &manager);
+void cilents_window(people::Manager &manager);
+void enter_window();
 
-void addClientWindow(people::Manager &manager) {
+void addClient_window(people::Manager &manager) {
     // open window
     std::string name, phone, email;
     std::cout << "Input your name, skip: ~" << '\n';
@@ -34,10 +35,10 @@ void addClientWindow(people::Manager &manager) {
     int number;
     std::cin >> number;
     assert(number == 1);
-    cilentsWindow(manager);
+    cilents_window(manager);
 }
 
-void managerWindow(people::Manager &manager) {
+void manager_window(people::Manager &manager) {
     // open window
     std::cout << "Here is a manager window. Here are some options:" << '\n';
     std::cout << manager;
@@ -45,12 +46,12 @@ void managerWindow(people::Manager &manager) {
     int number;
     std::cin >> number;
     if (number == 1) {
-        generalWindow(manager);
+        general_window(manager);
     }
     assert(false);
 }
 
-void cilentsWindow(people::Manager &manager) {
+void cilents_window(people::Manager &manager) {
     // open window
     std::cout << "Here is a clients list:" << '\n';
     for (const people::Client &i : manager.my_clients) {
@@ -63,56 +64,58 @@ void cilentsWindow(people::Manager &manager) {
     int number;
     std::cin >> number;
     if (number == 2) {
-        addClientWindow(manager);
+        addClient_window(manager);
     }
     if (number == 3) {
-        generalWindow(manager);
+        general_window(manager);
     }
     assert(false);
 }
 
-void loginWindow() {
+void login_window() {
     // open window
-    std::cout << "Here is a login window. To exit: 0 0. Input login and password" << '\n';
-    std::string login, pass;
-    std::cin >> login >> pass;
-    //    TODO after Qt: no spaces in login and password
-    if (login == "0" && pass == "0") {
-        enterWindow();
+    std::cout << "Here is a login window. To exit: 0 0. Input email and password" << '\n';
+    std::string email, pass;
+    std::cin >> email >> pass;
+    //    TODO after Qt: no spaces in email and password
+    if (email == "0" && pass == "0") {
+        enter_window();
     }
-    if (passwords.find({login, pass}) != passwords.end()) {
+    if (passwords.find({email, pass}) != passwords.end()) {
         std::cout << "Welcome" << '\n';
         for (people::Manager &i : managers) {
-            if (i.get_password() == pass && i.get_login() == login) {
-                generalWindow(i);
+            if (i.get_password() == pass && i.get_login() == email) {
+                general_window(i);
             }
         }
         assert(false);
     } else {
         std::cout << "Try again" << '\n';
-        loginWindow();
+        login_window();
     }
 }
 
-void registrationWindow() {
+void registration_window() {
     // open window
-    std::cout << "Here is a registration window. Input name, phone, email, login, password" << '\n';
+    std::cout << "Here is a registration window. Input name, phone, email, password" << '\n';
     //    TODO have to fix input after Qt
     //    TODO add exit
-    std::string name, phone, email, login, pass;
-    std::cin >> name >> phone >> email >> login >> pass;
-    people::Manager manager(name, phone, email, login, pass);
-    if (passwords.find({login, pass}) != passwords.end()) {
+    //    TODO fix std::cin >>
+    std::string name, phone, email, pass;
+    std::cin >> name >> phone >> email >> pass;
+    people::Manager manager(name, phone, email, pass);
+    if (managerEmails.find(manager.get_login()) != managerEmails.end()) {
         std::cout << "We have already have these" << '\n';
-        registrationWindow();
+        registration_window();
     }
-    passwords.insert({login, pass});
+    managers.push_back(manager);
+    passwords.insert({email, pass});
     std::ofstream file(MANAGERFILE);
     assert(file.is_open());
     file << manager;
     file.close();
     std::cout << "Welcome" << '\n';
-    generalWindow(manager);
+    general_window(manager);
 }
 
 void preparation() {
@@ -138,21 +141,21 @@ void preparation() {
     dataFile.close();
 }
 
-void enterWindow() {
+void enter_window() {
     // open window
     std::cout << "Log In - 0, register - 1" << '\n';
     int number;
     std::cin >> number;
     if (number == 0) {
-        loginWindow();
+        login_window();
     }
     if (number == 1) {
-        registrationWindow();
+        registration_window();
     }
     assert(false);
 }
 
-void generalWindow(people::Manager &manager) {
+void general_window(people::Manager &manager) {
     // open window
     std::cout << "Here is a general window. Here are some options:" << '\n';
     std::cout << "1. Go to your manager account (button) " << '\n';
@@ -162,18 +165,18 @@ void generalWindow(people::Manager &manager) {
     int number;
     std::cin >> number;
     if (number == 1) {
-        managerWindow(manager);
+        manager_window(manager);
     }
     if (number == 2) {
-        cilentsWindow(manager);
+        cilents_window(manager);
     }
     if (number == 4) {
-        enterWindow();
+        enter_window();
     }
     assert(false);
 }
 
 int main() {
     preparation();
-    enterWindow();
+    enter_window();
 }
