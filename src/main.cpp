@@ -84,7 +84,7 @@ void login_window() {
     if (passwords.find({email, pass}) != passwords.end()) {
         std::cout << "Welcome" << '\n';
         for (people::Manager &i : managers) {
-            if (i.get_password() == pass && i.get_login() == email) {
+            if (i.get_password() == pass && i.get_email() == email) {
                 general_window(i);
             }
         }
@@ -100,11 +100,10 @@ void registration_window() {
     std::cout << "Here is a registration window. Input name, phone, email, password" << '\n';
     //    TODO have to fix input after Qt
     //    TODO add exit
-    //    TODO fix std::cin >>
     std::string name, phone, email, pass;
     std::cin >> name >> phone >> email >> pass;
     people::Manager manager(name, phone, email, pass);
-    if (managerEmails.find(manager.get_login()) != managerEmails.end()) {
+    if (managerEmails.find(manager.get_email()) != managerEmails.end()) {
         std::cout << "We have already have these" << '\n';
         registration_window();
     }
@@ -125,7 +124,7 @@ void preparation() {
         people::Manager manager;
         managersFile >> manager;
         managers.push_back(manager);
-        passwords.insert({manager.get_login(), manager.get_password()});
+        passwords.insert({manager.get_email(), manager.get_password()});
     }
     managersFile.close();
     std::ifstream dataFile(CLIENTSFILE);

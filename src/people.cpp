@@ -41,20 +41,11 @@ namespace people {
         return is;
     }
 
-    //    std::cin &operator>>(std::cin &is, Manager &manager) {
-    //        std::string name, email, phone, login, password;
-    //        is >> name >> phone >> email >> login >> password;
-    //        std::replace(name.begin(), name.end(), '~', ' ');
-    //        Manager inputManager(name, phone, email, login, password);
-    //        manager = inputManager;
-    //        return is;
-    //    }
-
     std::string Manager::get_password() const {
         return password;
     }
 
-    std::string Manager::get_login() const {
+    std::string Manager::get_email() const {
         return email;
     }
 }// namespace people

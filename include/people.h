@@ -40,7 +40,7 @@ namespace people {
         Manager(std::string, std::string, std::string, std::string);
         Manager() = default;
         [[nodiscard]] std::string get_password() const;
-        [[nodiscard]] std::string get_login() const;
+        [[nodiscard]] std::string get_email() const;
 
         friend std::ostream &operator<<(std::ostream &, const Manager &);
         friend std::ifstream &operator>>(std::ifstream &, Manager &);
