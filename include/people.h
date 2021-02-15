@@ -1,9 +1,10 @@
 #include <algorithm>
 #include <fstream>
+#include <iostream>
+#include <memory>
 #include <string>
 #include <utility>
 #include <vector>
-#include <iostream>
 
 #ifndef CRM_SYSTEM_MANAGER_H
 #define CRM_SYSTEM_MANAGER_H
@@ -17,15 +18,8 @@ namespace people {
     public:
         Client(std::string, std::string, std::string);
         Client() = default;
-
-        friend std::ostream &operator<<(std::ostream &, const Client &);
-        friend std::ifstream &operator>>(std::ifstream &, Client &);
-
         // Window Client card
     };
-
-    std::ostream &operator<<(std::ostream &, const Client &);
-    std::ifstream &operator>>(std::ifstream &, Client &);
 
     struct Manager {
     private:
@@ -41,14 +35,11 @@ namespace people {
         Manager() = default;
         [[nodiscard]] std::string get_password() const;
         [[nodiscard]] std::string get_email() const;
-
-        friend std::ostream &operator<<(std::ostream &, const Manager &);
-        friend std::ifstream &operator>>(std::ifstream &, Manager &);
-
-        // Window Manager card
+        friend void add_manager(const Manager&, std::ostream&);
+        friend void get_manager(Manager&, const std::string&, std::ostream&);
     };
-
-    std::ostream &operator<<(std::ostream &, const Manager &);
-    std::ifstream &operator>>(std::ifstream &, Manager &);
+    std::string get_current_password(const std::string&, std::ostream &process);
+    void add_manager(const Manager&, std::ostream&);
+    void get_manager(Manager&, const std::string&, std::ostream&);
 }// namespace people
 #endif//CRM_SYSTEM_MANAGER_H
