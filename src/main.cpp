@@ -143,8 +143,9 @@ void preparation() {
 }
 
 void enterWindow() {
+    /*
     // open window
-    /*std::cout << "Log In - 0, register - 1" << '\n';
+    std::cout << "Log In - 0, register - 1" << '\n';
     int number;
     std::cin >> number;
     if (number == 0) {
@@ -153,12 +154,11 @@ void enterWindow() {
     if (number == 1) {
         registrationWindow();
     }
-    assert(false); */
-    /*EnterWindow eW;
+    assert(false);
+    EnterWindow eW;
     eW.resize(1500, 1000);
     eW.setWindowTitle("CRM-system start");
-    eW.show();*/
-
+    eW.show(); */
 }
 
 void generalWindow(people::Manager &manager) {
@@ -185,7 +185,6 @@ void generalWindow(people::Manager &manager) {
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     preparation();
-    //enterWindow();
     Application mainWindow;
     mainWindow.resize(1500, 1000);
     mainWindow.setWindowTitle("CRM-system");

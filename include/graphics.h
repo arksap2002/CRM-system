@@ -8,8 +8,13 @@
 
 class RegisterWindow : public QWidget {
 
+    Q_OBJECT
+
 public:
     explicit RegisterWindow(QWidget *parent = 0);
+private:
+    void RegisterManager();
+    QLabel *reginfo;
 };
 
 class LoginWindow : public QWidget {

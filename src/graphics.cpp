@@ -3,7 +3,19 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QGridLayout>
+#include <QLabel>
 
+RegisterWindow::RegisterWindow(QWidget *parent)
+        : QWidget(parent) {
+
+    reginfo = new QLabel("Я хочу умереть", this);
+
+    auto *grid = new QGridLayout(this);
+    grid->addWidget(reginfo, 1, 1);
+
+    setLayout(grid);
+
+}
 
 Application::Application(QWidget *parent)
         : QWidget(parent) {
@@ -28,7 +40,11 @@ void Application::LogIn() {
 }
 
 void Application::Register() {
-    window()->close();
+    //window()->hide();
+    RegisterWindow regW;
+    regW.resize(300, 190);
+    regW.setWindowTitle("aaaaaa");
+    regW.show();
 }
 
 
