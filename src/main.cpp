@@ -1,9 +1,13 @@
 #include "people.h"
+#include "graphics.h"
 #include <cassert>
 #include <iostream>
 #include <set>
 #include <string>
 #include <vector>
+#include <QApplication>
+#include <QWidget>
+
 
 std::vector<people::Manager> managers;
 std::set<std::pair<std::string, std::string>> passwords;
@@ -140,7 +144,7 @@ void preparation() {
 
 void enterWindow() {
     // open window
-    std::cout << "Log In - 0, register - 1" << '\n';
+    /*std::cout << "Log In - 0, register - 1" << '\n';
     int number;
     std::cin >> number;
     if (number == 0) {
@@ -149,11 +153,16 @@ void enterWindow() {
     if (number == 1) {
         registrationWindow();
     }
-    assert(false);
+    assert(false); */
+    /*EnterWindow eW;
+    eW.resize(1500, 1000);
+    eW.setWindowTitle("CRM-system start");
+    eW.show();*/
+
 }
 
 void generalWindow(people::Manager &manager) {
-    // open window
+    //возможно это вынести
     std::cout << "Here is a general window. Here are some options:" << '\n';
     std::cout << "1. Go to your manager account (button) " << '\n';
     std::cout << "2. Go to the clients window (button)" << '\n';
@@ -173,7 +182,13 @@ void generalWindow(people::Manager &manager) {
     assert(false);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
     preparation();
-    enterWindow();
+    //enterWindow();
+    Application mainWindow;
+    mainWindow.resize(1500, 1000);
+    mainWindow.setWindowTitle("CRM-system");
+    mainWindow.show();
+    return app.exec();
 }
