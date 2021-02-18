@@ -12,6 +12,11 @@ class RegisterWindow : public QWidget {
 
 public:
     explicit RegisterWindow(QWidget *parent = 0);
+    QString getName();
+    QString getPhone();
+    QString getEmail();
+    QString getLogin();
+    QString getPassword();
 private:
     void RegisterManager();
     QLabel *reginfo;
@@ -32,8 +37,9 @@ public:
 
 private:
     void LogIn();
-
     void Register();
+    LoginWindow log_window;
+    RegisterWindow reg_window;
 
 };
 

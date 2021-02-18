@@ -100,11 +100,11 @@ void loginWindow() {
 
 void registrationWindow() {
     // open window
-    std::cout << "Here is a registration window. Input name, phone, email, login, password" << '\n';
+    //std::cout << "Here is a registration window. Input name, phone, email, login, password" << '\n';
     //    TODO have to fix input after Qt
     //    TODO add exit
-    std::string name, phone, email, login, pass;
-    std::cin >> name >> phone >> email >> login >> pass;
+    //std::string name, phone, email, login, pass;
+    /*std::cin >> name >> phone >> email >> login >> pass;
     people::Manager manager(name, phone, email, login, pass);
     if (passwords.find({login, pass}) != passwords.end()) {
         std::cout << "We have already have these" << '\n';
@@ -116,7 +116,7 @@ void registrationWindow() {
     file << manager;
     file.close();
     std::cout << "Welcome" << '\n';
-    generalWindow(manager);
+    generalWindow(manager);*/
 }
 
 void preparation() {
