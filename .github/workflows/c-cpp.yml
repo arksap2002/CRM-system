@@ -1,23 +1,48 @@
-name: C/C++ CI
+name: CRM-system
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ MVP ]
-
+    branches:
+      - 'Arkady'
+defaults:
+  run:
+    working-directory: CRM-system/
 jobs:
-  build:
-
+  clang-format:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 2
     steps:
-    - uses: actions/checkout@v2
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      - uses: actions/checkout@v2
+      - run: clang-format --version
+      - run: for file in $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' ); do diff -u <(cat "$file") <(clang-format "$file") || exit 1; done
+  clang-tidy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v2
+      - run: clang-tidy --version
+      - run: clang-tidy $(find . -path '*/CMakeFiles/*' -prune -or \( -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h' \) -print)
+  cppcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v2
+      - run: cppcheck --version
+      - run: cppcheck --language=c++ -DSOME_DEFINE_TO_FIX_CONFIG --enable=all --suppress=*:doctest.h --suppress=unusedFunction --error-exitcode=1 --inline-suppr $(find . -iname '*.cpp' -or -iname '*.h' -and -not -iname 'doctest.h')
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v2
+      - run: cmake --version
+      - run: cmake . -DCMAKE_CXX_COMPILER="${{matrix.compiler.command}}" -DCMAKE_CXX_FLAGS="${{matrix.compiler.flags}} ${{matrix.sanitize.flags}}"
+      - run: make
+      - uses: actions/checkout@v2
+      - name: configure
+        run: ./configure
+      - name: make
+        run: make
+      - name: make check
+        run: make check
+      - name: make distcheck
+        run: make distcheck
