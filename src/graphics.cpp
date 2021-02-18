@@ -21,11 +21,11 @@ RegisterWindow::RegisterWindow(QWidget *parent)
     QLabel *password = new QLabel("Password:", this);
     password->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-    QLineEdit *le1 = new QLineEdit(this);
-    QLineEdit *le2 = new QLineEdit(this);
-    QLineEdit *le3 = new QLineEdit(this);
-    QLineEdit *le4 = new QLineEdit(this);
-    QLineEdit *le5 = new QLineEdit(this);
+    le1 = new QLineEdit(this);
+    le2 = new QLineEdit(this);
+    le3 = new QLineEdit(this);
+    le4 = new QLineEdit(this);
+    le5 = new QLineEdit(this);
 
     QPushButton *register_button = new QPushButton("Register", this);
 
@@ -53,16 +53,32 @@ RegisterWindow::RegisterWindow(QWidget *parent)
 
 }
 
-void RegisterWindow::RegisterManager() {
-
+QString RegisterWindow::getName() {
+    return le1->text();
 }
+
+QString RegisterWindow::getPhone() {
+    return le2->text();
+}
+
+QString RegisterWindow::getEmail() {
+    return le3->text();
+}
+
+QString RegisterWindow::getLogin() {
+    return le4->text();
+}
+
+QString RegisterWindow::getPassword() {
+    return le5->text();
+}
+
 
 LoginWindow::LoginWindow(QWidget *parent)
         : QWidget(parent) {
 
 
 }
-
 
 Application::Application(QWidget *parent)
         : QWidget(parent) {

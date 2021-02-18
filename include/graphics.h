@@ -5,6 +5,15 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
+#include <QLineEdit>
+
+class ErrorWindow : public QWidget {
+
+    explicit ErrorWindow(QWidget *parent = 0);
+Q_OBJECT
+
+    QLabel *errinfo;
+};
 
 class RegisterWindow : public QWidget {
 
@@ -17,9 +26,15 @@ public:
     QString getEmail();
     QString getLogin();
     QString getPassword();
+    QLineEdit *le1;
+    QLineEdit *le2;
+    QLineEdit *le3;
+    QLineEdit *le4;
+    QLineEdit *le5;
 private:
     void RegisterManager();
     QLabel *reginfo;
+
 };
 
 class LoginWindow : public QWidget {

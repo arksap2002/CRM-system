@@ -15,7 +15,9 @@ static const std::string CLIENTSFILE = "clients.txt";
 static const std::string MANAGERFILE = "managers.txt";
 
 void generalWindow(people::Manager &manager);
+
 void cilentsWindow(people::Manager &manager);
+
 void enterWindow();
 
 void addClientWindow(people::Manager &manager) {
@@ -119,6 +121,34 @@ void registrationWindow() {
     generalWindow(manager);*/
 }
 
+void RegisterWindow::RegisterManager() {
+    std::string name, phone, email, login, pass;
+    name = getName().toStdString();
+    phone = getPhone().toStdString();
+    email = getEmail().toStdString();
+    login = getLogin().toStdString();
+    pass = getPassword().toStdString();
+    if (name.empty() || phone.empty() || email.empty() || login.empty() || pass.empty()) {
+        //вызывать окно все плохо и завершиться
+    } else {
+        if (passwords.find({login, pass}) != passwords.end()) {
+            //std::cout << "We have already have these" << '\n';
+            //registrationWindow();
+            // TODO прошлое окно и сообщение что все плохо
+        }
+        people::Manager manager(name, phone, email, login, pass);
+        passwords.insert({login, pass});
+        std::ofstream file(MANAGERFILE);
+        assert(file.is_open());
+        file << manager;
+        file.close();
+        std::cout << "Welcome" << '\n';
+        //generalWindow(manager);
+        //TODO открыть главное окно
+    }
+
+}
+
 void preparation() {
     std::ifstream managersFile(MANAGERFILE);
     assert(managersFile.is_open());
@@ -142,24 +172,6 @@ void preparation() {
     dataFile.close();
 }
 
-void enterWindow() {
-    /*
-    // open window
-    std::cout << "Log In - 0, register - 1" << '\n';
-    int number;
-    std::cin >> number;
-    if (number == 0) {
-        loginWindow();
-    }
-    if (number == 1) {
-        registrationWindow();
-    }
-    assert(false);
-    EnterWindow eW;
-    eW.resize(1500, 1000);
-    eW.setWindowTitle("CRM-system start");
-    eW.show(); */
-}
 
 void generalWindow(people::Manager &manager) {
     //возможно это вынести
@@ -181,6 +193,7 @@ void generalWindow(people::Manager &manager) {
     }
     assert(false);
 }
+
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
