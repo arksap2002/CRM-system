@@ -47,10 +47,16 @@ namespace people {
 
         friend void add_manager(const Manager&, std::ostream&);
         friend void get_manager(Manager&, const std::string&, std::ostream&);
+        friend struct Testing;
     };
     std::string get_current_password(const std::string&, std::ostream &process);    //return password of std::string Manager + errors
     void add_manager(const Manager&, std::ostream&);                                //add Manager + errors
     void get_manager(Manager&, const std::string&, std::ostream&);                  //load information about this Manager
     void read_client(Client&, std::string&);
+
+    struct Testing{
+        static std::string get_name(const Manager&);
+        static std::string get_phone(const Manager&);
+    };
 }// namespace people
 #endif//CRM_SYSTEM_MANAGER_H

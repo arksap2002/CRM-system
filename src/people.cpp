@@ -62,7 +62,7 @@ namespace people {
         std::ofstream out(path);
         out << manager.password << "\n" << manager.email << "\n" << manager.name << "\n" << manager.phone << "\n";
         out.close();
-        fs::create_directory(static_cast<std::string>(fs::current_path()) + "/resources/" + manager.email);
+        fs::create_directory(static_cast<std::string>(fs::current_path()) + "/resources/Clients/" + manager.email);
         process << "User created";
     }
 
@@ -129,9 +129,9 @@ namespace people {
         std::string path = static_cast<std::string>(fs::current_path()) + "/resources/Clients/" + client.email;
         if (check_exists(path, "Such client is not exists", process, true)) { return; }
         fs::remove(path);
-        if (del_from_lst){
-            for (auto& c : list_clients){
-                if (c.email == client.email){
+        if (del_from_lst) {
+            for (auto &c : list_clients) {
+                if (c.email == client.email) {
                     std::swap(c, list_clients[list_clients.size() - 1]);
                     list_clients.pop_back();
                 }
@@ -142,5 +142,13 @@ namespace people {
 
     void Manager::change_client(const Client &, std::ostream &) {
         //   TODO
+    }
+
+    std::string Testing::get_name(const Manager & m) {
+        return m.name;
+    }
+
+    std::string Testing::get_phone(const Manager & m) {
+        return m.phone;
     }
 }// namespace people
