@@ -5,6 +5,7 @@
 namespace people {
     namespace {
         namespace fs = std::filesystem;
+        std::stringstream garbage;
     }
     void check_resources_tree() {
         std::string cur_path = fs::current_path();
@@ -98,6 +99,10 @@ namespace people {
         in.close();
     }
 
+    bool Comp::operator()(const Client& c1, const Client& c2){
+        return c1.name < c2.name;
+    }
+
     void Manager::load_clients() {
         check_resources_tree();
         list_clients.clear();
@@ -105,11 +110,12 @@ namespace people {
         for (auto& p : fs::directory_iterator(path)){
             read_client(list_clients, p.path());
         }
+        std::sort(list_clients.begin(), list_clients.end(), Comp());
     }
 
     void Manager::add_client(const Client &client, bool add_to_lstc, std::ostream &process) {
         check_resources_tree();
-        std::string path = static_cast<std::string>(fs::current_path()) + "/resources/Clients/" + client.email;
+        std::string path = static_cast<std::string>(fs::current_path()) + "/resources/Clients/" + email + "/" + client.email;
         if (check_exists(path, "Such client already exists", process, false)) { return; }
         std::ofstream out(path);
         out << client.email << "\n" << client.name << "\n" << client.phone << "\n" << client.deal_product << "\n";
@@ -124,31 +130,49 @@ namespace people {
         process << "Client successfully added";
     }
 
-    void Manager::delete_client(const Client &client, bool del_from_lst, std::ostream &process) {
+    void Manager::delete_client(const std::string &client_email, bool del_from_lst, std::ostream &process) {
         check_resources_tree();
-        std::string path = static_cast<std::string>(fs::current_path()) + "/resources/Clients/" + client.email;
+        std::string path = static_cast<std::string>(fs::current_path()) + "/resources/Clients/" + email + "/" + client_email;
         if (check_exists(path, "Such client is not exists", process, true)) { return; }
         fs::remove(path);
         if (del_from_lst) {
             for (auto &c : list_clients) {
-                if (c.email == client.email) {
+                if (c.email == client_email) {
                     std::swap(c, list_clients[list_clients.size() - 1]);
                     list_clients.pop_back();
+                    break;
                 }
             }
+            sort(list_clients.begin(), list_clients.end(), Comp());
         }
         process << "Client successfully deleted";
     }
 
-    void Manager::change_client(const Client &, std::ostream &) {
+    void Manager::change_client(const Client &, std::ostream&) {
         //   TODO
     }
 
-    std::string Testing::get_name(const Manager & m) {
+    std::string Testing::get_name_manager(const Manager & m) {
         return m.name;
     }
 
-    std::string Testing::get_phone(const Manager & m) {
+    std::string Testing::get_phone_manager(const Manager & m) {
         return m.phone;
+    }
+
+    std::string Testing::get_phone_client(const Client & c) {
+        return c.phone;
+    }
+
+    std::string Testing::get_name_client(const Client & c) {
+        return c.name;
+    }
+
+    std::string Testing::get_email_client(const Client & c) {
+        return c.email;
+    }
+
+    std::string Testing::get_deal_product_client(const Client & c) {
+        return c.deal_product;
     }
 }// namespace people

@@ -23,6 +23,8 @@ namespace people {
 
         friend void read_client(std::vector<Client>& lst, const std::string& path);
         friend struct Manager;
+        friend struct Testing;
+        friend struct Comp;
         // Window Client card
     };
 
@@ -42,7 +44,7 @@ namespace people {
         [[nodiscard]] std::string get_email() const;
         void load_clients();                                                        //load all clients from directory in the vector
         void add_client(const Client&, bool, std::ostream&);                        //add client to the "./resources/Clients/<email>/<Client.email>"
-        void delete_client(const Client&, bool, std::ostream&);                     //delete "./resources/Clients/<email>/<Client.email>"
+        void delete_client(const std::string&, bool, std::ostream&);                     //delete "./resources/Clients/<email>/<Client.email>"
         void change_client(const Client&, std::ostream&);                           //change client from the "./resources/Clients/<email>/<Client.email>"
 
         friend void add_manager(const Manager&, std::ostream&);
@@ -54,9 +56,16 @@ namespace people {
     void get_manager(Manager&, const std::string&, std::ostream&);                  //load information about this Manager
     void read_client(Client&, std::string&);
 
+    struct Comp{
+        bool operator()(const Client&, const Client&);
+    };
     struct Testing{
-        static std::string get_name(const Manager&);
-        static std::string get_phone(const Manager&);
+        static std::string get_name_manager(const Manager&);
+        static std::string get_phone_manager(const Manager&);
+        static std::string get_name_client(const Client&);
+        static std::string get_phone_client(const Client&);
+        static std::string get_email_client(const Client&);
+        static std::string get_deal_product_client(const Client&);
     };
 }// namespace people
 #endif//CRM_SYSTEM_MANAGER_H
