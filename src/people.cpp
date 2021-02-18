@@ -5,7 +5,6 @@
 namespace people {
     namespace {
         namespace fs = std::filesystem;
-        std::stringstream garbage;
     }
     void check_resources_tree() {
         std::string cur_path = fs::current_path();
@@ -148,31 +147,51 @@ namespace people {
         process << "Client successfully deleted";
     }
 
-    void Manager::change_client(const Client &, std::ostream&) {
-        //   TODO
+    void Manager::update_clients() {
+        std::string path = static_cast<std::string>(fs::current_path()) + "/resources/Clients/" + email;
+        for (auto& p : fs::directory_iterator(path)){
+            read_client(list_clients, p.path());
+            fs::remove(p.path());
+        }
+        std::stringstream ss;
+        for (auto& client : list_clients){
+            add_client(client, false, ss);
+            ss.str("");
+        }
     }
+}// namespace people
 
-    std::string Testing::get_name_manager(const Manager & m) {
+
+namespace testing{
+    std::string Testing::get_name_manager(const people::Manager & m) {
         return m.name;
     }
 
-    std::string Testing::get_phone_manager(const Manager & m) {
+    std::string Testing::get_phone_manager(const people::Manager & m) {
         return m.phone;
     }
 
-    std::string Testing::get_phone_client(const Client & c) {
+    std::string Testing::get_phone_client(const people::Client & c) {
         return c.phone;
     }
 
-    std::string Testing::get_name_client(const Client & c) {
+    std::string Testing::get_name_client(const people::Client & c) {
         return c.name;
     }
 
-    std::string Testing::get_email_client(const Client & c) {
+    std::string Testing::get_email_client(const people::Client & c) {
         return c.email;
     }
 
-    std::string Testing::get_deal_product_client(const Client & c) {
+    std::string Testing::get_deal_product_client(const people::Client & c) {
         return c.deal_product;
     }
-}// namespace people
+
+    void Testing::change_name1(people::Client& c){
+        c.name = "1-Naruto Uzumaki";
+    }
+
+    void Testing::change_name2(people::Client& c){
+        c.name = "1-Turtle Leonardo";
+    }
+} //namespace testing

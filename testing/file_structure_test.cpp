@@ -3,6 +3,7 @@
 #include <sstream>
 
 using namespace people;
+using namespace testing;
 
 TEST_CASE("Manager"){
     Manager m("Denis Shestakov Vladislavovich", "+7 (123) 456 78-90", "Deins_mail@mail.ru", "123321");
@@ -70,14 +71,20 @@ TEST_CASE("Delete Client"){
     get_manager(m, "Deins_mail@mail.ru", ss);
     m.load_clients();
     Client c("4-Dracula", "666", "BloodBlood@mail.ru", "Blood");
+    ss.str("");
+    ss.clear();
     m.add_client(c, true, ss);
+    CHECK(ss.str() == "Client successfully added");
     CHECK(m.list_clients.size() == 4);
     CHECK(Testing::get_name_client(m.list_clients[3]) == "4-Dracula");
     CHECK(Testing::get_phone_client(m.list_clients[3]) == "666");
     CHECK(Testing::get_email_client(m.list_clients[3]) == "BloodBlood@mail.ru");
     CHECK(Testing::get_deal_product_client(m.list_clients[3]) == "Blood");
+    ss.str("");
+    ss.clear();
     m.delete_client("BloodBlood@mail.ru", true, ss);
     CHECK(m.list_clients.size() == 3);
+    CHECK(ss.str() == "Client successfully deleted");
 }
 
 TEST_CASE("Add second Manager"){
@@ -109,5 +116,41 @@ TEST_CASE("Add second Manager"){
 }
 
 TEST_CASE("Errors"){
+    Manager m("Arkady Sapognikov", "-7 (321) 654 87-09", "arksap@mail.ru", "010199");
+    std::stringstream ss;
+    add_manager(m, ss);
+    CHECK(ss.str() == "Such user already exists");
+    Manager m1;
+    ss.str("");
+    ss.clear();
+    get_manager(m1, "SomeThing@mail.ru", ss);
+    CHECK(ss.str() == "Such user is not exists");
+    ss.str("");
+    ss.clear();
+    get_manager(m1, "arksap@mail.ru", ss);
+    Client c1("2-Scooby Doo", "93456789", "ghoostcompany@gmail.com", "Cookies");
+    ss.str("");
+    ss.clear();
+    m1.add_client(c1, false, ss);
+    CHECK(ss.str() == "Such client already exists");
+    ss.str("");
+    ss.clear();
+    m1.delete_client("abrakadabra@mail.ru", false, ss);
+    CHECK(ss.str() == "Such client is not exists");
+}
 
+TEST_CASE("Update clients"){
+    Manager m;
+    std::stringstream ss;
+    get_manager(m, "arksap@mail.ru", ss);
+    m.load_clients();
+    Testing::change_name1(m.list_clients[0]);
+    m.update_clients();
+
+    Manager mmm;
+    get_manager(mmm, "arksap@mail.ru", ss);
+    mmm.load_clients();
+    CHECK(Testing::get_name_client(mmm.list_clients[0]) == "1-Naruto Uzumaki");
+    Testing::change_name2(mmm.list_clients[0]);
+    mmm.update_clients();
 }
