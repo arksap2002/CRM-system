@@ -9,7 +9,7 @@ TEST_CASE("Manager"){
     Manager m("Denis Shestakov Vladislavovich", "+7 (123) 456 78-90", "Deins_mail@mail.ru", "123321");
     std::stringstream ss;
     add_manager(m, ss);
-    CHECK(ss.str() == "Such user already exists");
+    CHECK(ss.str() == "Such user already exists\n");
     ss.str("");
     ss.clear();
     CHECK(get_current_password("Deins_mail@mail.ru", ss) == "123321");
@@ -27,18 +27,18 @@ TEST_CASE("Clients"){
     Manager m;
     std::stringstream ss;
     get_manager(m, "Deins_mail@mail.ru", ss);
-    CHECK(ss.str() == "Read information about user");
+    CHECK(ss.str() == "Read information about user\n");
     ss.str("");
     ss.clear();
     Client c1("1-Turtle Leonardo", "232323", "katana@gamail.com", "Pizza");
     m.add_client(c1, false, ss);
     std::cout << ss.str() << "\n";
-    CHECK(ss.str() == "Such client already exists");
+    CHECK(ss.str() == "Such client already exists\n");
     Client c2("2-Scrooge McDuck", "777777", "moneymoney@yandex.com", "Oil");
     ss.str("");
     ss.clear();
     m.add_client(c2, false, ss);
-    CHECK(ss.str() == "Such client already exists");
+    CHECK(ss.str() == "Such client already exists\n");
     m.load_clients();
     CHECK((m.list_clients.size() >= 2 || m.list_clients.size() <= 4));
     CHECK(Testing::get_name_client(m.list_clients[0]) == "1-Turtle Leonardo");
@@ -74,7 +74,7 @@ TEST_CASE("Delete Client"){
     ss.str("");
     ss.clear();
     m.add_client(c, true, ss);
-    CHECK(ss.str() == "Client successfully added");
+    CHECK(ss.str() == "Client successfully added\n");
     CHECK(m.list_clients.size() == 4);
     CHECK(Testing::get_name_client(m.list_clients[3]) == "4-Dracula");
     CHECK(Testing::get_phone_client(m.list_clients[3]) == "666");
@@ -84,7 +84,7 @@ TEST_CASE("Delete Client"){
     ss.clear();
     m.delete_client("BloodBlood@mail.ru", true, ss);
     CHECK(m.list_clients.size() == 3);
-    CHECK(ss.str() == "Client successfully deleted");
+    CHECK(ss.str() == "Client successfully deleted\n");
 }
 
 TEST_CASE("Add second Manager"){
@@ -119,12 +119,12 @@ TEST_CASE("Errors"){
     Manager m("Arkady Sapognikov", "-7 (321) 654 87-09", "arksap@mail.ru", "010199");
     std::stringstream ss;
     add_manager(m, ss);
-    CHECK(ss.str() == "Such user already exists");
+    CHECK(ss.str() == "Such user already exists\n");
     Manager m1;
     ss.str("");
     ss.clear();
     get_manager(m1, "SomeThing@mail.ru", ss);
-    CHECK(ss.str() == "Such user is not exists");
+    CHECK(ss.str() == "Such user is not exists\n");
     ss.str("");
     ss.clear();
     get_manager(m1, "arksap@mail.ru", ss);
@@ -132,11 +132,11 @@ TEST_CASE("Errors"){
     ss.str("");
     ss.clear();
     m1.add_client(c1, false, ss);
-    CHECK(ss.str() == "Such client already exists");
+    CHECK(ss.str() == "Such client already exists\n");
     ss.str("");
     ss.clear();
     m1.delete_client("abrakadabra@mail.ru", false, ss);
-    CHECK(ss.str() == "Such client is not exists");
+    CHECK(ss.str() == "Such client is not exists\n");
 }
 
 TEST_CASE("Update clients"){

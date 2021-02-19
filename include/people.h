@@ -1,6 +1,7 @@
 #ifndef CRM_SYSTEM_MANAGER_H
 #define CRM_SYSTEM_MANAGER_H
 
+#include "fwd.h"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -8,7 +9,11 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include "fwd.h"
+
+const static std::string RESORCES = "resources";
+const std::string MANAGERS_RESORCES = RESORCES + "/Managers";
+const std::string CLIENTS_RESORCES = RESORCES + "/Clients";
+
 
 namespace people {
     struct Client {
@@ -23,7 +28,9 @@ namespace people {
         Client(std::string, std::string, std::string, std::string);
         Client();
 
-        friend void read_client(std::vector<Client>& lst, const std::string& path);
+        void print_info(std::ostream &);
+
+        friend void read_client(std::vector<Client> &lst, const std::string &path);
         friend struct Manager;
         friend struct testing::Testing;
         friend struct Comp;
@@ -43,37 +50,39 @@ namespace people {
         Manager(std::string, std::string, std::string, std::string);
         Manager() = default;
         [[nodiscard]] std::string get_password() const;
-        [[nodiscard]] std::string get_email() const;
-        void load_clients();                                                        //load all clients from directory in the vector
-        void add_client(const Client&, bool, std::ostream&);                        //add client to the "./resources/Clients/<email>/<Client.email>"
-        void delete_client(const std::string&, bool, std::ostream&);                //delete "./resources/Clients/<email>/<Client.email>"
-        void update_clients();                                                      //update all clients in the "./resources/Clients/<email>/<Client.email>"
-                                                                                                                    //Be carefully! It can delete all files!
+        /* for testing */ [[nodiscard]] std::string get_email() const;
+        void load_clients();                                          //load all clients from directory in the vector
+        void add_client(const Client &, bool, std::ostream &);        //add client to the "./resources/Clients/<email>/<Client.email>"
+        void delete_client(const std::string &, bool, std::ostream &);//delete "./resources/Clients/<email>/<Client.email>"
+        void update_clients();                                        //update all clients in the "./resources/Clients/<email>/<Client.email>"
+                                                                      //Be carefully! It can delete all files!
+        void print_info(std::ostream &);
+        bool is_correct_password(const std::string &, std::ostream &);
 
-        friend void add_manager(const Manager&, std::ostream&);
-        friend void get_manager(Manager&, const std::string&, std::ostream&);
+        friend bool add_manager(const Manager &, std::ostream &);
+        friend bool get_manager(Manager &, const std::string &, std::ostream &);
         friend struct testing::Testing;
     };
-    std::string get_current_password(const std::string&, std::ostream &process);    //return password of std::string Manager + errors
-    void add_manager(const Manager&, std::ostream&);                                //add Manager + errors
-    void get_manager(Manager&, const std::string&, std::ostream&);                  //load information about this Manager
-    void read_client(Client&, std::string&);
+    /* for testing */ std::string get_current_password(const std::string &, std::ostream &process);//return password of std::string Manager + errors
+    bool add_manager(const Manager &, std::ostream &);                                             //add Manager + errors
+    bool get_manager(Manager &, const std::string &, std::ostream &);                              //load information about this Manager
+    /* for testing */ void read_client(Client &, std::string &);
 
-    struct Comp{
-        bool operator()(const Client&, const Client&);
+    struct Comp {
+        bool operator()(const Client &, const Client &);
     };
 }// namespace people
 
-namespace testing{
-    struct Testing{
-        static std::string get_name_manager(const people::Manager&);
-        static std::string get_phone_manager(const people::Manager&);
-        static std::string get_name_client(const people::Client&);
-        static std::string get_phone_client(const people::Client&);
-        static std::string get_email_client(const people::Client&);
-        static std::string get_deal_product_client(const people::Client&);
-        static void change_name1(people::Client&);
-        static void change_name2(people::Client&);
+namespace testing {
+    struct Testing {
+        static std::string get_name_manager(const people::Manager &);
+        static std::string get_phone_manager(const people::Manager &);
+        static std::string get_name_client(const people::Client &);
+        static std::string get_phone_client(const people::Client &);
+        static std::string get_email_client(const people::Client &);
+        static std::string get_deal_product_client(const people::Client &);
+        static void change_name1(people::Client &);
+        static void change_name2(people::Client &);
     };
 }// namespace testing
 #endif//CRM_SYSTEM_MANAGER_H
