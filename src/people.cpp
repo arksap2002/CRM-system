@@ -9,7 +9,7 @@ namespace people {
 
     void check_resources_tree() {
         std::string cur_path = fs::current_path();
-        if (!fs::exists(cur_path + "/" + RESORCES)) { fs::create_directory(RESORCES); }
+        if (!fs::exists(cur_path + "/" + RESOURCES)) { fs::create_directory(RESOURCES); }
         if (!fs::exists(cur_path + "/" + MANAGERS_RESORCES)) { fs::create_directory(MANAGERS_RESORCES); }
         if (!fs::exists(cur_path + "/" + CLIENTS_RESORCES)) { fs::create_directory(CLIENTS_RESORCES); }
     }

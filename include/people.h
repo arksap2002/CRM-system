@@ -10,9 +10,9 @@
 #include <utility>
 #include <vector>
 
-const static std::string RESORCES = "resources";
-const std::string MANAGERS_RESORCES = RESORCES + "/Managers";
-const std::string CLIENTS_RESORCES = RESORCES + "/Clients";
+const static std::string RESOURCES = "resources";
+const std::string MANAGERS_RESORCES = RESOURCES + "/Managers";
+const std::string CLIENTS_RESORCES = RESOURCES + "/Clients";
 
 
 namespace people {
