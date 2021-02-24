@@ -33,6 +33,7 @@ namespace people {
         for (int i = 0; i < 3; ++i) {
             result[i] = deal_process[i].first + ' ' + std::to_string(deal_process[i].second);
         }
+        return result;
     }
 
     people::Manager::Manager(std::string email_, std::string password_, std::string name_, std::string phone_)
@@ -56,7 +57,8 @@ namespace people {
         std::string path = static_cast<std::string>(fs::current_path()) + "/" + MANAGERS_RESORCES + "/" + input_email;
         if (!fs::exists(path)) { throw; }
         std::ifstream in(path);
-        std::string passw;
+        std::string email_not_use, passw;
+        getline(in, email_not_use);
         getline(in, passw);
         in.close();
         return passw == input_password;
@@ -65,27 +67,25 @@ namespace people {
     void add_manager(const Manager &manager) {
         check_resources_tree();
         std::string path = static_cast<std::string>(fs::current_path()) + "/" + MANAGERS_RESORCES + "/" + manager.email;
-        if (is_already_exists(path, "Such user already exists\n", process, false)) { return false; }
+        if (fs::exists(path)) { throw; }
         std::ofstream out(path);
         out << manager.email << "\n"
+            << manager.password << "\n"
             << manager.name << "\n"
-            << manager.phone << "\n"
-            << manager.password << "\n";
+            << manager.phone << "\n";
         out.close();
         fs::create_directory(static_cast<std::string>(fs::current_path()) + "/" + CLIENTS_RESORCES + "/" + manager.email);
-        process << "User created\n";
-        return true;
     }
 
     void get_manager(Manager &input_manager, const std::string &input_email) {
         check_resources_tree();
         std::string path = static_cast<std::string>(fs::current_path()) + "/" + MANAGERS_RESORCES + "/" + input_email;
-        if (is_already_exists(path, "Such user is not exists\n", process, true)) { return false; }
+        if (!fs::exists(path)) { throw; }
         std::ifstream in(path);
         getline(in, input_manager.email);
+        getline(in, input_manager.password);
         getline(in, input_manager.name);
         getline(in, input_manager.phone);
-        getline(in, input_manager.password);
         input_manager.load_clients();
         in.close();
     }
@@ -127,7 +127,7 @@ namespace people {
         check_resources_tree();
         std::string path =
                 static_cast<std::string>(fs::current_path()) + "/" + CLIENTS_RESORCES + "/" + email + "/" + client.email;
-        if (is_already_exists(path, "Such client already exists\n", process, false)) { return; }
+        if (fs::exists(path)) { throw; }
         std::ofstream out(path);
         out << client.email << "\n"
             << client.name << "\n"
@@ -145,7 +145,7 @@ namespace people {
         check_resources_tree();
         std::string path =
                 static_cast<std::string>(fs::current_path()) + "/" + CLIENTS_RESORCES + "/" + email + "/" + client_email;
-        if (is_already_exists(path, "Such client is not exists\n", process, true)) { return; }
+        if (!fs::exists(path)) { throw; }
         fs::remove(path);
         for (auto &c : list_clients) {
             if (c.email == client_email) {
@@ -163,10 +163,8 @@ namespace people {
             read_client(list_clients, p.path());
             fs::remove(p.path());
         }
-        std::stringstream ss;
         for (auto &client : list_clients) {
-            add_client(client, ss);
-            ss.str("");
+            add_client(client);
         }
     }
 }// namespace people

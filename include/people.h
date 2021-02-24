@@ -44,9 +44,9 @@ namespace people {
     struct Manager {
     private:
         std::string email;
+        std::string password;
         std::string name;
         std::string phone;
-        std::string password;
 
     public:
         std::vector<Client> list_clients{};
