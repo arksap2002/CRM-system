@@ -20,7 +20,7 @@ void addClient_window(people::Manager &manager) {
     std::cin >> phone;
     std::cout << "Input your deal product, skip: ~\n";
     std::cin >> deal_product;
-    manager.add_client({email, name, phone, deal_product}, std::cout);
+    manager.add_client({email, name, phone, deal_product});
     std::cout << "Ready? - 1\n";
     int number;
     std::cin >> number;
@@ -32,7 +32,7 @@ void addClient_window(people::Manager &manager) {
 void manager_window(people::Manager &manager) {
     // open window
     std::cout << "Hello, ";
-    manager.print_info(std::cout);
+    std::cout << manager.get_info() << '\n';
     std::cout << "Here is a manager window. Here are some options:\n";
     std::cout << "1. Exit\n";
     int number;
@@ -43,9 +43,13 @@ void manager_window(people::Manager &manager) {
 
 void deal_list_window(people::Manager &manager, int index) {
     // open window
-    std::cout << "Here is a deal list window:\n";
-    manager.list_clients[index].print_info(std::cout);
-    manager.list_clients[index].print_deal_process(std::cout);
+    std::cout << "Here is a deal list window\n";
+    std::cout << "Hi, " << manager.get_email() << "! "
+              << "Here is your deal status for:" << manager.list_clients[index].get_info() << '\n';
+    std::vector<std::string> dealInfo = manager.list_clients[index].print_deal_process();
+    for (const auto &s: dealInfo) {
+        std::cout << s << '\n';
+    }
     std::cout << "Here are some options:\n";
     std::cout << "1. Exit (button)\n";
     int number;
@@ -59,9 +63,8 @@ void cilents_window(people::Manager &manager) {
     // open window
     std::cout << "Here is a clients list:\n";
     int index = 1;
-    for (people::Client client : manager.list_clients) {
-        std::cout << index++ << ' ';
-        client.print_info(std::cout);
+    for (const people::Client &client : manager.list_clients) {
+        std::cout << index++ << ' ' << client.get_info();
     }
     std::cout << "Here is a clients window. Here are some options:\n";
     std::cout << "1. Change someone (I can realize it only with buttons)\n";
@@ -86,13 +89,20 @@ void login_window() {
     std::cout << "Here is a login window. To exit: 0 0. Input email and password\n";
     std::string email, password;
     std::cin >> email >> password;
-    if (email == "0" && password == "0") { enter_window(); }
-    //    TODO after Qt, check the no-spaces
+    if (email == "0" && password == "0") { enter_window(); }// TODO for Arkady: remove this line after Qt
+    //    TODO for Anna: add exit button in Qt
+    //    TODO for Arkady: after Qt, check the no-spaces
     people::Manager manager;
-    bool is_exists = people::get_manager(manager, email, std::cout);
-    if (!is_exists) { login_window(); }
-    bool is_password = manager.is_correct_password(password, std::cout);
-    if (!is_password) { login_window(); }
+    try {
+        people::get_manager(manager, email);
+    } catch (...) {
+        std::cerr << "Account already exists. Try again\n";
+        login_window();
+    }
+    if (!people::is_correct_password(email, password)) {
+        std::cerr << "Incorrect password\n";
+        login_window();
+    }
     general_window(manager);
     assert(false);
 }
@@ -100,11 +110,17 @@ void login_window() {
 void registration_window() {
     // open window
     std::cout << "Here is a registration window. Input email, name, phone, password\n";
-    //    TODO add exit button in Qt
+    //    TODO for Anna: add exit button in Qt
     std::string email, name, phone, password;
-    std::cin >> email >> name >> phone >> password;
+    std::cin >> email >> password >> name >> phone;
     people::Manager manager(email, name, phone, password);
-    if (!people::add_manager(manager, std::cout)) { registration_window(); }
+    try {
+        people::add_manager(manager);
+    } catch (...) {
+        std::cerr << "Such user is not exists\n";
+        registration_window();
+    }
+    std::cout << "User created\n";
     std::cout << "Welcome\n";
     general_window(manager);
 }
@@ -121,6 +137,7 @@ void enter_window() {
 
 void general_window(people::Manager &manager) {
     // open window
+    std::cout << "Welcome\n";
     std::cout << "Here is a general window. Here are some options:\n";
     std::cout << "1. Go to your manager account (button)\n";
     std::cout << "2. Go to the clients window (button)\n";

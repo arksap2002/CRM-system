@@ -14,14 +14,6 @@ namespace people {
         if (!fs::exists(cur_path + "/" + CLIENTS_RESORCES)) { fs::create_directory(CLIENTS_RESORCES); }
     }
 
-    bool is_already_exists(const std::string &path, const std::string &message, std::ostream &process, bool b) {
-        if (fs::exists(path) ^ b) {
-            process << message;
-            return true;
-        }
-        return false;
-    }
-
     people::Client::Client(std::string email_, std::string name_, std::string phone_, std::string deal_product_)
         : email(std::move(email_)), name(std::move(name_)), phone(std::move(phone_)),
           deal_product(std::move(deal_product_)) {
@@ -36,13 +28,11 @@ namespace people {
                         {"Deal is completed", false}};
     }
 
-    void people::Client::print_info(std::ostream &os) {
-        os << email << " " << name << " " << phone << " " << deal_product << "\n";
-    }
-
-    void people::Client::print_deal_process(std::ostream &os) {
+    vector<std::string> people::Client::get_deal_process() {
+//        TODO for Denis: print the deal info for current client (line in deal list).
+        vector<std::string> result[4];
         for (const auto &deal : deal_process) {
-            os << deal.first << ' ' << deal.second << '\n';
+            deal.first + ' ' + std::to_string(deal.second) + '\n';
         }
     }
 
@@ -58,16 +48,19 @@ namespace people {
         return email;
     }
 
-    std::string get_current_password(const std::string &input_email, std::ostream &process) {
+    std::string Manager::get_info() const {
+        return email + " " + name + " " + phone;
+    }
+    
+    bool is_correct_password(const std::string &input_email, const std::string &input_password) {
         check_resources_tree();
         std::string path = static_cast<std::string>(fs::current_path()) + "/" + MANAGERS_RESORCES + "/" + input_email;
-        if (is_already_exists(path, "Such user is not exists\n", process, true)) { return "*"; }
+        if (!fs::exists(path)) { throw; }
         std::ifstream in(path);
         std::string passw;
         getline(in, passw);
         in.close();
-        process << "Read user password\n";
-        return passw;
+        return passw == input_password;
     }
 
     bool add_manager(const Manager &manager, std::ostream &process) {
@@ -104,7 +97,7 @@ namespace people {
         os << email << " " << name << " " << phone << "\n";
     }
 
-    bool people::Manager::is_correct_password(const std::string &input_password, std::ostream &process) {
+    bool people::Manager::is_correct_password(const std::string &input_password) {
         if (password != input_password) {
             process << "Incorrect password\n";
             return false;
@@ -145,7 +138,7 @@ namespace people {
         std::sort(list_clients.begin(), list_clients.end(), Comp());
     }
 
-    void Manager::add_client(const Client &client, std::ostream &process) {
+    void Manager::add_client(const Client &client) {
         check_resources_tree();
         std::string path =
                 static_cast<std::string>(fs::current_path()) + "/" + CLIENTS_RESORCES + "/" + email + "/" + client.email;
@@ -164,7 +157,7 @@ namespace people {
         process << "Client successfully added\n";
     }
 
-    void Manager::delete_client(const std::string &client_email, std::ostream &process) {
+    void Manager::delete_client(const std::string &client_email) {
         check_resources_tree();
         std::string path =
                 static_cast<std::string>(fs::current_path()) + "/" + CLIENTS_RESORCES + "/" + email + "/" + client_email;
@@ -176,9 +169,8 @@ namespace people {
                 list_clients.pop_back();
                 break;
             }
-            sort(list_clients.begin(), list_clients.end(), Comp());
         }
-        process << "Client successfully deleted\n";
+        sort(list_clients.begin(), list_clients.end(), Comp());
     }
 
     void Manager::update_clients() {
