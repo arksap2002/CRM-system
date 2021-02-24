@@ -32,7 +32,8 @@ void addClient_window(people::Manager &manager) {
 void manager_window(people::Manager &manager) {
     // open window
     std::cout << "Hello, ";
-    std::cout << manager.get_info() << '\n';
+    std::cout << manager.get_name() << '\n';
+    std::cout << "Your personal info: " << manager.get_info() << '\n';
     std::cout << "Here is a manager window. Here are some options:\n";
     std::cout << "1. Exit\n";
     int number;
@@ -44,7 +45,7 @@ void manager_window(people::Manager &manager) {
 void deal_list_window(people::Manager &manager, int index) {
     // open window
     std::cout << "Here is a deal list window\n";
-    std::cout << "Here is your deal status for:" << manager.list_clients[index].get_info() << '\n';
+    std::cout << "Here is your deal status for: " << manager.list_clients[index].get_info() << '\n';
     std::vector<std::string> dealInfo = manager.list_clients[index].get_deal_process();
     for (const auto &s: dealInfo) {
         std::cout << s << '\n';
@@ -63,7 +64,7 @@ void cilents_window(people::Manager &manager) {
     std::cout << "Here is a clients list:\n";
     int index = 1;
     for (const people::Client &client : manager.list_clients) {
-        std::cout << index++ << ' ' << client.get_info();
+        std::cout << index++ << ") " << client.get_info() << '\n';
     }
     std::cout << "Here is a clients window. Here are some options:\n";
     std::cout << "1. Change someone (I can realize it only with buttons)\n";
@@ -76,7 +77,7 @@ void cilents_window(people::Manager &manager) {
         std::cout << "Input the number of the client\n";
         int n;
         std::cin >> n;
-        deal_list_window(manager, n);
+        deal_list_window(manager, n - 1);
     }
     if (number == 3) { addClient_window(manager); }
     if (number == 4) { general_window(manager); }
@@ -94,14 +95,15 @@ void login_window() {
     people::Manager manager;
     try {
         people::get_manager(manager, email);
-    } catch (...) {
-        std::cerr << "Account already exists. Try again\n";
+    } catch (const std::exception& e) {
+        std::cerr << "Such user is not exists. Try again\n";
         login_window();
     }
     if (!people::is_correct_password(email, password)) {
         std::cerr << "Incorrect password\n";
         login_window();
     }
+    std::cout << "Welcome\n";
     general_window(manager);
     assert(false);
 }
@@ -111,12 +113,12 @@ void registration_window() {
     std::cout << "Here is a registration window. Input email, name, phone, password\n";
     //    TODO for Anna: add exit button in Qt
     std::string email, name, phone, password;
-    std::cin >> email >> password >> name >> phone;
-    people::Manager manager(email, name, phone, password);
+    std::cin >> email >> name >> phone >> password;
+    people::Manager manager(email, password, name, phone);
     try {
         people::add_manager(manager);
     } catch (...) {
-        std::cerr << "Such user is not exists\n";
+        std::cerr << "Account already exists\n";
         registration_window();
     }
     std::cout << "User created\n";
@@ -136,7 +138,6 @@ void enter_window() {
 
 void general_window(people::Manager &manager) {
     // open window
-    std::cout << "Welcome\n";
     std::cout << "Here is a general window. Here are some options:\n";
     std::cout << "1. Go to your manager account (button)\n";
     std::cout << "2. Go to the clients window (button)\n";

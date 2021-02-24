@@ -36,10 +36,6 @@ namespace people {
         return result;
     }
 
-    std::string people::Client::get_info() const {
-        return email + " " + name + " " + phone;
-    }
-
     people::Manager::Manager(std::string email_, std::string password_, std::string name_, std::string phone_)
         : email(std::move(email_)), password(std::move(password_)), name(std::move(name_)), phone(std::move(phone_)) {
     }
@@ -145,7 +141,7 @@ namespace people {
         read_client(list_clients, path);
     }
 
-    void Manager::delete_client(const std::string &client_email) {
+    [[maybe_unused]] void Manager::delete_client(const std::string &client_email) {
         check_resources_tree();
         std::string path =
                 static_cast<std::string>(fs::current_path()) + "/" + CLIENTS_RESORCES + "/" + email + "/" + client_email;
