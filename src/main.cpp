@@ -44,8 +44,7 @@ void manager_window(people::Manager &manager) {
 void deal_list_window(people::Manager &manager, int index) {
     // open window
     std::cout << "Here is a deal list window\n";
-    std::cout << "Hi, " << manager.get_email() << "! "
-              << "Here is your deal status for:" << manager.list_clients[index].get_info() << '\n';
+    std::cout << "Here is your deal status for:" << manager.list_clients[index].get_info() << '\n';
     std::vector<std::string> dealInfo = manager.list_clients[index].get_deal_process();
     for (const auto &s: dealInfo) {
         std::cout << s << '\n';
