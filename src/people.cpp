@@ -36,16 +36,16 @@ namespace people {
         return result;
     }
 
+    std::string people::Client::get_info() const {
+        return email + " " + name + " " + phone;
+    }
+
     people::Manager::Manager(std::string email_, std::string password_, std::string name_, std::string phone_)
         : email(std::move(email_)), password(std::move(password_)), name(std::move(name_)), phone(std::move(phone_)) {
     }
 
-    std::string Manager::get_password() const {
-        return password;
-    }
-
-    std::string Manager::get_email() const {
-        return email;
+    std::string Manager::get_name() const {
+        return name;
     }
 
     std::string Manager::get_info() const {
@@ -80,7 +80,7 @@ namespace people {
     void get_manager(Manager &input_manager, const std::string &input_email) {
         check_resources_tree();
         std::string path = static_cast<std::string>(fs::current_path()) + "/" + MANAGERS_RESORCES + "/" + input_email;
-        if (!fs::exists(path)) { throw; }
+        if (!fs::exists(path)) { throw std::exception(); }
         std::ifstream in(path);
         getline(in, input_manager.email);
         getline(in, input_manager.password);
