@@ -5,6 +5,16 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QTabWidget>
+
+
+ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
+    errinfo = new QLabel("An error", this);
+
+    auto *grid = new QGridLayout(this);
+    grid->addWidget(errinfo);
+    setLayout(grid);
+}
 
 RegisterWindow::RegisterWindow(QWidget *parent)
         : QWidget(parent) {
@@ -74,13 +84,11 @@ QString RegisterWindow::getPassword() {
 }
 
 
-LoginWindow::LoginWindow(QWidget *parent)
+LoginWindow::LoginWindow(MainWindow *parent)
         : QWidget(parent) {
-
-
 }
 
-Application::Application(QWidget *parent)
+StartWindow::StartWindow(MainWindow *parent)
         : QWidget(parent) {
 
     QPushButton *log_in_button = new QPushButton("Log in", this);
@@ -92,23 +100,41 @@ Application::Application(QWidget *parent)
 
     setLayout(grid);
 
-    connect(log_in_button, &QPushButton::clicked, this, &Application::LogIn);
-    connect(register_button, &QPushButton::clicked, this, &Application::Register);
+
+    connect(log_in_button, &QPushButton::clicked, parent, &MainWindow::PushLogIn);
+    connect(register_button, &QPushButton::clicked, parent, &MainWindow::PushRegister);
 
 }
 
 
-void Application::LogIn() {
-    window()->hide();
-    log_window.show();
+MainWindow::MainWindow(QWidget *parent) : QTabWidget(parent) {
 
 }
 
-void Application::Register() {
-    window()->hide();
-    reg_window.resize(1500, 1000);
-    reg_window.setWindowTitle("Registration");
-    reg_window.show();
+void MainWindow::PushLogIn() {
+    setCurrentIndex(1);
 }
+
+void MainWindow::PushRegister() {
+    setCurrentIndex(2);
+}
+
+GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {
+
+}
+
+AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
+
+}
+
+ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
+
+}
+
+ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
+
+}
+
+
 
 

@@ -14,7 +14,7 @@ std::set<std::pair<std::string, std::string>> passwords;
 static const std::string CLIENTSFILE = "clients.txt";
 static const std::string MANAGERFILE = "managers.txt";
 
-void generalWindow(people::Manager &manager);
+/*void generalWindow(people::Manager &manager);
 
 void cilentsWindow(people::Manager &manager);
 
@@ -100,27 +100,7 @@ void loginWindow() {
     }
 }
 
-void registrationWindow() {
-    // open window
-    //std::cout << "Here is a registration window. Input name, phone, email, login, password" << '\n';
-    //    TODO have to fix input after Qt
-    //    TODO add exit
-    //std::string name, phone, email, login, pass;
-    /*std::cin >> name >> phone >> email >> login >> pass;
-    people::Manager manager(name, phone, email, login, pass);
-    if (passwords.find({login, pass}) != passwords.end()) {
-        std::cout << "We have already have these" << '\n';
-        registrationWindow();
-    }
-    passwords.insert({login, pass});
-    std::ofstream file(MANAGERFILE);
-    assert(file.is_open());
-    file << manager;
-    file.close();
-    std::cout << "Welcome" << '\n';
-    generalWindow(manager);*/
-}
-
+*/
 void RegisterWindow::RegisterManager() {
     std::string name, phone, email, login, pass;
     name = getName().toStdString();
@@ -128,24 +108,25 @@ void RegisterWindow::RegisterManager() {
     email = getEmail().toStdString();
     login = getLogin().toStdString();
     pass = getPassword().toStdString();
-    if (name.empty() || phone.empty() || email.empty() || login.empty() || pass.empty()) {
-        //вызывать окно все плохо и завершиться
-    } else {
-        if (passwords.find({login, pass}) != passwords.end()) {
-            //std::cout << "We have already have these" << '\n';
-            //registrationWindow();
-            // TODO прошлое окно и сообщение что все плохо
-        }
-        people::Manager manager(name, phone, email, login, pass);
-        passwords.insert({login, pass});
-        std::ofstream file(MANAGERFILE);
-        assert(file.is_open());
-        file << manager;
-        file.close();
-        std::cout << "Welcome" << '\n';
-        //generalWindow(manager);
-        //TODO открыть главное окно
+    while (name.empty() || phone.empty() || email.empty() || login.empty() || pass.empty()) {
+        errwind.resize(1500, 1000);
+        errwind.setWindowTitle("Empty field");
+        errwind.show();
     }
+    if (passwords.find({login, pass}) != passwords.end()) {
+        errwind.resize(1500, 1000);
+        errwind.setWindowTitle("Manager already exists");
+        errwind.show();
+    }
+    people::Manager manager(name, phone, email, login, pass);
+    passwords.insert({login, pass});
+    std::ofstream file(MANAGERFILE);
+    assert(file.is_open());
+    file << manager;
+    file.close();
+    std::cout << "Welcome" << '\n';
+    //generalWindow(manager);
+    //TODO открыть главное окно
 
 }
 
@@ -173,7 +154,7 @@ void preparation() {
 }
 
 
-void generalWindow(people::Manager &manager) {
+/*void generalWindow(people::Manager &manager) {
     //возможно это вынести
     std::cout << "Here is a general window. Here are some options:" << '\n';
     std::cout << "1. Go to your manager account (button) " << '\n';
@@ -193,14 +174,27 @@ void generalWindow(people::Manager &manager) {
     }
     assert(false);
 }
-
+*/
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     preparation();
-    Application mainWindow;
-    mainWindow.resize(1500, 1000);
-    mainWindow.setWindowTitle("CRM-system");
-    mainWindow.show();
+    MainWindow main_window;
+    StartWindow start_window(&main_window);
+    LoginWindow login_window(&main_window);
+    RegisterWindow register_window(&main_window);
+    GeneralWindow general_window(&main_window);
+    ClientsList clients_list_window(&main_window);
+
+    main_window.addTab(&start_window, "Start");
+    main_window.addTab(&login_window, "Login");
+    main_window.addTab(&register_window, "Registration");
+    main_window.addTab(&general_window, "Main menu");
+    main_window.addTab(&clients_list_window, "ClientsList");
+
+    main_window.resize(2000, 1200);
+    main_window.setWindowTitle("CRM-system");
+    main_window.show();
     return app.exec();
 }
+
