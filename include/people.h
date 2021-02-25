@@ -27,8 +27,8 @@ namespace people {
         Client(std::string, std::string, std::string, std::string);
         Client();
 
-        void print_info(std::ostream &);
-        void print_deal_process(std::ostream &);
+        [[nodiscard]] std::vector<std::string> get_deal_process() const;
+        [[nodiscard]] std::string get_info() const;
 
         friend void read_client(std::vector<Client> &lst, const std::string &path);
         friend struct Manager;
@@ -44,32 +44,30 @@ namespace people {
     struct Manager {
     private:
         std::string email;
+        std::string password;
         std::string name;
         std::string phone;
-        std::string password;
 
     public:
         std::vector<Client> list_clients{};
 
         Manager(std::string, std::string, std::string, std::string);
         Manager() = default;
-        [[nodiscard]] std::string get_password() const;
-        /* for testing */ [[nodiscard]] std::string get_email() const;
-        void load_clients();                                    //load all clients from directory in the vector
-        void add_client(const Client &, std::ostream &);        //add client to the "./resources/Clients/<email>/<Client.email>"
-        void delete_client(const std::string &, std::ostream &);//delete "./resources/Clients/<email>/<Client.email>"
-        void update_clients();                                  //update all clients in the "./resources/Clients/<email>/<Client.email>"
-                                                                //Be carefully! It can delete all files!
-        void print_info(std::ostream &);
-        bool is_correct_password(const std::string &, std::ostream &);
+        [[nodiscard]] std::string get_name() const;
+        void load_clients();                                                  //load all clients from directory in the vector
+        void add_client(const Client &);                                      //add client to the "./resources/Clients/<email>/<Client.email>"
+        /* future */ [[maybe_unused]] void delete_client(const std::string &);//delete "./resources/Clients/<email>/<Client.email>"
+        /* future */ [[maybe_unused]] void update_clients();                  //update all clients in the "./resources/Clients/<email>/<Client.email>"
+        [[nodiscard]] std::string get_info() const;
 
-        friend bool add_manager(const Manager &, std::ostream &);
-        friend bool get_manager(Manager &, const std::string &, std::ostream &);
+        friend void add_manager(const Manager &);
+        friend void get_manager(Manager &, const std::string &);
         friend struct testing::Testing;
     };
-    /* for testing */ std::string get_current_password(const std::string &, std::ostream &process);//return password of std::string Manager + errors
-    bool add_manager(const Manager &, std::ostream &);                                             //add Manager + errors
-    bool get_manager(Manager &, const std::string &, std::ostream &);                              //load information about this Manager
+    void add_manager(const Manager &);               //add Manager + errors
+    void get_manager(Manager &, const std::string &);//load information about this Manager
+
+    bool is_correct_password(const std::string &, const std::string &);
 }// namespace people
 
 namespace testing {

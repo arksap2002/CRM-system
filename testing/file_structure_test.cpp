@@ -7,14 +7,8 @@ using namespace testing;
 
 TEST_CASE("Manager") {
     Manager m("Deins_mail@mail.ru", "Denis Shestakov Vladislavovich", "+7 (123) 456 78-90", "123321");
-    std::stringstream ss;
-    add_manager(m, ss);
-    CHECK(ss.str() == "Such user already exists\n");
-    ss.str("");
-    ss.clear();
-//    CHECK(get_current_password("Deins_mail@mail.ru", ss) == "123321");
-    ss.str("");
-    ss.clear();
+    add_manager(m);
+    CHECK(get_current_password("Deins_mail@mail.ru", ss) == "123321");
     Manager new_m;
     get_manager(new_m, "Deins_mail@mail.ru", ss);
     CHECK(new_m.get_email() == "Deins_mail@mail.ru");
