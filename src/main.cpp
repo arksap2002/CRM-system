@@ -7,6 +7,8 @@ void general_window(people::Manager &manager);
 void cilents_window(people::Manager &manager);
 void enter_window();
 
+people::Controller controller;
+
 void addClient_window(people::Manager &manager) {
     // open window
     std::string name, phone, email, deal_product;
@@ -47,7 +49,7 @@ void deal_list_window(people::Manager &manager, int index) {
     std::cout << "Here is a deal list window\n";
     std::cout << "Here is your deal status for: " << manager.list_clients[index].get_info() << '\n';
     std::vector<std::string> dealInfo = manager.list_clients[index].get_deal_process();
-    for (const auto &s: dealInfo) {
+    for (const auto &s : dealInfo) {
         std::cout << s << '\n';
     }
     std::cout << "Here are some options:\n";
@@ -94,12 +96,12 @@ void login_window() {
     //    TODO for Arkady: after Qt, check the no-spaces
     people::Manager manager;
     try {
-        people::get_manager(manager, email);
-    } catch (const std::exception& e) {
+        controller.get_manager(manager, email);
+    } catch (const std::exception &e) {
         std::cerr << "Such user is not exists. Try again\n";
         login_window();
     }
-    if (!people::is_correct_password(email, password)) {
+    if (!controller.is_correct_password(email, password)) {
         std::cerr << "Incorrect password\n";
         login_window();
     }
@@ -116,7 +118,7 @@ void registration_window() {
     std::cin >> email >> name >> phone >> password;
     people::Manager manager(email, password, name, phone);
     try {
-        people::add_manager(manager);
+        controller.add_manager(manager);
     } catch (...) {
         std::cerr << "Account already exists\n";
         registration_window();

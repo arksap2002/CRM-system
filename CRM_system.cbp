@@ -76,6 +76,9 @@
 		<Unit filename="/home/arkady/C++/CRM-system/src/people.cpp">
 			<Option target="CRM_system"/>
 		</Unit>
+		<Unit filename="/home/arkady/C++/CRM-system/src/peopleMVP.cpp">
+			<Option target="CRM_system"/>
+		</Unit>
 		<Unit filename="/home/arkady/C++/CRM-system/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

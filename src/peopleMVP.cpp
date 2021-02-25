@@ -1,8 +1,8 @@
-#include "people.h"
+#include "peopleMVP.h"
 #include <cmath>
 #include <filesystem>
 
-namespace people {
+namespace people_MVP{
     namespace {
         namespace fs = std::filesystem;
     }
@@ -14,21 +14,20 @@ namespace people {
         if (!fs::exists(cur_path + "/" + CLIENTS_RESORCES)) { fs::create_directory(CLIENTS_RESORCES); }
     }
 
-    people::Client::Client(std::string email_, std::string name_, std::string phone_, std::string deal_product_)
-        : email(std::move(email_)), name(std::move(name_)), phone(std::move(phone_)),
-          deal_product(std::move(deal_product_)) {
+    people_MVP::Client_MVP::Client_MVP(std::string email_, std::string name_, std::string phone_, std::string deal_product_)
+            : people::Client(std::move(email_), std::move(name_), std::move(phone_), std::move(deal_product_)) {
         deal_process = {{"Connection with client", false},
                         {"Concluding the contract", false},
                         {"Deal is completed", false}};
     }
 
-    people::Client::Client() {
+    people_MVP::Client_MVP::Client_MVP() {
         deal_process = {{"Connection with client", false},
                         {"Concluding the contract", false},
                         {"Deal is completed", false}};
     }
 
-    std::vector<std::string> people::Client::get_deal_process() const {
+    std::vector<std::string> people_MVP::Client_MVP::get_deal_process() const {
         std::vector<std::string> result(3);
         for (int i = 0; i < 3; ++i) {
             result[i] = deal_process[i].first + ' ' + std::to_string(deal_process[i].second);
@@ -41,7 +40,7 @@ namespace people {
     }
 
     people::Manager::Manager(std::string email_, std::string password_, std::string name_, std::string phone_)
-        : email(std::move(email_)), password(std::move(password_)), name(std::move(name_)), phone(std::move(phone_)) {
+            : email(std::move(email_)), password(std::move(password_)), name(std::move(name_)), phone(std::move(phone_)) {
     }
 
     std::string Manager::get_name() const {
@@ -167,4 +166,4 @@ namespace people {
             add_client(client);
         }
     }
-}// namespace people
+}
