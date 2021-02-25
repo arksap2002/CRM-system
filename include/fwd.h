@@ -4,6 +4,7 @@
 namespace people{
     struct Manager;
     struct Client;
+    struct Controller;
 }
 
 namespace testing{
