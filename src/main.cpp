@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
     MainWindow main_window;
     StartWindow start_window(&main_window);
     LoginWindow login_window(&main_window);
-    RegisterWindow register_window(nullptr, &main_window);
+    RegisterWindow register_window(&main_window);
     GeneralWindow general_window(&main_window);
     ClientsList clients_list_window(&main_window);
 

@@ -74,7 +74,7 @@ public:
 
 class RegisterWindow : public QWidget {
 
-    //MainWindow mainwind;
+    MainWindow *mainwind;
 Q_OBJECT
 
 public:

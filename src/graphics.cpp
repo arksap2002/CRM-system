@@ -18,7 +18,9 @@ ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
 }
 
 RegisterWindow::RegisterWindow(MainWindow *parent)
-        : QWidget(parent){
+        : QWidget(parent) {
+
+    mainwind = parent;
 
     reginfo = new QLabel("Here is a registration window. Input email, name, phone, password", this);
     QLabel *email = new QLabel("Email:", this);
@@ -78,6 +80,7 @@ void RegisterWindow::RegisterManager() {
         std::cerr << "Account already exists\n";
         //registration_window();
     }
+    mainwind->ChangeToGeneral();
 }
 
 QString RegisterWindow::getName() {
@@ -133,7 +136,7 @@ void MainWindow::PushRegister() {
 }
 
 void MainWindow::ChangeToGeneral() {
-    setCurrentIndex(4);
+    setCurrentIndex(3);
 }
 
 GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {
