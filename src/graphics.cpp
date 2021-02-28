@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QTabWidget>
+#include "people.h"
 
 
 ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
@@ -16,8 +17,8 @@ ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
     setLayout(grid);
 }
 
-RegisterWindow::RegisterWindow(QWidget *parent, MainWindow *mainwind_)
-        : QWidget(parent), mainwind(mainwind_){
+RegisterWindow::RegisterWindow(MainWindow *parent)
+        : QWidget(parent){
 
     reginfo = new QLabel("Here is a registration window. Input email, name, phone, password", this);
     QLabel *email = new QLabel("Email:", this);
@@ -55,7 +56,28 @@ RegisterWindow::RegisterWindow(QWidget *parent, MainWindow *mainwind_)
     setLayout(grid);
 
     connect(register_button, &QPushButton::clicked, this, &RegisterWindow::RegisterManager);
+}
 
+
+
+void RegisterWindow::RegisterManager() {
+    std::string name, phone, email, pass;
+    email = getEmail().toStdString();
+    name = getName().toStdString();
+    phone = getPhone().toStdString();
+    pass = getPassword().toStdString();
+    while (name.empty() || phone.empty() || email.empty() || pass.empty()) {
+        errwind.resize(1500, 1000);
+        errwind.setWindowTitle("Empty field");
+        errwind.show();
+    }
+    people::Manager manager(email, pass, name, phone);
+    try {
+        people::add_manager(manager);
+    } catch (...) {
+        std::cerr << "Account already exists\n";
+        //registration_window();
+    }
 }
 
 QString RegisterWindow::getName() {
@@ -110,8 +132,8 @@ void MainWindow::PushRegister() {
     setCurrentIndex(2);
 }
 
-void MainWindow::ChangeToGeneral(MainWindow *parent) {
-    parent->setCurrentIndex(4);
+void MainWindow::ChangeToGeneral() {
+    setCurrentIndex(4);
 }
 
 GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {

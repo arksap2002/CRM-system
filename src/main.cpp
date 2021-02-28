@@ -131,27 +131,6 @@ void login_window() {
     general_window(manager);
 }*/
 
-void RegisterWindow::RegisterManager() {
-    std::string name, phone, email, pass;
-    email = getEmail().toStdString();
-    name = getName().toStdString();
-    phone = getPhone().toStdString();
-    pass = getPassword().toStdString();
-    while (name.empty() || phone.empty() || email.empty() || pass.empty()) {
-        errwind.resize(1500, 1000);
-        errwind.setWindowTitle("Empty field");
-        errwind.show();
-    }
-    people::Manager manager(email, pass, name, phone);
-    try {
-        people::add_manager(manager);
-    } catch (...) {
-        std::cerr << "Account already exists\n";
-        //registration_window();
-    }
-
-    MainWindow::ChangeToGeneral(&mainwind);
-}
 
 /*void enter_window() {
     // open window

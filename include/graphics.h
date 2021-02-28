@@ -51,7 +51,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     void PushLogIn();
     void PushRegister();
-    static void ChangeToGeneral(MainWindow *parent);
+    void ChangeToGeneral();
 }; //главное окно, куда я добавляю все табы, между которыми переключаемся
 
 class StartWindow : public QWidget {
@@ -74,11 +74,11 @@ public:
 
 class RegisterWindow : public QWidget {
 
-    MainWindow mainwind;
+    //MainWindow mainwind;
 Q_OBJECT
 
 public:
-    explicit RegisterWindow(QWidget *parent = 0, MainWindow *mainwind_ = nullptr);
+    explicit RegisterWindow(MainWindow *parent = 0);
     QString getName();
     QString getPhone();
     QString getEmail();
