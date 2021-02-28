@@ -33,7 +33,6 @@
 .idea/
 /CMakeFiles/
 /resources/
-
-
-
+cmake_install.cmake
+CRM_system.cbp
 Makefile
