@@ -1,13 +1,18 @@
 #include "people.h"
+#include "graphics.h"
 #include <cassert>
 #include <iostream>
+#include <set>
 #include <string>
+#include <vector>
+#include <QApplication>
+#include <QWidget>
 
 void general_window(people::Manager &manager);
 void cilents_window(people::Manager &manager);
 void enter_window();
 
-void addClient_window(people::Manager &manager) {
+/*void addClient_window(people::Manager &manager) {
     // open window
     std::string name, phone, email, deal_product;
     //    TODO think about skip after Qt
@@ -27,9 +32,9 @@ void addClient_window(people::Manager &manager) {
     assert(number == 1);
     cilents_window(manager);
     assert(false);
-}
+}*/
 
-void manager_window(people::Manager &manager) {
+/*void manager_window(people::Manager &manager) {
     // open window
     std::cout << "Hello, ";
     std::cout << manager.get_name() << '\n';
@@ -106,9 +111,9 @@ void login_window() {
     std::cout << "Welcome\n";
     general_window(manager);
     assert(false);
-}
+}*/
 
-void registration_window() {
+/*void registration_window() {
     // open window
     std::cout << "Here is a registration window. Input email, name, phone, password\n";
     //    TODO for Anna: add exit button in Qt
@@ -124,9 +129,31 @@ void registration_window() {
     std::cout << "User created\n";
     std::cout << "Welcome\n";
     general_window(manager);
+}*/
+
+void RegisterWindow::RegisterManager() {
+    std::string name, phone, email, pass;
+    email = getEmail().toStdString();
+    name = getName().toStdString();
+    phone = getPhone().toStdString();
+    pass = getPassword().toStdString();
+    while (name.empty() || phone.empty() || email.empty() || pass.empty()) {
+        errwind.resize(1500, 1000);
+        errwind.setWindowTitle("Empty field");
+        errwind.show();
+    }
+    people::Manager manager(email, pass, name, phone);
+    try {
+        people::add_manager(manager);
+    } catch (...) {
+        std::cerr << "Account already exists\n";
+        //registration_window();
+    }
+
+    MainWindow::ChangeToGeneral(&mainwind);
 }
 
-void enter_window() {
+/*void enter_window() {
     // open window
     std::cout << "Log In - 0, register - 1\n";
     int number;
@@ -134,9 +161,9 @@ void enter_window() {
     if (number == 0) { login_window(); }
     if (number == 1) { registration_window(); }
     assert(false);
-}
+}*/
 
-void general_window(people::Manager &manager) {
+/*void general_window(people::Manager &manager) {
     // open window
     std::cout << "Here is a general window. Here are some options:\n";
     std::cout << "1. Go to your manager account (button)\n";
@@ -148,8 +175,25 @@ void general_window(people::Manager &manager) {
     if (number == 2) { cilents_window(manager); }
     if (number == 3) { enter_window(); }
     assert(false);
-}
+}*/
 
-int main() {
-    enter_window();
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    MainWindow main_window;
+    StartWindow start_window(&main_window);
+    LoginWindow login_window(&main_window);
+    RegisterWindow register_window(nullptr, &main_window);
+    GeneralWindow general_window(&main_window);
+    ClientsList clients_list_window(&main_window);
+
+    main_window.addTab(&start_window, "Start");
+    main_window.addTab(&login_window, "Login");
+    main_window.addTab(&register_window, "Registration");
+    main_window.addTab(&general_window, "Main menu");
+    main_window.addTab(&clients_list_window, "ClientsList");
+
+    main_window.resize(2000, 1200);
+    main_window.setWindowTitle("CRM-system");
+    main_window.show();
+    return app.exec();
 }

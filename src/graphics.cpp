@@ -16,26 +16,23 @@ ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
     setLayout(grid);
 }
 
-RegisterWindow::RegisterWindow(QWidget *parent)
-        : QWidget(parent) {
+RegisterWindow::RegisterWindow(QWidget *parent, MainWindow *mainwind_)
+        : QWidget(parent), mainwind(mainwind_){
 
-    reginfo = new QLabel("Here is a registration window. Input name, phone, email, login, password", this);
+    reginfo = new QLabel("Here is a registration window. Input email, name, phone, password", this);
+    QLabel *email = new QLabel("Email:", this);
+    email->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     QLabel *name = new QLabel("Name:", this);
     name->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     QLabel *phone = new QLabel("Phone:", this);
     phone->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    QLabel *email = new QLabel("Email:", this);
-    email->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    QLabel *login = new QLabel("Login:", this);
-    login->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     QLabel *password = new QLabel("Password:", this);
     password->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-    le1 = new QLineEdit(this);
-    le2 = new QLineEdit(this);
-    le3 = new QLineEdit(this);
-    le4 = new QLineEdit(this);
-    le5 = new QLineEdit(this);
+    email_ = new QLineEdit(this);
+    name_ = new QLineEdit(this);
+    phone_ = new QLineEdit(this);
+    password_ = new QLineEdit(this);
 
     QPushButton *register_button = new QPushButton("Register", this);
 
@@ -45,17 +42,15 @@ RegisterWindow::RegisterWindow(QWidget *parent)
     grid->setHorizontalSpacing(10);
 
     grid->addWidget(reginfo, 0, 0);
-    grid->addWidget(name, 1, 0);
-    grid->addWidget(le1, 1, 1);
-    grid->addWidget(phone, 2, 0);
-    grid->addWidget(le2, 2, 1);
-    grid->addWidget(email, 3, 0);
-    grid->addWidget(le3, 3, 1);
-    grid->addWidget(login, 4, 0);
-    grid->addWidget(le4, 4, 1);
-    grid->addWidget(password, 5, 0);
-    grid->addWidget(le5, 5, 1);
-    grid->addWidget(register_button, 6, 2);
+    grid->addWidget(email, 1, 0);
+    grid->addWidget(email_, 1, 1);
+    grid->addWidget(name, 2, 0);
+    grid->addWidget(name_, 2, 1);
+    grid->addWidget(phone, 3, 0);
+    grid->addWidget(phone_, 3, 1);
+    grid->addWidget(password, 4, 0);
+    grid->addWidget(password_, 4, 1);
+    grid->addWidget(register_button, 5, 2);
 
     setLayout(grid);
 
@@ -64,23 +59,19 @@ RegisterWindow::RegisterWindow(QWidget *parent)
 }
 
 QString RegisterWindow::getName() {
-    return le1->text();
+    return name_->text();
 }
 
 QString RegisterWindow::getPhone() {
-    return le2->text();
+    return phone_->text();
 }
 
 QString RegisterWindow::getEmail() {
-    return le3->text();
-}
-
-QString RegisterWindow::getLogin() {
-    return le4->text();
+    return email_->text();
 }
 
 QString RegisterWindow::getPassword() {
-    return le5->text();
+    return password_->text();
 }
 
 
@@ -117,6 +108,10 @@ void MainWindow::PushLogIn() {
 
 void MainWindow::PushRegister() {
     setCurrentIndex(2);
+}
+
+void MainWindow::ChangeToGeneral(MainWindow *parent) {
+    parent->setCurrentIndex(4);
 }
 
 GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {

@@ -16,29 +16,6 @@ public:
     QLabel *errinfo;
 }; //окно с сообщением о ошибке
 
-class RegisterWindow : public QWidget {
-
-Q_OBJECT
-
-public:
-    explicit RegisterWindow(QWidget *parent = 0);
-    QString getName();
-    QString getPhone();
-    QString getEmail();
-    QString getLogin();
-    QString getPassword();
-    QLineEdit *le1;
-    QLineEdit *le2;
-    QLineEdit *le3;
-    QLineEdit *le4;
-    QLineEdit *le5;
-    ErrorWindow errwind;
-private:
-    void RegisterManager();
-    QLabel *reginfo;
-
-}; //окно регистрации нового пользователя
-
 
 class GeneralWindow : public QWidget {
 
@@ -74,6 +51,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     void PushLogIn();
     void PushRegister();
+    static void ChangeToGeneral(MainWindow *parent);
 }; //главное окно, куда я добавляю все табы, между которыми переключаемся
 
 class StartWindow : public QWidget {
@@ -93,5 +71,27 @@ class LoginWindow : public QWidget {
 public:
     explicit LoginWindow(MainWindow *parent = 0);
 }; //окно где новый пользователь входит в систему
+
+class RegisterWindow : public QWidget {
+
+    MainWindow mainwind;
+Q_OBJECT
+
+public:
+    explicit RegisterWindow(QWidget *parent = 0, MainWindow *mainwind_ = nullptr);
+    QString getName();
+    QString getPhone();
+    QString getEmail();
+    QString getPassword();
+    QLineEdit *email_;
+    QLineEdit *name_;
+    QLineEdit *phone_;
+    QLineEdit *password_;
+    ErrorWindow errwind;
+private:
+    void RegisterManager();
+    QLabel *reginfo;
+
+}; //окно регистрации нового пользователя
 
 #endif //CRM_SYSTEM_GRAPHICS_H
