@@ -113,34 +113,47 @@ void login_window() {
     assert(false);
 }*/
 
-/*void registration_window() {
-    // open window
-    std::cout << "Here is a registration window. Input email, name, phone, password\n";
-    //    TODO for Anna: add exit button in Qt
-    std::string email, name, phone, password;
-    std::cin >> email >> name >> phone >> password;
-    people::Manager manager(email, password, name, phone);
+void LoginWindow::LoginManager() {
+    std::string email, password;
+    email = getEmail().toStdString();
+    password = getPassword().toStdString();
+    people::Manager manager;
+    if (!people::is_correct_password(email, password)) {
+        //std::cerr << "Incorrect password\n";
+        //login_window();
+        //TODO окно ошибки
+    }
+    try {
+        people::get_manager(manager, email);
+    } catch (const std::exception& e) {
+        //std::cerr << "Such user is not exists. Try again\n";
+        //TODO окно ошибки
+    }
+    mainwind->ChangeToGeneral();
+}
+
+void RegisterWindow::RegisterManager() {
+    std::string name, phone, email, pass;
+    email = getEmail().toStdString();
+    name = getName().toStdString();
+    phone = getPhone().toStdString();
+    pass = getPassword().toStdString();
+    while (name.empty() || phone.empty() || email.empty() || pass.empty()) {
+        errwind.resize(1500, 1000);
+        errwind.setWindowTitle("Empty field");
+        errwind.show();
+    }
+    people::Manager manager(email, pass, name, phone);
     try {
         people::add_manager(manager);
     } catch (...) {
-        std::cerr << "Account already exists\n";
-        registration_window();
+        //std::cerr << "Account already exists\n";
+        mainwind->ChangeToStart();
+        //TODO окно с ошибкой и вернуться назад
     }
-    std::cout << "User created\n";
-    std::cout << "Welcome\n";
-    general_window(manager);
-}*/
+    mainwind->ChangeToGeneral();
+}
 
-
-/*void enter_window() {
-    // open window
-    std::cout << "Log In - 0, register - 1\n";
-    int number;
-    std::cin >> number;
-    if (number == 0) { login_window(); }
-    if (number == 1) { registration_window(); }
-    assert(false);
-}*/
 
 /*void general_window(people::Manager &manager) {
     // open window

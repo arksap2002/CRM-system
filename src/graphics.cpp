@@ -8,6 +8,12 @@
 #include <QTabWidget>
 #include "people.h"
 
+int start_window_num = 0;
+int login_window_num = 1;
+int registration_window_num = 2;
+int general_window_num = 3;
+int clients_window_num = 4;
+
 
 ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
     errinfo = new QLabel("An error", this);
@@ -61,28 +67,6 @@ RegisterWindow::RegisterWindow(MainWindow *parent)
 }
 
 
-
-void RegisterWindow::RegisterManager() {
-    std::string name, phone, email, pass;
-    email = getEmail().toStdString();
-    name = getName().toStdString();
-    phone = getPhone().toStdString();
-    pass = getPassword().toStdString();
-    while (name.empty() || phone.empty() || email.empty() || pass.empty()) {
-        errwind.resize(1500, 1000);
-        errwind.setWindowTitle("Empty field");
-        errwind.show();
-    }
-    people::Manager manager(email, pass, name, phone);
-    try {
-        people::add_manager(manager);
-    } catch (...) {
-        std::cerr << "Account already exists\n";
-        //registration_window();
-    }
-    mainwind->ChangeToGeneral();
-}
-
 QString RegisterWindow::getName() {
     return name_->text();
 }
@@ -102,6 +86,44 @@ QString RegisterWindow::getPassword() {
 
 LoginWindow::LoginWindow(MainWindow *parent)
         : QWidget(parent) {
+
+    mainwind = parent;
+
+    logininfo = new QLabel("Here is a login window. Input email/login and password", this);
+    QLabel *email = new QLabel("Email:", this);
+    email->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    QLabel *password = new QLabel("Password:", this);
+    password->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+    email_ = new QLineEdit(this);
+    password_ = new QLineEdit(this);
+
+    QPushButton *login_button = new QPushButton("Login", this);
+
+    auto *grid = new QGridLayout(this);
+
+    grid->setVerticalSpacing(40);
+    grid->setHorizontalSpacing(10);
+
+    grid->addWidget(logininfo, 0, 0);
+    grid->addWidget(email, 1, 0);
+    grid->addWidget(email_, 1, 1);
+    grid->addWidget(password, 2, 0);
+    grid->addWidget(password_, 2, 1);
+    grid->addWidget(login_button, 3, 2);
+
+    setLayout(grid);
+
+    connect(login_button, &QPushButton::clicked, this, &LoginWindow::LoginManager);
+
+}
+
+QString LoginWindow::getEmail() {
+    return email_->text();
+}
+
+QString LoginWindow::getPassword() {
+    return password_->text();
 }
 
 StartWindow::StartWindow(MainWindow *parent)
@@ -117,8 +139,8 @@ StartWindow::StartWindow(MainWindow *parent)
     setLayout(grid);
 
 
-    connect(log_in_button, &QPushButton::clicked, parent, &MainWindow::PushLogIn);
-    connect(register_button, &QPushButton::clicked, parent, &MainWindow::PushRegister);
+    connect(log_in_button, &QPushButton::clicked, parent, &MainWindow::ChangeToLogIn);
+    connect(register_button, &QPushButton::clicked, parent, &MainWindow::ChangeToRegister);
 
 }
 
@@ -127,16 +149,24 @@ MainWindow::MainWindow(QWidget *parent) : QTabWidget(parent) {
 
 }
 
-void MainWindow::PushLogIn() {
-    setCurrentIndex(1);
+void MainWindow::ChangeToStart() {
+    setCurrentIndex(start_window_num);
 }
 
-void MainWindow::PushRegister() {
-    setCurrentIndex(2);
+void MainWindow::ChangeToLogIn() {
+    setCurrentIndex(login_window_num);
+}
+
+void MainWindow::ChangeToRegister() {
+    setCurrentIndex(registration_window_num);
 }
 
 void MainWindow::ChangeToGeneral() {
-    setCurrentIndex(3);
+    setCurrentIndex(general_window_num);
+}
+
+void MainWindow::ChangeToClients() {
+    setCurrentIndex(clients_window_num);
 }
 
 GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {

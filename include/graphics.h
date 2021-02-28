@@ -49,27 +49,31 @@ public:
 class MainWindow : public QTabWidget {
 public:
     explicit MainWindow(QWidget *parent = 0);
-    void PushLogIn();
-    void PushRegister();
+    void ChangeToStart();
+    void ChangeToLogIn();
+    void ChangeToRegister();
     void ChangeToGeneral();
+    void ChangeToClients();
 }; //главное окно, куда я добавляю все табы, между которыми переключаемся
 
 class StartWindow : public QWidget {
 
 public:
     explicit StartWindow(MainWindow *parent = 0);
-    //void LogIn();
-    //void Register();
-private:
-    //LoginWindow log_window;
-    //RegisterWindow reg_window;
 
 }; //окно входа
 
 class LoginWindow : public QWidget {
-
+    MainWindow *mainwind;
+Q_OBJECT
 public:
     explicit LoginWindow(MainWindow *parent = 0);
+    QString getEmail();
+    QString getPassword();
+    QLineEdit *email_;
+    QLineEdit *password_;
+    QLabel *logininfo;
+    void LoginManager();
 }; //окно где новый пользователь входит в систему
 
 class RegisterWindow : public QWidget {
