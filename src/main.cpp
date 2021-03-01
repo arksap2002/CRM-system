@@ -3,16 +3,14 @@
 #include <cassert>
 #include <iostream>
 #include <string>
+
 void general_window(people::Manager &manager);
 void cilents_window(people::Manager &manager);
 void enter_window();
 
-//using namespace repositories;
+using namespace people;
+using namespace repositories;
 using namespace useCases;
-
-/*namespace {
-    useCases::UseCaseAddManager useCaseAddManager(std::make_unique<reposit>);
-}*/
 
 
 //void addClient_window(people::Manager &manager) {
@@ -37,18 +35,18 @@ using namespace useCases;
 //    assert(false);
 //}
 
-//void manager_window(people::Manager &manager) {
-//    // open window
-//    std::cout << "Hello, ";
-//    std::cout << manager.get_name() << '\n';
-//    std::cout << "Your personal info: " << manager.get_info() << '\n';
-//    std::cout << "Here is a manager window. Here are some options:\n";
-//    std::cout << "1. Exit\n";
-//    int number;
-//    std::cin >> number;
-//    if (number == 1) { general_window(manager); }
-//    assert(false);
-//}
+void manager_window(people::Manager &manager) {
+    // open window
+    std::cout << "Hello, ";
+    std::cout << manager.name << '\n';
+    std::cout << "Your personal info: " << info << '\n';
+    std::cout << "Here is a manager window. Here are some options:\n";
+    std::cout << "1. Exit\n";
+    int number;
+    std::cin >> number;
+    if (number == 1) { general_window(manager); }
+    assert(false);
+}
 
 //void deal_list_window(people::Manager &manager, int index) {
 //    // open window
@@ -92,29 +90,31 @@ using namespace useCases;
 //    assert(false);
 //}
 
-//void login_window() {
-//    // open window
-//    std::cout << "Here is a login window. To exit: 0 0. Input email and password\n";
-//    std::string email, password;
-//    std::cin >> email >> password;
-//    if (email == "0" && password == "0") { enter_window(); }// TODO for Arkady: remove this line after Qt
-//    //    TODO for Anna: add exit button in Qt
-//    //    TODO for Arkady: after Qt, check the no-spaces
-//    people::Manager manager;
-//    try {
-//        people::get_manager(manager, email);
-//    } catch (const std::exception& e) {
-//        std::cerr << "Such user is not exists. Try again\n";
-//        login_window();
-//    }
-//    if (!people::is_correct_password(email, password)) {
-//        std::cerr << "Incorrect password\n";
-//        login_window();
-//    }
-//    std::cout << "Welcome\n";
-//    general_window(manager);
-//    assert(false);
-//}
+void login_window() {
+    // open window
+    std::cout << "Here is a login window. To exit: 0 0. Input email and password\n";
+    std::string email, password;
+    std::cin >> email >> password;
+    if (email == "0" && password == "0") { enter_window(); }// TODO for Arkady: remove this line after Qt
+    //    TODO for Anna: add exit button in Qt
+    //    TODO for Arkady: after Qt, check the no-spaces
+    UseCaseInCorrectPassword check(std::make_unique<ManagerFileSystem>());
+    try {
+        if (check.isCorrectPassword(email, password)) {
+            std::cerr << "Incorrect password\n";
+            login_window();
+        }
+    } catch (const std::exception &e) {
+        std::cerr << "Such user is not exists. Try again\n";
+        login_window();
+    }
+    Manager manager;
+    UseCaseGetManager get(std::make_unique<ManagerFileSystem>());
+    get.getManager(manager, email);
+    std::cout << "Welcome\n";
+    general_window(manager);
+    assert(false);
+}
 
 void registration_window() {
     // open window
@@ -122,8 +122,8 @@ void registration_window() {
     //    TODO for Anna: add exit button in Qt
     std::string email, name, phone, password;
     std::cin >> email >> name >> phone >> password;
-    people::Manager manager(email, password, name, phone);
-    UseCaseAddManager add(std::make_unique<repositories::ManagerFileSystem>());
+    Manager manager(email, password, name, phone);
+    UseCaseAddManager add(std::make_unique<ManagerFileSystem>());
     try {
         add.addManager(manager);
     } catch (...) {
@@ -133,6 +133,7 @@ void registration_window() {
     std::cout << "User created\n";
     std::cout << "Welcome\n";
     general_window(manager);
+    assert(false);
 }
 
 void enter_window() {
@@ -140,23 +141,23 @@ void enter_window() {
     std::cout << "Log In - 0, register - 1\n";
     int number;
     std::cin >> number;
-    //    if (number == 0) { login_window(); }
+    if (number == 0) { login_window(); }
     if (number == 1) { registration_window(); }
-//    assert(false);
+    assert(false);
 }
 
 void general_window([[maybe_unused]] people::Manager &manager) {
-    // open window
-    //    std::cout << "Here is a general window. Here are some options:\n";
-    //    std::cout << "1. Go to your manager account (button)\n";
-    //    std::cout << "2. Go to the clients window (button)\n";
-    //    std::cout << "3. Exit (button)\n";
-    //    int number;
-    //    std::cin >> number;
-    //    //    if (number == 1) { manager_window(manager); }
-    //    if (number == 2) { cilents_window(manager); }
-    //    if (number == 3) { enter_window(); }
-    //    assert(false);
+    //     open window
+    std::cout << "Here is a general window. Here are some options:\n";
+    std::cout << "1. Go to your manager account (button)\n";
+    std::cout << "2. Go to the clients window (button)\n";
+    std::cout << "3. Exit (button)\n";
+    int number;
+    std::cin >> number;
+    if (number == 1) { manager_window(manager); }
+    if (number == 2) { cilents_window(manager); }
+    if (number == 3) { enter_window(); }
+    assert(false);
 }
 
 int main() {
