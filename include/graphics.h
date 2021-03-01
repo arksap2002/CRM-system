@@ -7,6 +7,8 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QTabWidget>
+#include <QGridLayout>
+#include "people.h"
 
 class ErrorWindow : public QWidget {
 Q_OBJECT
@@ -16,13 +18,6 @@ public:
     QLabel *errinfo;
 }; //окно с сообщением о ошибке
 
-
-class GeneralWindow : public QWidget {
-
-public:
-    explicit GeneralWindow(QWidget *parent = 0);
-
-};//окно основного взаимодействия
 
 class AddClientsWindow : public QWidget {
 
@@ -45,15 +40,33 @@ public:
 
 };//окно со списком клиентов
 
+class GeneralWindow : public QWidget {
+Q_OBJECT
+    //MainWindow *mainwind;
+public:
+    people::Manager *manager = nullptr;
+    explicit GeneralWindow(QWidget *parent = 0, people::Manager *manager_ = nullptr);
+    QLabel *manager_name;
+    void redraw();
+    QGridLayout *grid;
+
+    void SetManager(people::Manager &manager);
+
+
+};//окно основного взаимодействия
 
 class MainWindow : public QTabWidget {
 public:
+    people::Manager *manager = nullptr;
     explicit MainWindow(QWidget *parent = 0);
     void ChangeToStart();
     void ChangeToLogIn();
     void ChangeToRegister();
     void ChangeToGeneral();
     void ChangeToClients();
+    people::Manager& GetManager();
+    void SetManager(people::Manager &manager_);
+    GeneralWindow general_window;
 }; //главное окно, куда я добавляю все табы, между которыми переключаемся
 
 class StartWindow : public QWidget {
@@ -77,9 +90,9 @@ public:
 }; //окно где новый пользователь входит в систему
 
 class RegisterWindow : public QWidget {
+Q_OBJECT
 
     MainWindow *mainwind;
-Q_OBJECT
 
 public:
     explicit RegisterWindow(MainWindow *parent = 0);
@@ -97,5 +110,6 @@ private:
     QLabel *reginfo;
 
 }; //окно регистрации нового пользователя
+
 
 #endif //CRM_SYSTEM_GRAPHICS_H

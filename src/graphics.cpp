@@ -162,6 +162,9 @@ void MainWindow::ChangeToRegister() {
 }
 
 void MainWindow::ChangeToGeneral() {
+    general_window.SetManager(GetManager());
+    general_window.redraw();
+    addTab(&general_window, "General");
     setCurrentIndex(general_window_num);
 }
 
@@ -169,8 +172,45 @@ void MainWindow::ChangeToClients() {
     setCurrentIndex(clients_window_num);
 }
 
-GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {
+people::Manager& MainWindow::GetManager() {
+    return *manager;
+}
 
+void MainWindow::SetManager(people::Manager &manager_) {
+    manager = &manager_;
+}
+
+GeneralWindow::GeneralWindow(QWidget *parent, people::Manager *manager_) : QWidget(parent), manager(manager_) {
+
+    if (manager == nullptr) {
+        manager_name = new QLabel("error. need to update", this);
+    } else {
+        manager_name = new QLabel(QString::fromStdString(manager->get_name()), this);
+    }
+
+    grid = new QGridLayout(this);
+    grid->setVerticalSpacing(40);
+    grid->setHorizontalSpacing(10);
+
+    grid->addWidget(manager_name, 0, 0);
+    setLayout(grid);
+}
+
+void GeneralWindow::redraw() {
+
+    grid->removeWidget(grid->itemAtPosition(0, 0)->widget());
+
+    if (manager == nullptr) {
+        manager_name = new QLabel("error. need to update", this);
+    } else {
+        manager_name = new QLabel(QString::fromStdString(manager->get_name()), this);
+    }
+    //manager_name->update();
+    grid->addWidget(manager_name, 0, 0);
+}
+
+void GeneralWindow::SetManager(people::Manager &manager_) {
+    manager = &manager_;
 }
 
 AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {

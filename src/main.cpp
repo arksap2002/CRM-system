@@ -87,30 +87,6 @@ void cilents_window(people::Manager &manager) {
     if (number == 3) { addClient_window(manager); }
     if (number == 4) { general_window(manager); }
     assert(false);
-}
-
-void login_window() {
-    // open window
-    std::cout << "Here is a login window. To exit: 0 0. Input email and password\n";
-    std::string email, password;
-    std::cin >> email >> password;
-    if (email == "0" && password == "0") { enter_window(); }// TODO for Arkady: remove this line after Qt
-    //    TODO for Anna: add exit button in Qt
-    //    TODO for Arkady: after Qt, check the no-spaces
-    people::Manager manager;
-    try {
-        people::get_manager(manager, email);
-    } catch (const std::exception& e) {
-        std::cerr << "Such user is not exists. Try again\n";
-        login_window();
-    }
-    if (!people::is_correct_password(email, password)) {
-        std::cerr << "Incorrect password\n";
-        login_window();
-    }
-    std::cout << "Welcome\n";
-    general_window(manager);
-    assert(false);
 }*/
 
 void LoginWindow::LoginManager() {
@@ -151,6 +127,7 @@ void RegisterWindow::RegisterManager() {
         mainwind->ChangeToStart();
         //TODO окно с ошибкой и вернуться назад
     }
+    mainwind->SetManager(manager);
     mainwind->ChangeToGeneral();
 }
 
@@ -175,13 +152,13 @@ int main(int argc, char *argv[]) {
     StartWindow start_window(&main_window);
     LoginWindow login_window(&main_window);
     RegisterWindow register_window(&main_window);
-    GeneralWindow general_window(&main_window);
+    //GeneralWindow general_window(&main_window);
     ClientsList clients_list_window(&main_window);
 
     main_window.addTab(&start_window, "Start");
     main_window.addTab(&login_window, "Login");
     main_window.addTab(&register_window, "Registration");
-    main_window.addTab(&general_window, "Main menu");
+    //main_window.addTab(&general_window, "Main menu");
     main_window.addTab(&clients_list_window, "ClientsList");
 
     main_window.resize(2000, 1200);
