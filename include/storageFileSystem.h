@@ -4,16 +4,15 @@
 
 namespace repositories {
 
-    class FolderNotExists : std::exception {
-    public:
+    struct FolderExists : std::exception {
         static std::string get_name();
-        FolderNotExists() = default;
+        FolderExists() = default;
     };
 
-    class ManagerFileSystem : ManagerRepository {
-        void preparatoryCheck() const override;//check_resources_tree
+    struct ManagerFileSystem : ManagerRepository {
+        ManagerFileSystem();
         void addManager(const people::Manager &manager) const override;
-        [[nodiscard]] bool is_correct_password(const std::string &email, const std::string &inputPassword) const override;
+        ~ManagerFileSystem() override = default;
     };
 
 }// namespace repositories

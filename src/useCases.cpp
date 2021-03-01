@@ -7,26 +7,26 @@ namespace useCases {
 
     void UseCaseAddManager::addManager(const people::Manager &manager) {
         try {
-            managerRepository->preparatoryCheck();
             managerRepository->addManager(manager);
-        } catch (const repositories::FolderNotExists &folderNotExists) {
-            std::cerr << repositories::FolderNotExists::get_name() << "\n";
+        } catch (const repositories::FolderExists &folderExists) {
+            std::cerr << repositories::FolderExists::get_name() << "\n";
+            throw folderExists;
         }
     }
 
-    void UseCaseGetManager::getManager() {
-        //    TODO
-    }
-
-    void UseCaseIsCorrectPassword::isCorrectPassword() {
-        //    TODO
-    }
-
-    void UseCaseAddClient::addClient() {
-        //    TODO
-    }
-
-    void UseCaseDeleteClient::deleteClient() {
-        //    TODO
-    }
+//    void UseCaseGetManager::getManager() {
+//        //    TODO
+//    }
+//
+//    void UseCaseIsCorrectPassword::isCorrectPassword() {
+//        //    TODO
+//    }
+//
+//    void UseCaseAddClient::addClient() {
+//        //    TODO
+//    }
+//
+//    void UseCaseDeleteClient::deleteClient() {
+//        //    TODO
+//    }
 }// namespace useCases

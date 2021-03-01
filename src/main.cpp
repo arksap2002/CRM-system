@@ -1,13 +1,13 @@
 #include "people.h"
+#include "useCases.h"
 #include <cassert>
 #include <iostream>
 #include <string>
-#include "useCases.h"
 void general_window(people::Manager &manager);
 void cilents_window(people::Manager &manager);
 void enter_window();
 
-using namespace repositories;
+//using namespace repositories;
 using namespace useCases;
 
 /*namespace {
@@ -123,11 +123,9 @@ void registration_window() {
     std::string email, name, phone, password;
     std::cin >> email >> name >> phone >> password;
     people::Manager manager(email, password, name, phone);
-    useCases::UseCaseAddManager add(dynamic_cast<std::unique_ptr<ManagerRepository>>(std::make_unique<ManagerFileSystem>(ManagerFileSystem())));
+    UseCaseAddManager add(std::make_unique<repositories::ManagerFileSystem>());
     try {
-//        TODO
-//        people::add_manager(manager);
-
+        add.addManager(manager);
     } catch (...) {
         std::cerr << "Account already exists\n";
         registration_window();
@@ -138,27 +136,27 @@ void registration_window() {
 }
 
 void enter_window() {
-    // open window
+    //     open window
     std::cout << "Log In - 0, register - 1\n";
     int number;
     std::cin >> number;
     //    if (number == 0) { login_window(); }
     if (number == 1) { registration_window(); }
-    assert(false);
+//    assert(false);
 }
 
-void general_window(people::Manager &manager) {
+void general_window([[maybe_unused]] people::Manager &manager) {
     // open window
-    std::cout << "Here is a general window. Here are some options:\n";
-    std::cout << "1. Go to your manager account (button)\n";
-    std::cout << "2. Go to the clients window (button)\n";
-    std::cout << "3. Exit (button)\n";
-    int number;
-    std::cin >> number;
-    //    if (number == 1) { manager_window(manager); }
-    if (number == 2) { cilents_window(manager); }
-    if (number == 3) { enter_window(); }
-    assert(false);
+    //    std::cout << "Here is a general window. Here are some options:\n";
+    //    std::cout << "1. Go to your manager account (button)\n";
+    //    std::cout << "2. Go to the clients window (button)\n";
+    //    std::cout << "3. Exit (button)\n";
+    //    int number;
+    //    std::cin >> number;
+    //    //    if (number == 1) { manager_window(manager); }
+    //    if (number == 2) { cilents_window(manager); }
+    //    if (number == 3) { enter_window(); }
+    //    assert(false);
 }
 
 int main() {
