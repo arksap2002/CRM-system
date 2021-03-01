@@ -29,9 +29,14 @@ public:
 };//окно добавления клиента
 
 class ManagersWindow : public QWidget {
-
+Q_OBJECT
+    people::Manager *manager;
 public:
-    explicit ManagersWindow(QWidget *parent = 0);
+    QGridLayout *grid;
+    QLabel *info;
+    explicit ManagersWindow(QWidget *parent = 0, people::Manager *manager_ = nullptr);
+    void SetManager(people::Manager *manager_);
+    void redraw();
 
 };//окно менеджера загадка что там и как оно достигается
 
@@ -42,6 +47,24 @@ public:
 
 };//окно со списком клиентов
 
+class GeneralWindow : public QWidget {
+Q_OBJECT
+    //MainWindow *mainwind;
+public:
+    people::Manager *manager = nullptr;
+    explicit GeneralWindow(QWidget *parent = 0, people::Manager *manager_ = nullptr);
+    QLabel *manager_name;
+    QGridLayout *grid;
+    ManagersWindow managers_window;
+    AddClientsWindow clients_window;
+
+    void redraw();
+    void SetManager(people::Manager &manager);
+    people::Manager& GetManager();
+    void OpenManagersAccount();
+    void OpenClientsWindow();
+
+};//окно основного взаимодействия
 
 class MainWindow : public QTabWidget {
 public:
@@ -98,22 +121,5 @@ private:
     QLabel *reginfo;
 
 }; //окно регистрации нового пользователя
-
-class GeneralWindow : public QWidget {
-Q_OBJECT
-    MainWindow *mainwind;
-public:
-    people::Manager *manager = nullptr;
-    explicit GeneralWindow(MainWindow *parent = 0, people::Manager *manager_ = nullptr);
-    QLabel *manager_name;
-    QGridLayout *grid;
-
-    void redraw();
-    void SetManager(people::Manager &manager);
-    void OpenManagersAccount();
-    void OpenClientsWindow();
-
-};//окно основного взаимодействия
-
 
 #endif //CRM_SYSTEM_GRAPHICS_H

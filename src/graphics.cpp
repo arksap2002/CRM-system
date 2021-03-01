@@ -188,12 +188,19 @@ GeneralWindow::GeneralWindow(QWidget *parent, people::Manager *manager_) : QWidg
         manager_name = new QLabel(QString::fromStdString(manager->get_name()), this);
     }
 
+    QPushButton *managers_window_button = new QPushButton("Open managers window", this);
+
     grid = new QGridLayout(this);
     grid->setVerticalSpacing(40);
     grid->setHorizontalSpacing(10);
 
     grid->addWidget(manager_name, 0, 0);
+    grid->addWidget(managers_window_button, 1, 0);
+
     setLayout(grid);
+
+    connect(managers_window_button, &QPushButton::clicked, this, &GeneralWindow::OpenManagersAccount);
+
 }
 
 void GeneralWindow::redraw() {
@@ -209,11 +216,48 @@ void GeneralWindow::SetManager(people::Manager &manager_) {
     manager = &manager_;
 }
 
-AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
 
+people::Manager& GeneralWindow::GetManager() {
+    return *manager;
 }
 
-ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
+void GeneralWindow::OpenManagersAccount() {
+    managers_window.SetManager(&GetManager());
+    managers_window.redraw();
+    managers_window.resize(1000, 700);
+    managers_window.setWindowTitle("Your account");
+    managers_window.show();
+}
+
+ManagersWindow::ManagersWindow(QWidget *parent, people::Manager *manager_) : QWidget(parent), manager(manager_) {
+
+    if (manager != nullptr) {
+        info = new QLabel(
+                QString::fromStdString("Hello" + manager->get_name() + "!\n You personal info: " + manager->get_info()),
+                this);
+    } else {
+        info = new QLabel("No manager. Error", this);
+    }
+    grid = new QGridLayout(this);
+    grid->setVerticalSpacing(40);
+    grid->setHorizontalSpacing(10);
+
+    grid->addWidget(info, 0, 0);
+
+    setLayout(grid);
+}
+
+void ManagersWindow::SetManager(people::Manager *manager_) {
+    manager = manager_;
+}
+
+void ManagersWindow::redraw() {
+    info->setText(QString::fromStdString("Hello " + manager->get_name() + "!\n You personal info: " + manager->get_info()));
+    //info->setText("aaaa");
+    info->update();
+}
+
+AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
 
 }
 
