@@ -198,15 +198,11 @@ GeneralWindow::GeneralWindow(QWidget *parent, people::Manager *manager_) : QWidg
 
 void GeneralWindow::redraw() {
 
-    grid->removeWidget(grid->itemAtPosition(0, 0)->widget());
-
-    if (manager == nullptr) {
-        manager_name = new QLabel("error. need to update", this);
-    } else {
-        manager_name = new QLabel(QString::fromStdString(manager->get_name()), this);
+    if (manager != nullptr) {
+        manager_name->setText(QString::fromStdString("Hello, " + manager->get_name() + "! Here is a general window. Here are some options:"));
+        manager_name->update();
     }
-    //manager_name->update();
-    grid->addWidget(manager_name, 0, 0);
+
 }
 
 void GeneralWindow::SetManager(people::Manager &manager_) {

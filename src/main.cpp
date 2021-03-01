@@ -105,6 +105,7 @@ void LoginWindow::LoginManager() {
         //std::cerr << "Such user is not exists. Try again\n";
         //TODO окно ошибки
     }
+    mainwind->SetManager(manager);
     mainwind->ChangeToGeneral();
 }
 
@@ -153,13 +154,13 @@ int main(int argc, char *argv[]) {
     LoginWindow login_window(&main_window);
     RegisterWindow register_window(&main_window);
     //GeneralWindow general_window(&main_window);
-    ClientsList clients_list_window(&main_window);
+    //ClientsList clients_list_window(&main_window);
 
     main_window.addTab(&start_window, "Start");
     main_window.addTab(&login_window, "Login");
     main_window.addTab(&register_window, "Registration");
     //main_window.addTab(&general_window, "Main menu");
-    main_window.addTab(&clients_list_window, "ClientsList");
+    //main_window.addTab(&clients_list_window, "ClientsList");
 
     main_window.resize(2000, 1200);
     main_window.setWindowTitle("CRM-system");
