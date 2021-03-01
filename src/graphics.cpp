@@ -1,5 +1,4 @@
 #include "graphics.h"
-#include <QApplication>
 #include <QWidget>
 #include <QPushButton>
 #include <QGridLayout>
@@ -252,7 +251,11 @@ void ManagersWindow::SetManager(people::Manager &manager_) {
 }
 
 void ManagersWindow::redraw() {
-    info->setText(QString::fromStdString("Hello " + manager->get_name()));
+    if (manager!= nullptr) {
+        info->setText(QString::fromStdString("Hello " + manager->get_name()));
+    } else {
+        info->setText("Error");
+    }
     //info->setText("aaaa");
     info->update();
 }
