@@ -222,7 +222,7 @@ people::Manager& GeneralWindow::GetManager() {
 }
 
 void GeneralWindow::OpenManagersAccount() {
-    managers_window.SetManager(&GetManager());
+    managers_window.SetManager(GetManager());
     managers_window.redraw();
     managers_window.resize(1000, 700);
     managers_window.setWindowTitle("Your account");
@@ -247,12 +247,12 @@ ManagersWindow::ManagersWindow(QWidget *parent, people::Manager *manager_) : QWi
     setLayout(grid);
 }
 
-void ManagersWindow::SetManager(people::Manager *manager_) {
-    manager = manager_;
+void ManagersWindow::SetManager(people::Manager &manager_) {
+    manager = &manager_;
 }
 
 void ManagersWindow::redraw() {
-    info->setText(QString::fromStdString("Hello " + manager->get_name() + "!\n You personal info: " + manager->get_info()));
+    info->setText(QString::fromStdString("Hello " + manager->get_name()));
     //info->setText("aaaa");
     info->update();
 }

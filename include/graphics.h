@@ -35,7 +35,7 @@ public:
     QGridLayout *grid;
     QLabel *info;
     explicit ManagersWindow(QWidget *parent = 0, people::Manager *manager_ = nullptr);
-    void SetManager(people::Manager *manager_);
+    void SetManager(people::Manager &manager_);
     void redraw();
 
 };//окно менеджера загадка что там и как оно достигается
