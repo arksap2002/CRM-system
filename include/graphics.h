@@ -10,6 +10,8 @@
 #include <QGridLayout>
 #include "people.h"
 
+class GeneralWindow;
+
 class ErrorWindow : public QWidget {
 Q_OBJECT
 public:
@@ -40,20 +42,6 @@ public:
 
 };//окно со списком клиентов
 
-class GeneralWindow : public QWidget {
-Q_OBJECT
-    //MainWindow *mainwind;
-public:
-    people::Manager *manager = nullptr;
-    explicit GeneralWindow(QWidget *parent = 0, people::Manager *manager_ = nullptr);
-    QLabel *manager_name;
-    void redraw();
-    QGridLayout *grid;
-
-    void SetManager(people::Manager &manager);
-
-
-};//окно основного взаимодействия
 
 class MainWindow : public QTabWidget {
 public:
@@ -110,6 +98,22 @@ private:
     QLabel *reginfo;
 
 }; //окно регистрации нового пользователя
+
+class GeneralWindow : public QWidget {
+Q_OBJECT
+    MainWindow *mainwind;
+public:
+    people::Manager *manager = nullptr;
+    explicit GeneralWindow(MainWindow *parent = 0, people::Manager *manager_ = nullptr);
+    QLabel *manager_name;
+    QGridLayout *grid;
+
+    void redraw();
+    void SetManager(people::Manager &manager);
+    void OpenManagersAccount();
+    void OpenClientsWindow();
+
+};//окно основного взаимодействия
 
 
 #endif //CRM_SYSTEM_GRAPHICS_H

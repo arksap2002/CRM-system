@@ -8,7 +8,15 @@
 #include <QApplication>
 #include <QWidget>
 
-void general_window(people::Manager &manager);
+namespace wd {
+    MainWindow main_window;
+    StartWindow start_window(&main_window);
+    LoginWindow login_window(&main_window);
+    RegisterWindow register_window(&main_window);
+    GeneralWindow general_window(&main_window);
+}
+
+//void general_window(people::Manager &manager);
 void cilents_window(people::Manager &manager);
 void enter_window();
 
@@ -149,21 +157,21 @@ void RegisterWindow::RegisterManager() {
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    MainWindow main_window;
-    StartWindow start_window(&main_window);
-    LoginWindow login_window(&main_window);
-    RegisterWindow register_window(&main_window);
+    //MainWindow main_window;
+    //StartWindow start_window(&main_window);
+    //LoginWindow login_window(&main_window);
+    //RegisterWindow register_window(&main_window);
     //GeneralWindow general_window(&main_window);
     //ClientsList clients_list_window(&main_window);
 
-    main_window.addTab(&start_window, "Start");
-    main_window.addTab(&login_window, "Login");
-    main_window.addTab(&register_window, "Registration");
-    //main_window.addTab(&general_window, "Main menu");
+    wd::main_window.addTab(&wd::start_window, "Start");
+    wd::main_window.addTab(&wd::login_window, "Login");
+    wd::main_window.addTab(&wd::register_window, "Registration");
+    wd::main_window.addTab(&wd::general_window, "Main menu");
     //main_window.addTab(&clients_list_window, "ClientsList");
 
-    main_window.resize(2000, 1200);
-    main_window.setWindowTitle("CRM-system");
-    main_window.show();
+    wd::main_window.resize(2000, 1200);
+    wd::main_window.setWindowTitle("CRM-system");
+    wd::main_window.show();
     return app.exec();
 }
