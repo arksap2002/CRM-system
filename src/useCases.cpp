@@ -1,7 +1,7 @@
 #include "useCases.h"
 
 namespace useCases {
-    UseCaseAddManager::UseCaseAddManager(std::shared_ptr<repositories::ManagerRepository> managerRepository_)
+    UseCaseAddManager::UseCaseAddManager(std::unique_ptr<repositories::ManagerRepository> managerRepository_)
         : managerRepository(std::move(managerRepository_)) {
     }
 
@@ -9,12 +9,12 @@ namespace useCases {
         try {
             managerRepository->addManager(manager);
         } catch (const repositories::FileExists &fileExists) {
-            std::cerr << repositories::FileExists::get_name() << "\n";
+//            std::cerr << repositories::FileExists::get_name() << "\n";
             throw fileExists;
         }
     }
 
-    UseCaseGetManager::UseCaseGetManager(std::shared_ptr<repositories::ManagerRepository> managerRepository_)
+    UseCaseGetManager::UseCaseGetManager(std::unique_ptr<repositories::ManagerRepository> managerRepository_)
         : managerRepository(std::move(managerRepository_)) {
     }
 
@@ -22,7 +22,7 @@ namespace useCases {
         managerRepository->getManager(input_manager, input_email);
     }
 
-    UseCaseIsCorrectPassword::UseCaseIsCorrectPassword(std::shared_ptr<repositories::ManagerRepository> managerRepository_)
+    UseCaseIsCorrectPassword::UseCaseIsCorrectPassword(std::unique_ptr<repositories::ManagerRepository> managerRepository_)
         : managerRepository(std::move(managerRepository_)) {
     }
 
@@ -30,18 +30,18 @@ namespace useCases {
         try {
             return managerRepository->isCorrectPassword(input_email, input_password);
         } catch (const repositories::FileNotExists &fileNotExists) {
-            std::cerr << repositories::FileNotExists::get_name() << "\n";
+//            std::cerr << repositories::FileNotExists::get_name() << "\n";
             throw fileNotExists;
         }
     }
-    UseCaseManagerInfo::UseCaseManagerInfo(std::shared_ptr<repositories::ManagerRepository> managerRepository_)
+    UseCaseManagerInfo::UseCaseManagerInfo(std::unique_ptr<repositories::ManagerRepository> managerRepository_)
         : managerRepository(std::move(managerRepository_)) {
     }
     std::string UseCaseManagerInfo::managerInfo(people::Manager &manager) const {
         return managerRepository->managerInfo(manager);
     }
 
-    UseCaseAddClient::UseCaseAddClient(std::shared_ptr<repositories::ClientRepository> clientRepository_)
+    UseCaseAddClient::UseCaseAddClient(std::unique_ptr<repositories::ClientRepository> clientRepository_)
         : clientRepository(std::move(clientRepository_)) {
     }
 
@@ -49,12 +49,12 @@ namespace useCases {
         try {
             clientRepository->addClient(client, managerEmail);
         } catch (const repositories::FileExists &fileExists) {
-            std::cerr << repositories::FileExists::get_name() << "\n";
+//            std::cerr << repositories::FileExists::get_name() << "\n";
             throw fileExists;
         }
     }
 
-    UseCaseDeleteClient::UseCaseDeleteClient(std::shared_ptr<repositories::ClientRepository> clientRepository_)
+    UseCaseDeleteClient::UseCaseDeleteClient(std::unique_ptr<repositories::ClientRepository> clientRepository_)
         : clientRepository(std::move(clientRepository_)) {
     }
 
@@ -62,12 +62,12 @@ namespace useCases {
         try {
             return clientRepository->deleteClient(client_email, managerEmail);
         } catch (const repositories::FileNotExists &fileNotExists) {
-            std::cerr << repositories::FileNotExists::get_name() << "\n";
+//            std::cerr << repositories::FileNotExists::get_name() << "\n";
             throw fileNotExists;
         }
     }
 
-    UseCaseUpdateAllClients::UseCaseUpdateAllClients(std::shared_ptr<repositories::ClientRepository> clientRepository_)
+    UseCaseUpdateAllClients::UseCaseUpdateAllClients(std::unique_ptr<repositories::ClientRepository> clientRepository_)
         : clientRepository(std::move(clientRepository_)) {
     }
 
@@ -75,7 +75,7 @@ namespace useCases {
         return clientRepository->updateAllClients(manager);
     }
 
-    UseCaseClientInfo::UseCaseClientInfo(std::shared_ptr<repositories::ClientRepository> clientRepository_)
+    UseCaseClientInfo::UseCaseClientInfo(std::unique_ptr<repositories::ClientRepository> clientRepository_)
         : clientRepository(std::move(clientRepository_)) {
     }
 
@@ -83,7 +83,7 @@ namespace useCases {
         return clientRepository->clientInfo(client);
     }
 
-    UseCaseGetDealProcess::UseCaseGetDealProcess(std::shared_ptr<repositories::ClientRepository> clientRepository_)
+    UseCaseGetDealProcess::UseCaseGetDealProcess(std::unique_ptr<repositories::ClientRepository> clientRepository_)
         : clientRepository(std::move(clientRepository_)) {
     }
     std::vector<std::string> UseCaseGetDealProcess::getDealProcess(const people::Client &client) const {

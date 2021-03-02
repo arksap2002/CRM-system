@@ -8,17 +8,17 @@ using namespace people;
 using namespace repositories;
 using namespace useCases;
 namespace {
-    std::shared_ptr<ManagerRepository> managerRepository = std::make_shared<ManagerFileSystem>();
-    std::shared_ptr<ClientRepository> clientRepository = std::make_shared<ClientFileSystem>();
-    UseCaseGetManager ucGetManager(managerRepository);
-    UseCaseAddManager ucAddManager(managerRepository);
-    UseCaseIsCorrectPassword ucIsCorrectPassword(managerRepository);
-    UseCaseManagerInfo ucManagerInfo(managerRepository);
-    UseCaseAddClient ucAddClient(clientRepository);
-    UseCaseDeleteClient ucDeleteClient(clientRepository);
-    UseCaseUpdateAllClients ucUpdateAllClients(clientRepository);
-    UseCaseClientInfo ucClientInfo(clientRepository);
-    UseCaseGetDealProcess ucGetDealProcess(clientRepository);
+//    std::shared_ptr<ManagerRepository> managerRepository = std::make_shared<ManagerFileSystem>();
+//    std::shared_ptr<ClientRepository> clientRepository = std::make_unique<ClientFileSystem>();
+    UseCaseGetManager ucGetManager(std::make_unique<ManagerFileSystem>());
+    UseCaseAddManager ucAddManager(std::make_unique<ManagerFileSystem>());
+    UseCaseIsCorrectPassword ucIsCorrectPassword(std::make_unique<ManagerFileSystem>());
+    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
+    UseCaseAddClient ucAddClient(std::make_unique<ClientFileSystem>());
+    UseCaseDeleteClient ucDeleteClient(std::make_unique<ClientFileSystem>());
+    UseCaseUpdateAllClients ucUpdateAllClients(std::make_unique<ClientFileSystem>());
+    UseCaseClientInfo ucClientInfo(std::make_unique<ClientFileSystem>());
+    UseCaseGetDealProcess ucGetDealProcess(std::make_unique<ClientFileSystem>());
 }// namespace
 void general_window(people::Manager &manager);
 void clients_window(people::Manager &manager);
@@ -136,7 +136,7 @@ void registration_window() {
     Manager manager(email, password, name, phone);
     try {
         ucAddManager.addManager(manager);
-    } catch (...) {
+    } catch (const std::exception &e) {
         std::cerr << "Account already exists\n";
         registration_window();
     }
@@ -171,5 +171,6 @@ void general_window([[maybe_unused]] people::Manager &manager) {
 }
 
 int main() {
+    ManagerFileSystem m; // TODO fix later
     enter_window();
 }

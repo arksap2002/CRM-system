@@ -5,12 +5,12 @@
 namespace repositories {
 
     struct FileExists : std::exception {
-        static std::string get_name();
+//        static std::string get_name();
         FileExists() = default;
     };
 
     struct FileNotExists : std::exception {
-        static std::string get_name();
+//        static std::string get_name();
         FileNotExists() = default;
     };
 
