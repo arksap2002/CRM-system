@@ -4,27 +4,39 @@
 
 namespace repositories {
 
-    struct FolderExists : std::exception {
+    struct FileExists : std::exception {
         static std::string get_name();
-        FolderExists() = default;
+        FileExists() = default;
     };
 
-    struct FolderNotExists : std::exception {
+    struct FileNotExists : std::exception {
         static std::string get_name();
-        FolderNotExists() = default;
+        FileNotExists() = default;
     };
 
     struct ManagerFileSystem : ManagerRepository {
     private:
-        void load_clients(people::Manager &manager) const override;
+        static void load_clients(people::Manager &manager);
+
     public:
         ManagerFileSystem();
         void addManager(const people::Manager &manager) const override;
-        void getManager(people::Manager &input_manager, const std::string &input_email) const override;
-        [[nodiscard]] bool is_correct_password(const std::string &input_email, const std::string &input_password) const override;
+        void getManager(people::Manager &inputManager, const std::string &inputEmail) const override;
+        [[nodiscard]] bool isCorrectPassword(const std::string &inputEmail, const std::string &inputPassword) const override;
+        std::string managerInfo(people::Manager &manager) const override;
         ~ManagerFileSystem() override = default;
     };
 
+    struct ClientFileSystem : ClientRepository {
+    public:
+        ClientFileSystem();
+        void addClient(const people::Client &client, const std::string &managerEmail) const override;
+        void deleteClient(const std::string &clientEmail, const std::string &managerEmail) const override;
+        void updateAllClients(const people::Manager &manager) const override;
+        [[nodiscard]] std::string clientInfo(const people::Client &client) const override;
+        [[nodiscard]] std::vector<std::string> getDealProcess(const people::Client &client) const override;
+        ~ClientFileSystem() override = default;
+    };
 }// namespace repositories
 
 #endif//CRM_SYSTEM_STORAGEFILESYSTEM_H

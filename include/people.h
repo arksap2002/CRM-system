@@ -19,8 +19,8 @@ namespace people {
         std::string email;
         std::string name;
         std::string phone;
-        std::string deal_product;
-        std::vector<std::pair<std::string, bool>> deal_process;
+        std::string dealProduct;
+        std::vector<std::pair<std::string, bool>> dealProcess;
 
         Client(std::string, std::string, std::string, std::string);
 
@@ -44,7 +44,7 @@ struct Comp {
         std::string password;
         std::string name;
         std::string phone;
-        std::vector<Client> list_clients{};
+        std::vector<Client> listClients{};
 
         Manager(std::string, std::string, std::string, std::string);
 
