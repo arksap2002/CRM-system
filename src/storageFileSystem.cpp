@@ -30,7 +30,7 @@ namespace repositories {
             << manager.name << "\n"
             << manager.phone << "\n";
         out.close();
-        fs::create_directory(path);
+        fs::create_directory(static_cast<std::string>(fs::current_path()) + "/" + CLIENTS_RESORCES + "/" + manager.email);
     }
 
     void read_client(std::vector<people::Client> &lst, const std::string &path) {

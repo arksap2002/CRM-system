@@ -33,7 +33,7 @@ namespace useCases {
     struct UseCaseAddClient {
         std::unique_ptr<repositories::ClientRepository> clientRepository;
         explicit UseCaseAddClient(std::unique_ptr<repositories::ClientRepository> clientRepository_);
-        void addClient(const people::Client &client, const std::string &managerEmail) const;
+        void addClient(const people::Client &client, people::Manager &manager) const;
     };
 
     struct UseCaseDeleteClient {
@@ -59,5 +59,11 @@ namespace useCases {
         explicit UseCaseGetDealProcess(std::unique_ptr<repositories::ClientRepository> clientRepository_);
         [[nodiscard]] std::vector<std::string> getDealProcess(const people::Client &client) const;
     };
+
+//    struct UseCaseEnterWindow{
+//
+//    };
+//
+//    struct UseCaseE
 }// namespace useCases
 #endif//CRM_SYSTEM_USECASES_H

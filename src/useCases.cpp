@@ -45,9 +45,10 @@ namespace useCases {
         : clientRepository(std::move(clientRepository_)) {
     }
 
-    void UseCaseAddClient::addClient(const people::Client &client, const std::string &managerEmail) const {
+    void UseCaseAddClient::addClient(const people::Client &client, people::Manager &manager) const {
         try {
-            clientRepository->addClient(client, managerEmail);
+            clientRepository->addClient(client, manager.email);
+            manager.listClients.push_back(client);
         } catch (const repositories::FileExists &fileExists) {
 //            std::cerr << repositories::FileExists::get_name() << "\n";
             throw fileExists;
