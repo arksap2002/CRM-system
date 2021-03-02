@@ -7,14 +7,14 @@ namespace people {
         : email(std::move(email_)), name(std::move(name_)), phone(std::move(phone_)),
           dealProduct(std::move(deal_product_)) {
         dealProcess = {{"Connection with client", false},
-                        {"Concluding the contract", false},
-                        {"Deal is completed", false}};
+                       {"Concluding the contract", false},
+                       {"Deal is completed", false}};
     }
 
     people::Client::Client() {
         dealProcess = {{"Connection with client", false},
-                        {"Concluding the contract", false},
-                        {"Deal is completed", false}};
+                       {"Concluding the contract", false},
+                       {"Deal is completed", false}};
     }
 
     people::Manager::Manager(std::string email_, std::string password_, std::string name_, std::string phone_)

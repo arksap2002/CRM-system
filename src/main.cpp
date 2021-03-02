@@ -7,19 +7,19 @@
 using namespace people;
 using namespace repositories;
 using namespace useCases;
-
-std::shared_ptr<ManagerRepository> managerRepository = std::make_shared<ManagerFileSystem>();
-std::shared_ptr<ClientRepository> clientRepository = std::make_shared<ClientFileSystem>();
-UseCaseGetManager ucGetManager(managerRepository);
-UseCaseAddManager ucAddManager(managerRepository);
-UseCaseIsCorrectPassword ucIsCorrectPassword(managerRepository);
-UseCaseManagerInfo ucManagerInfo(managerRepository);
-UseCaseAddClient ucAddClient(clientRepository);
-UseCaseDeleteClient ucDeleteClient(clientRepository);
-UseCaseUpdateAllClients ucUpdateAllClients(clientRepository);
-UseCaseClientInfo ucClientInfo(clientRepository);
-UseCaseGetDealProcess ucGetDealProcess(clientRepository);
-
+namespace {
+    std::shared_ptr<ManagerRepository> managerRepository = std::make_shared<ManagerFileSystem>();
+    std::shared_ptr<ClientRepository> clientRepository = std::make_shared<ClientFileSystem>();
+    UseCaseGetManager ucGetManager(managerRepository);
+    UseCaseAddManager ucAddManager(managerRepository);
+    UseCaseIsCorrectPassword ucIsCorrectPassword(managerRepository);
+    UseCaseManagerInfo ucManagerInfo(managerRepository);
+    UseCaseAddClient ucAddClient(clientRepository);
+    UseCaseDeleteClient ucDeleteClient(clientRepository);
+    UseCaseUpdateAllClients ucUpdateAllClients(clientRepository);
+    UseCaseClientInfo ucClientInfo(clientRepository);
+    UseCaseGetDealProcess ucGetDealProcess(clientRepository);
+}// namespace
 void general_window(people::Manager &manager);
 void clients_window(people::Manager &manager);
 void enter_window();
