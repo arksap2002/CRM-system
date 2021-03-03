@@ -361,12 +361,11 @@ void ClientsList::SetManager(people::Manager &manager_) {
 
 void ClientsList::redraw() {
     CreateTable(QStringList() << trUtf8("№") << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
-    //grid->addWidget(clients_data, 0, 0);
     clients_data->update();
 }
 
 void ClientsList::CreateTable(const QStringList &headers) {
-
+    clients_data->clear();
     clients_data->setHorizontalHeaderLabels(headers);
     int i = 0;
     for (const people::Client &client : manager.list_clients) {
