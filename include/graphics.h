@@ -25,7 +25,7 @@ class AddClientsWindow : public QWidget {
 public:
     people::Manager manager;
     explicit AddClientsWindow(QWidget *parent = 0);
-    void SetManager(people::Manager &manager_);
+    void SetManager(people::Manager *manager_);
     void AddClient();
     QLineEdit *email_;
     QLineEdit *phone_;

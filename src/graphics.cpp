@@ -312,8 +312,8 @@ AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
 
 }
 
-void AddClientsWindow::SetManager(people::Manager &manager_) {
-    manager = manager_;
+void AddClientsWindow::SetManager(people::Manager *manager_) {
+    manager = *manager_;
 }
 
 void AddClientsWindow::AddClient() {
@@ -351,7 +351,7 @@ ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
 }
 
 void ClientsList::OpenAddClientWindow() {
-    add_clients_window.SetManager(manager);
+    add_clients_window.SetManager(&manager);
     add_clients_window.show();
 }
 
