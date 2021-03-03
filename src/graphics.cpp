@@ -331,9 +331,9 @@ ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
     clients_data->setShowGrid(true);
     clients_data->setSelectionMode(QAbstractItemView::SingleSelection);
     clients_data->setSelectionBehavior(QAbstractItemView::SelectRows);
-    clients_data->setColumnCount(4);
+    clients_data->setColumnCount(3);
     if (manager.get_name() != "") {
-        this->CreateTable(QStringList() << trUtf8("№") << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
+        this->CreateTable(QStringList() << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
     }
 
     QPushButton *add_client_button = new QPushButton("Add client", this);
@@ -360,21 +360,31 @@ void ClientsList::SetManager(people::Manager &manager_) {
 }
 
 void ClientsList::redraw() {
-    CreateTable(QStringList() << trUtf8("№") << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
+    //CreateTable(QStringList() << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
+    int t = clients_data->rowCount();
+
+    if ((int)manager.list_clients.size() > t) {
+        for (; t < (int)manager.list_clients.size(); t++) {
+            clients_data->insertRow(t);
+            const people::Client &client = manager.list_clients[t];
+            clients_data->setItem(t, 0, new QTableWidgetItem(QString::fromStdString(client.get_email())));
+            clients_data->setItem(t, 1, new QTableWidgetItem(QString::fromStdString(client.get_name())));
+            clients_data->setItem(t, 2, new QTableWidgetItem(QString::fromStdString(client.get_phone())));
+        }
+    }
     clients_data->update();
 }
 
 void ClientsList::CreateTable(const QStringList &headers) {
-    clients_data->clear();
-    clients_data->setHorizontalHeaderLabels(headers);
+
     int i = 0;
+    clients_data->setHorizontalHeaderLabels(headers);
     for (const people::Client &client : manager.list_clients) {
         clients_data->insertRow(i);
+        clients_data->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(client.get_email())));
+        clients_data->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(client.get_name())));
+        clients_data->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(client.get_phone())));
         i++;
-        clients_data->setItem(i, 0, new QTableWidgetItem(i));
-        clients_data->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(client.get_email())));
-        clients_data->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(client.get_name())));
-        clients_data->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(client.get_phone())));
     }
     clients_data->resizeColumnsToContents();
 }
