@@ -32,20 +32,8 @@ void enter_window();
     assert(number == 1);
     cilents_window(manager);
     assert(false);
-}*/
-
-/*void manager_window(people::Manager &manager) {
-    // open window
-    std::cout << "Hello, ";
-    std::cout << manager.get_name() << '\n';
-    std::cout << "Your personal info: " << manager.get_info() << '\n';
-    std::cout << "Here is a manager window. Here are some options:\n";
-    std::cout << "1. Exit\n";
-    int number;
-    std::cin >> number;
-    if (number == 1) { general_window(manager); }
-    assert(false);
 }
+
 
 void deal_list_window(people::Manager &manager, int index) {
     // open window

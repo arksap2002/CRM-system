@@ -171,23 +171,24 @@ void MainWindow::ChangeToClients() {
     setCurrentIndex(clients_window_num);
 }
 
-people::Manager& MainWindow::GetManager() {
-    return *manager;
+people::Manager &MainWindow::GetManager() {
+    return manager;
 }
 
 void MainWindow::SetManager(people::Manager &manager_) {
-    manager = &manager_;
+    manager = manager_;
 }
 
-GeneralWindow::GeneralWindow(QWidget *parent, people::Manager *manager_) : QWidget(parent), manager(manager_) {
+GeneralWindow::GeneralWindow(QWidget *parent, people::Manager manager_) : QWidget(parent), manager(manager_) {
 
-    if (manager == nullptr) {
+    if (manager.get_name() == "") {
         manager_name = new QLabel("error. need to update", this);
     } else {
-        manager_name = new QLabel(QString::fromStdString(manager->get_name()), this);
+        manager_name = new QLabel(QString::fromStdString(manager.get_name()), this);
     }
 
     QPushButton *managers_window_button = new QPushButton("Open managers window", this);
+    QPushButton *clients_list_button = new QPushButton("Open clients list", this);
 
     grid = new QGridLayout(this);
     grid->setVerticalSpacing(40);
@@ -195,29 +196,32 @@ GeneralWindow::GeneralWindow(QWidget *parent, people::Manager *manager_) : QWidg
 
     grid->addWidget(manager_name, 0, 0);
     grid->addWidget(managers_window_button, 1, 0);
+    grid->addWidget(clients_list_button, 2, 0);
 
     setLayout(grid);
 
     connect(managers_window_button, &QPushButton::clicked, this, &GeneralWindow::OpenManagersAccount);
+    connect(clients_list_button, &QPushButton::clicked, this, &GeneralWindow::OpenClientsWindow);
 
 }
 
 void GeneralWindow::redraw() {
 
-    if (manager != nullptr) {
-        manager_name->setText(QString::fromStdString("Hello, " + manager->get_name() + "! Here is a general window. Here are some options:"));
+    if (manager.get_name() != "") {
+        manager_name->setText(QString::fromStdString(
+                "Hello, " + manager.get_name() + "! Here is a general window. Here are some options:"));
         manager_name->update();
     }
 
 }
 
 void GeneralWindow::SetManager(people::Manager &manager_) {
-    manager = &manager_;
+    manager = manager_;
 }
 
 
-people::Manager& GeneralWindow::GetManager() {
-    return *manager;
+people::Manager &GeneralWindow::GetManager() {
+    return manager;
 }
 
 void GeneralWindow::OpenManagersAccount() {
@@ -228,11 +232,19 @@ void GeneralWindow::OpenManagersAccount() {
     managers_window.show();
 }
 
-ManagersWindow::ManagersWindow(QWidget *parent, people::Manager *manager_) : QWidget(parent), manager(manager_) {
+void GeneralWindow::OpenClientsWindow() {
+    clients_window.SetManager(manager);
+    clients_window.redraw();
+    clients_window.resize(1000, 700);
+    clients_window.setWindowTitle("Your clients list");
+    clients_window.show();
+}
 
-    if (manager != nullptr) {
+ManagersWindow::ManagersWindow(QWidget *parent, people::Manager manager_) : QWidget(parent), manager(manager_) {
+
+    if (manager.get_info() != "") {
         info = new QLabel(
-                QString::fromStdString("Hello" + manager->get_name() + "!\n You personal info: " + manager->get_info()),
+                QString::fromStdString("Hello" + manager.get_name() + "!\n You personal info: " + manager.get_info()),
                 this);
     } else {
         info = new QLabel("No manager. Error", this);
@@ -247,17 +259,18 @@ ManagersWindow::ManagersWindow(QWidget *parent, people::Manager *manager_) : QWi
 }
 
 void ManagersWindow::SetManager(people::Manager &manager_) {
-    manager = &manager_;
+    manager = manager_;
 }
 
 void ManagersWindow::redraw() {
-    if (manager!= nullptr) {
-        info->setText(QString::fromStdString("Hello " + manager->get_name()));
+    if (manager.get_name() != "") {
+        info->setText(
+                QString::fromStdString("Hello " + manager.get_name() + "!\n You personal info: " + manager.get_info()));
     } else {
         info->setText("Error");
     }
-    //info->setText("aaaa");
     info->update();
+
 }
 
 AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
@@ -265,6 +278,43 @@ AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
 }
 
 ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
+
+    clients_data->setColumnCount(4);
+    if (manager.get_name() != "") {
+        this->CreateTable(QStringList() << trUtf8("№") << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
+    }
+    grid = new QGridLayout(this);
+    grid->addWidget(clients_data, 0, 0);
+    grid = new QGridLayout(this);
+    grid->setVerticalSpacing(40);
+    grid->setHorizontalSpacing(10);
+}
+
+void ClientsList::SetManager(people::Manager &manager_) {
+    manager = manager_;
+}
+
+void ClientsList::redraw() {
+    CreateTable(QStringList() << trUtf8("№") << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
+    //grid->addWidget(clients_data, 0, 0);
+    clients_data->update();
+}
+
+void ClientsList::CreateTable(const QStringList &headers) {
+    clients_data->setShowGrid(true);
+    clients_data->setSelectionMode(QAbstractItemView::SingleSelection);
+    clients_data->setSelectionBehavior(QAbstractItemView::SelectRows);
+    clients_data->setHorizontalHeaderLabels(headers);
+    int i = 0;
+    for (const people::Client &client : manager.list_clients) {
+        clients_data->insertRow(i);
+        i++;
+        clients_data->setItem(i,0, new QTableWidgetItem(i));
+        clients_data->setItem(i,1, new QTableWidgetItem(QString::fromStdString(client.get_email())));
+        clients_data->setItem(i,2, new QTableWidgetItem(QString::fromStdString(client.get_name())));
+        clients_data->setItem(i,3, new QTableWidgetItem(QString::fromStdString(client.get_phone())));
+    }
+    clients_data->resizeColumnsToContents();
 
 }
 

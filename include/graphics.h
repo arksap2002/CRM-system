@@ -8,9 +8,9 @@
 #include <QLineEdit>
 #include <QTabWidget>
 #include <QGridLayout>
+#include <QTableWidget>
 #include "people.h"
 
-class GeneralWindow;
 
 class ErrorWindow : public QWidget {
 Q_OBJECT
@@ -20,6 +20,17 @@ public:
     QLabel *errinfo;
 }; //окно с сообщением о ошибке
 
+class ClientsList : public QWidget {
+    people::Manager manager;
+public:
+    explicit ClientsList(QWidget *parent = 0);
+    QGridLayout *grid;
+    QTableWidget *clients_data = new QTableWidget(this);
+    void SetManager(people::Manager &manager_);
+    void CreateTable(const QStringList &headers);
+    void redraw();
+
+};//окно со списком клиентов
 
 class AddClientsWindow : public QWidget {
 
@@ -30,33 +41,27 @@ public:
 
 class ManagersWindow : public QWidget {
 Q_OBJECT
-    people::Manager *manager;
+    people::Manager manager;
 public:
     QGridLayout *grid;
     QLabel *info;
-    explicit ManagersWindow(QWidget *parent = 0, people::Manager *manager_ = nullptr);
+    explicit ManagersWindow(QWidget *parent = 0, people::Manager manager = people::Manager());
     void SetManager(people::Manager &manager_);
     void redraw();
 
 };//окно менеджера загадка что там и как оно достигается
 
-class ClientsList : public QWidget {
-
-public:
-    explicit ClientsList(QWidget *parent = 0);
-
-};//окно со списком клиентов
 
 class GeneralWindow : public QWidget {
 Q_OBJECT
-    //MainWindow *mainwind;
+
 public:
-    people::Manager *manager = nullptr;
-    explicit GeneralWindow(QWidget *parent = 0, people::Manager *manager_ = nullptr);
+    people::Manager manager = people::Manager();
+    explicit GeneralWindow(QWidget *parent = 0, people::Manager manager_ = people::Manager());
     QLabel *manager_name;
     QGridLayout *grid;
     ManagersWindow managers_window;
-    AddClientsWindow clients_window;
+    ClientsList clients_window;
 
     void redraw();
     void SetManager(people::Manager &manager);
@@ -68,7 +73,7 @@ public:
 
 class MainWindow : public QTabWidget {
 public:
-    people::Manager *manager = nullptr;
+    people::Manager manager = people::Manager();
     explicit MainWindow(QWidget *parent = 0);
     void ChangeToStart();
     void ChangeToLogIn();

@@ -29,6 +29,9 @@ namespace people {
 
         [[nodiscard]] std::vector<std::string> get_deal_process() const;
         [[nodiscard]] std::string get_info() const;
+        [[nodiscard]] std::string get_email() const;
+        [[nodiscard]] std::string get_name() const;
+        [[nodiscard]] std::string get_phone() const;
 
         friend void read_client(std::vector<Client> &lst, const std::string &path);
         friend struct Manager;
