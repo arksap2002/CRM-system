@@ -20,24 +20,34 @@ public:
     QLabel *errinfo;
 }; //окно с сообщением о ошибке
 
+class AddClientsWindow : public QWidget {
+
+public:
+    people::Manager manager;
+    explicit AddClientsWindow(QWidget *parent = 0);
+    void SetManager(people::Manager &manager_);
+    void AddClient();
+    QLineEdit *email_;
+    QLineEdit *phone_;
+    QLineEdit *name_;
+    QLineEdit *deal_product_;
+
+};//окно добавления клиента
+
 class ClientsList : public QWidget {
     people::Manager manager;
 public:
     explicit ClientsList(QWidget *parent = 0);
+    AddClientsWindow add_clients_window;
     QGridLayout *grid;
     QTableWidget *clients_data = new QTableWidget(this);
     void SetManager(people::Manager &manager_);
     void CreateTable(const QStringList &headers);
     void redraw();
+    void OpenAddClientWindow();
 
 };//окно со списком клиентов
 
-class AddClientsWindow : public QWidget {
-
-public:
-    explicit AddClientsWindow(QWidget *parent = 0);
-
-};//окно добавления клиента
 
 class ManagersWindow : public QWidget {
 Q_OBJECT

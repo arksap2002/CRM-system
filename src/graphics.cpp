@@ -275,19 +275,84 @@ void ManagersWindow::redraw() {
 
 AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
 
+    QLabel *email = new QLabel("Input email:", this);
+    email->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    QLabel *name = new QLabel("Input name:", this);
+    name->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    QLabel *phone = new QLabel("Input phone:", this);
+    phone->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    QLabel *deal_product = new QLabel("Input deal_product:", this);
+    deal_product->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+    email_ = new QLineEdit(this);
+    name_ = new QLineEdit(this);
+    phone_ = new QLineEdit(this);
+    deal_product_ = new QLineEdit(this);
+
+    QPushButton *add_button = new QPushButton("Add", this);
+
+    auto *grid = new QGridLayout(this);
+
+    grid->setVerticalSpacing(40);
+    grid->setHorizontalSpacing(10);
+
+    grid->addWidget(email, 1, 0);
+    grid->addWidget(email_, 1, 1);
+    grid->addWidget(name, 2, 0);
+    grid->addWidget(name_, 2, 1);
+    grid->addWidget(phone, 3, 0);
+    grid->addWidget(phone_, 3, 1);
+    grid->addWidget(deal_product, 4, 0);
+    grid->addWidget(deal_product_, 4, 1);
+    grid->addWidget(add_button, 5, 2);
+
+    setLayout(grid);
+
+    connect(add_button, &QPushButton::clicked, this, &AddClientsWindow::AddClient);
+
+}
+
+void AddClientsWindow::SetManager(people::Manager &manager_) {
+    manager = manager_;
+}
+
+void AddClientsWindow::AddClient() {
+    manager.add_client({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
+                        deal_product_->text().toStdString()});
+    email_->clear();
+    name_->clear();
+    phone_->clear();
+    deal_product_->clear();
+    this->close();
 }
 
 ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
 
+    clients_data->setShowGrid(true);
+    clients_data->setSelectionMode(QAbstractItemView::SingleSelection);
+    clients_data->setSelectionBehavior(QAbstractItemView::SelectRows);
     clients_data->setColumnCount(4);
     if (manager.get_name() != "") {
         this->CreateTable(QStringList() << trUtf8("№") << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
     }
+
+    QPushButton *add_client_button = new QPushButton("Add client", this);
+    QPushButton *update_button = new QPushButton("Update", this);
+
     grid = new QGridLayout(this);
     grid->addWidget(clients_data, 0, 0);
+    grid->addWidget(add_client_button, 1, 1);
+    grid->addWidget(update_button, 1, 2);
     grid = new QGridLayout(this);
-    grid->setVerticalSpacing(40);
-    grid->setHorizontalSpacing(10);
+
+    connect(add_client_button, &QPushButton::clicked, this, &ClientsList::OpenAddClientWindow);
+    connect(update_button, &QPushButton::clicked, this, &ClientsList::redraw);
+
+}
+
+void ClientsList::OpenAddClientWindow() {
+    add_clients_window.SetManager(manager);
+    add_clients_window.show();
 }
 
 void ClientsList::SetManager(people::Manager &manager_) {
@@ -301,21 +366,18 @@ void ClientsList::redraw() {
 }
 
 void ClientsList::CreateTable(const QStringList &headers) {
-    clients_data->setShowGrid(true);
-    clients_data->setSelectionMode(QAbstractItemView::SingleSelection);
-    clients_data->setSelectionBehavior(QAbstractItemView::SelectRows);
+
     clients_data->setHorizontalHeaderLabels(headers);
     int i = 0;
     for (const people::Client &client : manager.list_clients) {
         clients_data->insertRow(i);
         i++;
-        clients_data->setItem(i,0, new QTableWidgetItem(i));
-        clients_data->setItem(i,1, new QTableWidgetItem(QString::fromStdString(client.get_email())));
-        clients_data->setItem(i,2, new QTableWidgetItem(QString::fromStdString(client.get_name())));
-        clients_data->setItem(i,3, new QTableWidgetItem(QString::fromStdString(client.get_phone())));
+        clients_data->setItem(i, 0, new QTableWidgetItem(i));
+        clients_data->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(client.get_email())));
+        clients_data->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(client.get_name())));
+        clients_data->setItem(i, 3, new QTableWidgetItem(QString::fromStdString(client.get_phone())));
     }
     clients_data->resizeColumnsToContents();
-
 }
 
 
