@@ -13,6 +13,9 @@ int registration_window_num = 2;
 int general_window_num = 3;
 int clients_window_num = 4;
 
+
+people::Manager manager = people::Manager();
+
 //TODO it later
 ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
     errinfo = new QLabel("An error", this);
@@ -158,7 +161,6 @@ void MainWindow::ChangeToRegister() {
 }
 
 void MainWindow::ChangeToGeneral() {
-    general_window.SetManager(GetManager());
     general_window.redraw();
     addTab(&general_window, "General");
     setCurrentIndex(general_window_num);
@@ -168,15 +170,11 @@ void MainWindow::ChangeToClients() {
     setCurrentIndex(clients_window_num);
 }
 
-people::Manager &MainWindow::GetManager() {
-    return manager;
-}
-
-void MainWindow::SetManager(people::Manager &manager_) {
+void MainWindow::SetManager(const people::Manager &manager_) {
     manager = manager_;
 }
 
-GeneralWindow::GeneralWindow(QWidget *parent, people::Manager manager_) : QWidget(parent), manager(std::move(manager_)) {
+GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {
     if (manager.name.empty()) {
         manager_name = new QLabel("error. need to update", this);
     } else {
@@ -208,17 +206,7 @@ void GeneralWindow::redraw() {
     }
 }
 
-void GeneralWindow::SetManager(people::Manager &manager_) {
-    manager = manager_;
-}
-
-
-people::Manager &GeneralWindow::GetManager() {
-    return manager;
-}
-
 void GeneralWindow::OpenManagersAccount() {
-    managers_window.SetManager(GetManager());
     managers_window.redraw();
     managers_window.resize(1000, 700);
     managers_window.setWindowTitle("Your account");
@@ -226,14 +214,13 @@ void GeneralWindow::OpenManagersAccount() {
 }
 
 void GeneralWindow::OpenClientsWindow() {
-    clients_window.SetManager(manager);
     clients_window.redraw();
     clients_window.resize(1000, 700);
     clients_window.setWindowTitle("Your clients list");
     clients_window.show();
 }
 
-ManagersWindow::ManagersWindow(QWidget *parent, people::Manager manager_) : QWidget(parent), manager(std::move(manager_)) {
+ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
     if (!manager.get_info().empty()) {
         info = new QLabel(
                 QString::fromStdString("Hello" + manager.name + "!\n You personal info: " + manager.get_info()),
@@ -246,10 +233,6 @@ ManagersWindow::ManagersWindow(QWidget *parent, people::Manager manager_) : QWid
     grid->setHorizontalSpacing(10);
     grid->addWidget(info, 0, 0);
     setLayout(grid);
-}
-
-void ManagersWindow::SetManager(people::Manager &manager_) {
-    manager = manager_;
 }
 
 void ManagersWindow::redraw() {
@@ -300,14 +283,6 @@ AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
     connect(add_button, &QPushButton::clicked, this, &AddClientsWindow::AddClient);
 }
 
-void AddClientsWindow::SetManager(people::Manager &manager_) {
-    manager = manager_;
-}
-
-void ClientsList::SetManager(people::Manager &manager_) {
-    manager = manager_;
-}
-
 void AddClientsWindow::AddClient() {
     manager.add_client({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
                         deal_product_->text().toStdString()});
@@ -343,7 +318,6 @@ ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
 }
 
 void ClientsList::OpenAddClientWindow() {
-    add_clients_window.SetManager(manager);
     add_clients_window.show();
 }
 

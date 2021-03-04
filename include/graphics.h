@@ -23,9 +23,7 @@ public:
 class AddClientsWindow : public QWidget {
 
 public:
-    people::Manager manager;
     explicit AddClientsWindow(QWidget *parent = nullptr);
-    void SetManager(people::Manager &manager_);
     void AddClient();
     QLineEdit *email_;
     QLineEdit *phone_;
@@ -35,14 +33,12 @@ public:
 };//окно добавления клиента
 
 class ClientsList : public QWidget {
-    people::Manager manager;
 
 public:
     explicit ClientsList(QWidget *parent = nullptr);
     AddClientsWindow add_clients_window;
     QGridLayout *grid;
     QTableWidget *clients_data = new QTableWidget(this);
-    void SetManager(people::Manager &manager_);
     void CreateTable(const QStringList &headers);
     void redraw();
     void OpenAddClientWindow();
@@ -52,13 +48,11 @@ public:
 
 class ManagersWindow : public QWidget {
     Q_OBJECT
-    people::Manager manager;
 
 public:
     QGridLayout *grid;
     QLabel *info;
-    explicit ManagersWindow(QWidget *parent = nullptr, people::Manager manager = people::Manager());
-    void SetManager(people::Manager &manager_);
+    explicit ManagersWindow(QWidget *parent = nullptr);
     void redraw();
 
 };//окно менеджера загадка что там и как оно достигается
@@ -68,16 +62,13 @@ class GeneralWindow : public QWidget {
     Q_OBJECT
 
 public:
-    people::Manager manager = people::Manager();
-    explicit GeneralWindow(QWidget *parent = nullptr, people::Manager manager_ = people::Manager());
+    explicit GeneralWindow(QWidget *parent = nullptr);
     QLabel *manager_name;
     QGridLayout *grid;
     ManagersWindow managers_window;
     ClientsList clients_window;
 
     void redraw();
-    void SetManager(people::Manager &manager);
-    people::Manager &GetManager();
     void OpenManagersAccount();
     void OpenClientsWindow();
 
@@ -85,15 +76,13 @@ public:
 
 class MainWindow : public QTabWidget {
 public:
-    people::Manager manager = people::Manager();
     explicit MainWindow(QWidget *parent = nullptr);
     void ChangeToStart();
     void ChangeToLogIn();
     void ChangeToRegister();
     void ChangeToGeneral();
     void ChangeToClients();
-    people::Manager &GetManager();
-    void SetManager(people::Manager &manager_);
+    void SetManager(const people::Manager &);
     GeneralWindow general_window;
 };//главное окно, куда я добавляю все табы, между которыми переключаемся
 
