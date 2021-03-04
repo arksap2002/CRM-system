@@ -290,7 +290,6 @@ void AddClientsWindow::AddClient() {
     name_->clear();
     phone_->clear();
     deal_product_->clear();
-    //    TODO here is a problem! We don't update manager in ClientsList!!!
     this->close();
 }
 
