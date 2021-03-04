@@ -302,6 +302,7 @@ ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
     clients_data->setSelectionMode(QAbstractItemView::SingleSelection);
     clients_data->setSelectionBehavior(QAbstractItemView::SelectRows);
     clients_data->setColumnCount(3);
+    clients_data->setHorizontalHeaderLabels(QStringList() << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
     if (!manager.name.empty()) {
         this->CreateTable(QStringList() << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
     }
