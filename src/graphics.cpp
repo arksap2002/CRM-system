@@ -18,9 +18,12 @@ people::Manager manager = people::Manager();
 
 //TODO it later
 ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
-    errinfo = new QLabel("An error", this);
+
+    errinfo = new QLabel("Error", this);
 
     auto *grid = new QGridLayout(this);
+    grid->setVerticalSpacing(40);
+    grid->setHorizontalSpacing(10);
     grid->addWidget(errinfo);
     setLayout(grid);
 }

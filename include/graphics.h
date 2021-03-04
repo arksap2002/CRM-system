@@ -16,7 +16,6 @@ class ErrorWindow : public QWidget {
     Q_OBJECT
 public:
     [[maybe_unused]] explicit ErrorWindow(QWidget *parent = nullptr);
-
     QLabel *errinfo;
 };//окно с сообщением о ошибке
 
@@ -104,6 +103,7 @@ public:
     QLineEdit *password_;
     QLabel *logininfo;
     void LoginManager();
+    ErrorWindow error_window_login;
 };//окно где новый пользователь входит в систему
 
 class RegisterWindow : public QWidget {
@@ -121,7 +121,7 @@ public:
     QLineEdit *name_;
     QLineEdit *phone_;
     QLineEdit *password_;
-    ErrorWindow errwind;
+    ErrorWindow error_window_register;
 
 private:
     void RegisterManager();

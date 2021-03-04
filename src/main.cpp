@@ -72,13 +72,23 @@ void LoginWindow::LoginManager() {
     password = getPassword().toStdString();
     people::Manager manager;
     if (!people::is_correct_password(email, password)) {
+        error_window_login.resize(1000, 1000);
+        error_window_login.setWindowTitle("Error");
+        error_window_login.errinfo->setText("Incorrect password");
+        error_window_login.errinfo->update();
+        error_window_login.show();
         //std::cerr << "Incorrect password\n";
         //login_window();
-        //TODO окно ошибки
     }
     try {
         people::get_manager(manager, email);
-    } catch (const std::exception& e) {
+    } catch (... /*const std::exception& e*/) {
+        error_window_login.resize(1000, 1000);
+        error_window_login.setWindowTitle("Error");
+        error_window_login.errinfo->setText("Such user is not exists. Try again");
+        error_window_login.errinfo->update();
+        error_window_login.show();
+        //throw;
         //std::cerr << "Such user is not exists. Try again\n";
         //TODO окно ошибки
     }
@@ -88,22 +98,30 @@ void LoginWindow::LoginManager() {
 
 void RegisterWindow::RegisterManager() {
     std::string name, phone, email, pass;
-    email = getEmail().toStdString();
-    name = getName().toStdString();
-    phone = getPhone().toStdString();
-    pass = getPassword().toStdString();
-    while (name.empty() || phone.empty() || email.empty() || pass.empty()) {
-        errwind.resize(1500, 1000);
-        errwind.setWindowTitle("Empty field");
-        errwind.show();
+    try {
+        email = getEmail().toStdString();
+        name = getName().toStdString();
+        phone = getPhone().toStdString();
+        pass = getPassword().toStdString();
+    } catch (...) {
+        error_window_register.resize(1000, 1000);
+        error_window_register.setWindowTitle("Error");
+        error_window_register.errinfo->setText("You have not filled all the fields");
+        error_window_register.errinfo->update();
+        error_window_register.show();
+        //throw;
     }
     people::Manager manager(email, pass, name, phone);
     try {
         people::add_manager(manager);
     } catch (...) {
-        //std::cerr << "Account already exists\n";
+        error_window_register.resize(1000, 1000);
+        error_window_register.setWindowTitle("Error");
+        error_window_register.errinfo->setText("Account already exists");
+        error_window_register.errinfo->update();
+        error_window_register.show();
         mainwind->ChangeToStart();
-        //TODO окно с ошибкой и вернуться назад
+        //throw;
     }
     mainwind->SetManager(manager);
     mainwind->ChangeToGeneral();
