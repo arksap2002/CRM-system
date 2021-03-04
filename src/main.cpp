@@ -79,21 +79,22 @@ void LoginWindow::LoginManager() {
         error_window_login.show();
         //std::cerr << "Incorrect password\n";
         //login_window();
+    } else {
+        try {
+            people::get_manager(manager, email);
+        } catch (... /*const std::exception& e*/) {
+            error_window_login.resize(1000, 1000);
+            error_window_login.setWindowTitle("Error");
+            error_window_login.errinfo->setText("Such user is not exists. Try again");
+            error_window_login.errinfo->update();
+            error_window_login.show();
+            //throw;
+            //std::cerr << "Such user is not exists. Try again\n";
+            //TODO окно ошибки
+        }
+        mainwind->SetManager(manager);
+        mainwind->ChangeToGeneral();
     }
-    try {
-        people::get_manager(manager, email);
-    } catch (... /*const std::exception& e*/) {
-        error_window_login.resize(1000, 1000);
-        error_window_login.setWindowTitle("Error");
-        error_window_login.errinfo->setText("Such user is not exists. Try again");
-        error_window_login.errinfo->update();
-        error_window_login.show();
-        //throw;
-        //std::cerr << "Such user is not exists. Try again\n";
-        //TODO окно ошибки
-    }
-    mainwind->SetManager(manager);
-    mainwind->ChangeToGeneral();
 }
 
 void RegisterWindow::RegisterManager() {
