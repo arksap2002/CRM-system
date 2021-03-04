@@ -72,7 +72,7 @@ void LoginWindow::LoginManager() {
     password = getPassword().toStdString();
     people::Manager manager;
     if (!people::is_correct_password(email, password)) {
-        error_window_login.resize(1000, 1000);
+        error_window_login.resize(500, 500);
         error_window_login.setWindowTitle("Error");
         error_window_login.errinfo->setText("Incorrect password");
         error_window_login.errinfo->update();
