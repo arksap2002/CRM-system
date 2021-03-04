@@ -1,19 +1,19 @@
 #include "graphics.h"
-#include <QWidget>
-#include <QPushButton>
-#include <QGridLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QTabWidget>
-#include "people.h"
 
+//TODO make just one manager later, remove all sets
+//TODO think about "QLayout: Attempting to add QLayout "" to QWidget "", which already has a layout" problem
+//TODO think about global var manager, we have to implement it here, because multiply definition in graphics.h
+//TODO remove graphics.h from add_executable in CMake
+
+
+//TODO maybe enum?
 int start_window_num = 0;
 int login_window_num = 1;
 int registration_window_num = 2;
 int general_window_num = 3;
 int clients_window_num = 4;
 
-
+//TODO it later
 ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
     errinfo = new QLabel("An error", this);
 
@@ -23,18 +23,18 @@ ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
 }
 
 RegisterWindow::RegisterWindow(MainWindow *parent)
-        : QWidget(parent) {
+    : QWidget(parent) {
 
     mainwind = parent;
 
     reginfo = new QLabel("Here is a registration window. Input email, name, phone, password", this);
-    QLabel *email = new QLabel("Email:", this);
+    auto *email = new QLabel("Email:", this);
     email->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    QLabel *name = new QLabel("Name:", this);
+    auto *name = new QLabel("Name:", this);
     name->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    QLabel *phone = new QLabel("Phone:", this);
+    auto *phone = new QLabel("Phone:", this);
     phone->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    QLabel *password = new QLabel("Password:", this);
+    auto *password = new QLabel("Password:", this);
     password->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     email_ = new QLineEdit(this);
@@ -42,7 +42,7 @@ RegisterWindow::RegisterWindow(MainWindow *parent)
     phone_ = new QLineEdit(this);
     password_ = new QLineEdit(this);
 
-    QPushButton *register_button = new QPushButton("Register", this);
+    auto *register_button = new QPushButton("Register", this);
 
     auto *grid = new QGridLayout(this);
 
@@ -66,38 +66,38 @@ RegisterWindow::RegisterWindow(MainWindow *parent)
 }
 
 
-QString RegisterWindow::getName() {
+QString RegisterWindow::getName() const {
     return name_->text();
 }
 
-QString RegisterWindow::getPhone() {
+QString RegisterWindow::getPhone() const {
     return phone_->text();
 }
 
-QString RegisterWindow::getEmail() {
+QString RegisterWindow::getEmail() const {
     return email_->text();
 }
 
-QString RegisterWindow::getPassword() {
+QString RegisterWindow::getPassword() const {
     return password_->text();
 }
 
 
 LoginWindow::LoginWindow(MainWindow *parent)
-        : QWidget(parent) {
+    : QWidget(parent) {
 
     mainwind = parent;
 
     logininfo = new QLabel("Here is a login window. Input email/login and password", this);
-    QLabel *email = new QLabel("Email:", this);
+    auto *email = new QLabel("Email:", this);
     email->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    QLabel *password = new QLabel("Password:", this);
+    auto *password = new QLabel("Password:", this);
     password->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     email_ = new QLineEdit(this);
     password_ = new QLineEdit(this);
 
-    QPushButton *login_button = new QPushButton("Login", this);
+    auto *login_button = new QPushButton("Login", this);
 
     auto *grid = new QGridLayout(this);
 
@@ -114,24 +114,23 @@ LoginWindow::LoginWindow(MainWindow *parent)
     setLayout(grid);
 
     connect(login_button, &QPushButton::clicked, this, &LoginWindow::LoginManager);
-
 }
 
-QString LoginWindow::getEmail() {
+QString LoginWindow::getEmail() const {
     return email_->text();
 }
 
-QString LoginWindow::getPassword() {
+QString LoginWindow::getPassword() const {
     return password_->text();
 }
 
 StartWindow::StartWindow(MainWindow *parent)
-        : QWidget(parent) {
+    : QWidget(parent) {
 
-    QPushButton *log_in_button = new QPushButton("Log in", this);
-    QPushButton *register_button = new QPushButton("Register", this);
+    auto *log_in_button = new QPushButton("Log in", this);
+    auto *register_button = new QPushButton("Register", this);
 
-    QGridLayout *grid = new QGridLayout(this);
+    auto *grid = new QGridLayout(this);
     grid->addWidget(log_in_button, 0, 0);
     grid->addWidget(register_button, 0, 1);
 
@@ -140,12 +139,10 @@ StartWindow::StartWindow(MainWindow *parent)
 
     connect(log_in_button, &QPushButton::clicked, parent, &MainWindow::ChangeToLogIn);
     connect(register_button, &QPushButton::clicked, parent, &MainWindow::ChangeToRegister);
-
 }
 
 
 MainWindow::MainWindow(QWidget *parent) : QTabWidget(parent) {
-
 }
 
 void MainWindow::ChangeToStart() {
@@ -179,16 +176,15 @@ void MainWindow::SetManager(people::Manager &manager_) {
     manager = manager_;
 }
 
-GeneralWindow::GeneralWindow(QWidget *parent, people::Manager manager_) : QWidget(parent), manager(manager_) {
-
-    if (manager.get_name() == "") {
+GeneralWindow::GeneralWindow(QWidget *parent, people::Manager manager_) : QWidget(parent), manager(std::move(manager_)) {
+    if (manager.name.empty()) {
         manager_name = new QLabel("error. need to update", this);
     } else {
-        manager_name = new QLabel(QString::fromStdString(manager.get_name()), this);
+        manager_name = new QLabel(QString::fromStdString(manager.name), this);
     }
 
-    QPushButton *managers_window_button = new QPushButton("Open managers window", this);
-    QPushButton *clients_list_button = new QPushButton("Open clients list", this);
+    auto *managers_window_button = new QPushButton("Open managers window", this);
+    auto *clients_list_button = new QPushButton("Open clients list", this);
 
     grid = new QGridLayout(this);
     grid->setVerticalSpacing(40);
@@ -202,17 +198,14 @@ GeneralWindow::GeneralWindow(QWidget *parent, people::Manager manager_) : QWidge
 
     connect(managers_window_button, &QPushButton::clicked, this, &GeneralWindow::OpenManagersAccount);
     connect(clients_list_button, &QPushButton::clicked, this, &GeneralWindow::OpenClientsWindow);
-
 }
 
 void GeneralWindow::redraw() {
-
-    if (manager.get_name() != "") {
+    if (!manager.name.empty()) {
         manager_name->setText(QString::fromStdString(
-                "Hello, " + manager.get_name() + "! Here is a general window. Here are some options:"));
+                "Hello, " + manager.name + "! Here is a general window. Here are some options:"));
         manager_name->update();
     }
-
 }
 
 void GeneralWindow::SetManager(people::Manager &manager_) {
@@ -240,11 +233,10 @@ void GeneralWindow::OpenClientsWindow() {
     clients_window.show();
 }
 
-ManagersWindow::ManagersWindow(QWidget *parent, people::Manager manager_) : QWidget(parent), manager(manager_) {
-
-    if (manager.get_info() != "") {
+ManagersWindow::ManagersWindow(QWidget *parent, people::Manager manager_) : QWidget(parent), manager(std::move(manager_)) {
+    if (!manager.get_info().empty()) {
         info = new QLabel(
-                QString::fromStdString("Hello" + manager.get_name() + "!\n You personal info: " + manager.get_info()),
+                QString::fromStdString("Hello" + manager.name + "!\n You personal info: " + manager.get_info()),
                 this);
     } else {
         info = new QLabel("No manager. Error", this);
@@ -252,9 +244,7 @@ ManagersWindow::ManagersWindow(QWidget *parent, people::Manager manager_) : QWid
     grid = new QGridLayout(this);
     grid->setVerticalSpacing(40);
     grid->setHorizontalSpacing(10);
-
     grid->addWidget(info, 0, 0);
-
     setLayout(grid);
 }
 
@@ -263,25 +253,24 @@ void ManagersWindow::SetManager(people::Manager &manager_) {
 }
 
 void ManagersWindow::redraw() {
-    if (manager.get_name() != "") {
+    if (!manager.name.empty()) {
         info->setText(
-                QString::fromStdString("Hello " + manager.get_name() + "!\n You personal info: " + manager.get_info()));
+                QString::fromStdString("Hello " + manager.name + "!\n You personal info: " + manager.get_info()));
     } else {
         info->setText("Error");
     }
     info->update();
-
 }
 
 AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
 
-    QLabel *email = new QLabel("Input email:", this);
+    auto *email = new QLabel("Input email:", this);
     email->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    QLabel *name = new QLabel("Input name:", this);
+    auto *name = new QLabel("Input name:", this);
     name->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    QLabel *phone = new QLabel("Input phone:", this);
+    auto *phone = new QLabel("Input phone:", this);
     phone->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    QLabel *deal_product = new QLabel("Input deal_product:", this);
+    auto *deal_product = new QLabel("Input deal_product:", this);
     deal_product->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     email_ = new QLineEdit(this);
@@ -289,7 +278,7 @@ AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
     phone_ = new QLineEdit(this);
     deal_product_ = new QLineEdit(this);
 
-    QPushButton *add_button = new QPushButton("Add", this);
+    auto *add_button = new QPushButton("Add", this);
 
     auto *grid = new QGridLayout(this);
 
@@ -309,11 +298,14 @@ AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
     setLayout(grid);
 
     connect(add_button, &QPushButton::clicked, this, &AddClientsWindow::AddClient);
-
 }
 
-void AddClientsWindow::SetManager(people::Manager *manager_) {
-    manager = *manager_;
+void AddClientsWindow::SetManager(people::Manager &manager_) {
+    manager = manager_;
+}
+
+void ClientsList::SetManager(people::Manager &manager_) {
+    manager = manager_;
 }
 
 void AddClientsWindow::AddClient() {
@@ -323,6 +315,7 @@ void AddClientsWindow::AddClient() {
     name_->clear();
     phone_->clear();
     deal_product_->clear();
+    //    TODO here is a problem! We don't update manager in ClientsList!!!
     this->close();
 }
 
@@ -332,12 +325,12 @@ ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
     clients_data->setSelectionMode(QAbstractItemView::SingleSelection);
     clients_data->setSelectionBehavior(QAbstractItemView::SelectRows);
     clients_data->setColumnCount(3);
-    if (manager.get_name() != "") {
+    if (!manager.name.empty()) {
         this->CreateTable(QStringList() << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
     }
 
-    QPushButton *add_client_button = new QPushButton("Add client", this);
-    QPushButton *update_button = new QPushButton("Update", this);
+    auto *add_client_button = new QPushButton("Add client", this);
+    auto *update_button = new QPushButton("Update", this);
 
     grid = new QGridLayout(this);
     grid->addWidget(clients_data, 0, 0);
@@ -347,46 +340,37 @@ ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
 
     connect(add_client_button, &QPushButton::clicked, this, &ClientsList::OpenAddClientWindow);
     connect(update_button, &QPushButton::clicked, this, &ClientsList::redraw);
-
 }
 
 void ClientsList::OpenAddClientWindow() {
-    add_clients_window.SetManager(&manager);
+    add_clients_window.SetManager(manager);
     add_clients_window.show();
-}
-
-void ClientsList::SetManager(people::Manager &manager_) {
-    manager = manager_;
 }
 
 void ClientsList::redraw() {
     //CreateTable(QStringList() << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
     int t = clients_data->rowCount();
-
-    if ((int)manager.list_clients.size() > t) {
-        for (; t < (int)manager.list_clients.size(); t++) {
+    if (static_cast<int>(manager.list_clients.size()) > t) {
+        for (; t < static_cast<int>(manager.list_clients.size()); t++) {
             clients_data->insertRow(t);
             const people::Client &client = manager.list_clients[t];
-            clients_data->setItem(t, 0, new QTableWidgetItem(QString::fromStdString(client.get_email())));
-            clients_data->setItem(t, 1, new QTableWidgetItem(QString::fromStdString(client.get_name())));
-            clients_data->setItem(t, 2, new QTableWidgetItem(QString::fromStdString(client.get_phone())));
+            clients_data->setItem(t, 0, new QTableWidgetItem(QString::fromStdString(client.email)));
+            clients_data->setItem(t, 1, new QTableWidgetItem(QString::fromStdString(client.name)));
+            clients_data->setItem(t, 2, new QTableWidgetItem(QString::fromStdString(client.phone)));
         }
     }
     clients_data->update();
 }
 
 void ClientsList::CreateTable(const QStringList &headers) {
-
     int i = 0;
     clients_data->setHorizontalHeaderLabels(headers);
     for (const people::Client &client : manager.list_clients) {
         clients_data->insertRow(i);
-        clients_data->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(client.get_email())));
-        clients_data->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(client.get_name())));
-        clients_data->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(client.get_phone())));
+        clients_data->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(client.email)));
+        clients_data->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(client.name)));
+        clients_data->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(client.phone)));
         i++;
     }
     clients_data->resizeColumnsToContents();
 }
-
-

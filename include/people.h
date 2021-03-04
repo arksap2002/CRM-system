@@ -16,22 +16,16 @@ const std::string CLIENTS_RESORCES = RESOURCES + "/Clients";
 
 namespace people {
     struct Client {
-    private:
         std::string email;
         std::string name;
         std::string phone;
         std::string deal_product;
         std::vector<std::pair<std::string, bool>> deal_process;
 
-    public:
         Client(std::string, std::string, std::string, std::string);
         Client();
 
         [[nodiscard]] std::vector<std::string> get_deal_process() const;
-        [[nodiscard]] std::string get_info() const;
-        [[nodiscard]] std::string get_email() const;
-        [[nodiscard]] std::string get_name() const;
-        [[nodiscard]] std::string get_phone() const;
 
         friend void read_client(std::vector<Client> &lst, const std::string &path);
         friend struct Manager;
@@ -45,18 +39,14 @@ namespace people {
     };
 
     struct Manager {
-    private:
         std::string email;
         std::string password;
         std::string name;
         std::string phone;
-
-    public:
         std::vector<Client> list_clients{};
 
         Manager(std::string, std::string, std::string, std::string);
         Manager() = default;
-        [[nodiscard]] std::string get_name() const;
         void load_clients();                                                  //load all clients from directory in the vector
         void add_client(const Client &);                                      //add client to the "./resources/Clients/<email>/<Client.email>"
         /* future */ [[maybe_unused]] void delete_client(const std::string &);//delete "./resources/Clients/<email>/<Client.email>"

@@ -1,16 +1,8 @@
-#include "people.h"
 #include "graphics.h"
-#include <cassert>
-#include <iostream>
-#include <set>
-#include <string>
-#include <vector>
-#include <QApplication>
-#include <QWidget>
 
 //void general_window(people::Manager &manager);
-void cilents_window(people::Manager &manager);
-void enter_window();
+//void cilents_window(people::Manager &manager);
+//void enter_window();
 
 /*void addClient_window(people::Manager &manager) {
     // open window
@@ -33,8 +25,6 @@ void enter_window();
     cilents_window(manager);
     assert(false);
 }
-
-
 void deal_list_window(people::Manager &manager, int index) {
     // open window
     std::cout << "Here is a deal list window\n";
@@ -51,7 +41,6 @@ void deal_list_window(people::Manager &manager, int index) {
     cilents_window(manager);
     assert(false);
 }
-
 void cilents_window(people::Manager &manager) {
     // open window
     std::cout << "Here is a clients list:\n";
