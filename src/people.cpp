@@ -36,28 +36,8 @@ namespace people {
         return result;
     }
 
-    std::string people::Client::get_info() const {
-        return email + " " + name + " " + phone;
-    }
-
-    std::string people::Client::get_email() const {
-        return email;
-    }
-
-    std::string people::Client::get_name() const {
-        return name;
-    }
-
-    std::string people::Client::get_phone() const {
-        return phone;
-    }
-
     people::Manager::Manager(std::string email_, std::string password_, std::string name_, std::string phone_)
         : email(std::move(email_)), password(std::move(password_)), name(std::move(name_)), phone(std::move(phone_)) {
-    }
-
-    std::string Manager::get_name() const {
-        return name;
     }
 
     std::string Manager::get_info() const {
