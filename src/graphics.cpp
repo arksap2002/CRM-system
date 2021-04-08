@@ -1,9 +1,17 @@
 #include "graphics.h"
+#include "storage.h"
+#include "storageFileSystem.h"
+#include "useCases.h"
 
-//TODO make just one manager later, remove all sets
+//TODO make just one manager later, remove all sets (Done?)
 //TODO think about "QLayout: Attempting to add QLayout "" to QWidget "", which already has a layout" problem
 //TODO think about global var manager, we have to implement it here, because multiply definition in graphics.h
 //TODO remove graphics.h from add_executable in CMake
+//TODO remove tabs
+
+using namespace people;
+using namespace repositories;
+using namespace useCases;
 
 
 //TODO maybe enum?
@@ -172,11 +180,11 @@ void MainWindow::ChangeToGeneral() {
 void MainWindow::ChangeToClients() {
     setCurrentIndex(clients_window_num);
 }
-
+// TODO clang-tidy, can be static?
 void MainWindow::SetManager(const people::Manager &manager_) {
     manager = manager_;
 }
-
+// TODO why unused?
 GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {
     if (manager.name.empty()) {
         manager_name = new QLabel("error. need to update", this);
@@ -200,7 +208,7 @@ GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {
     connect(managers_window_button, &QPushButton::clicked, this, &GeneralWindow::OpenManagersAccount);
     connect(clients_list_button, &QPushButton::clicked, this, &GeneralWindow::OpenClientsWindow);
 }
-
+// TODO clang-tidy, can be const?
 void GeneralWindow::redraw() {
     if (!manager.name.empty()) {
         manager_name->setText(QString::fromStdString(
@@ -222,11 +230,13 @@ void GeneralWindow::OpenClientsWindow() {
     clients_window.setWindowTitle("Your clients list");
     clients_window.show();
 }
-
+// TODO why unused?
 ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
-    if (!manager.get_info().empty()) {
+    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
+    // TODO WTF why you did'n check only the name like in manager redraw; and why it can be empty?))
+    if (!ucManagerInfo.managerInfo(manager).empty()) {
         info = new QLabel(
-                QString::fromStdString("Hello" + manager.name + "!\n You personal info: " + manager.get_info()),
+                QString::fromStdString("Hello" + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)),
                 this);
     } else {
         info = new QLabel("No manager. Error", this);
@@ -237,17 +247,19 @@ ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
     grid->addWidget(info, 0, 0);
     setLayout(grid);
 }
-
+// TODO clang-tidy, can be const?
 void ManagersWindow::redraw() {
+    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
+    //TODO WTF: Manager name may be empty?
     if (!manager.name.empty()) {
         info->setText(
-                QString::fromStdString("Hello " + manager.name + "!\n You personal info: " + manager.get_info()));
+                QString::fromStdString("Hello " + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)));
     } else {
         info->setText("Error");
     }
     info->update();
 }
-
+// TODO why unused?
 AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
 
     auto *email = new QLabel("Input email:", this);
@@ -287,15 +299,18 @@ AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
 }
 
 void AddClientsWindow::AddClient() {
-    manager.add_client({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
-                        deal_product_->text().toStdString()});
+    UseCaseAddClient ucAddClient(std::make_unique<ClientFileSystem>());
+    ucAddClient.addClient({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
+                 deal_product_->text().toStdString()}, manager);
+    //manager.add_client({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
+    //                            deal_product_->text().toStdString()});
     email_->clear();
     name_->clear();
     phone_->clear();
     deal_product_->clear();
     this->close();
 }
-
+// TODO why unused?
 ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
 
     clients_data->setShowGrid(true);
@@ -323,14 +338,15 @@ ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
 void ClientsList::OpenAddClientWindow() {
     add_clients_window.show();
 }
-
+// TODO clang-tidy, can be const?
 void ClientsList::redraw() {
     //CreateTable(QStringList() << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
     int t = clients_data->rowCount();
-    if (static_cast<int>(manager.list_clients.size()) > t) {
-        for (; t < static_cast<int>(manager.list_clients.size()); t++) {
+
+    if (static_cast<int>(manager.listClients.size()) > t) {
+        for (; t < static_cast<int>(manager.listClients.size()); t++) {
             clients_data->insertRow(t);
-            const people::Client &client = manager.list_clients[t];
+            const people::Client &client = manager.listClients[t];
             clients_data->setItem(t, 0, new QTableWidgetItem(QString::fromStdString(client.email)));
             clients_data->setItem(t, 1, new QTableWidgetItem(QString::fromStdString(client.name)));
             clients_data->setItem(t, 2, new QTableWidgetItem(QString::fromStdString(client.phone)));
@@ -338,11 +354,11 @@ void ClientsList::redraw() {
     }
     clients_data->update();
 }
-
+// TODO clang-tidy, can be const?
 void ClientsList::CreateTable(const QStringList &headers) {
     int i = 0;
     clients_data->setHorizontalHeaderLabels(headers);
-    for (const people::Client &client : manager.list_clients) {
+    for (const people::Client &client : manager.listClients) {
         clients_data->insertRow(i);
         clients_data->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(client.email)));
         clients_data->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(client.name)));

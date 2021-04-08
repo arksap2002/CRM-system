@@ -28,6 +28,7 @@ namespace people {
         std::string password;
         std::string name;
         std::string phone;
+    public:
         std::vector<Client> listClients{};
 
         Manager(std::string, std::string, std::string, std::string);
