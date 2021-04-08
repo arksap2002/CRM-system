@@ -239,7 +239,7 @@ ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
                 QString::fromStdString("Hello" + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)),
                 this);
     } else {
-        info = new QLabel("No manager. Error", this);
+        info = new QLabel("No manager. Error", this); // TODO think about this)))
     }
     grid = new QGridLayout(this);
     grid->setVerticalSpacing(40);
