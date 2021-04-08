@@ -1,0 +1,16 @@
+This file contains location of directories and files of our project.
+It's look like tree of folders.
+
+
+CRM-System //(It is the main executable file of our programm)
+CMake-Lists.txt
+include
+src
+resources  -->  Managers [dir]  -->  File list: <manager email> [file] {name + phone + email + password}
+         \                      \
+          \                      ->  "Managers email" [file] {list of all managers emails}
+           \
+            ->  Clients [dir]   -->  Dir list:  <manager email>  -->  File lists: <client email> {name + phone + email}
+                                                                 \
+                                                                  ->  "Clients email" [file] {list of all clients
+                                                                                              emails of this manager}
