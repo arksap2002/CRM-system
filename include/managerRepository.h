@@ -1,8 +1,0 @@
-//
-// Created by arkady on 2/21/21.
-//
-
-#ifndef CRM_SYSTEM_MANAGERREPOSITORY_H
-#define CRM_SYSTEM_MANAGERREPOSITORY_H
-
-#endif//CRM_SYSTEM_MANAGERREPOSITORY_H

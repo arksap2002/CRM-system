@@ -1,10 +1,15 @@
 #include "people.h"
+#include "useCases.h"
 #include <cassert>
 #include <iostream>
 #include <string>
 
+using namespace people;
+using namespace repositories;
+using namespace useCases;
+
 void general_window(people::Manager &manager);
-void cilents_window(people::Manager &manager);
+void clients_window(people::Manager &manager);
 void enter_window();
 
 void addClient_window(people::Manager &manager) {
@@ -20,20 +25,24 @@ void addClient_window(people::Manager &manager) {
     std::cin >> phone;
     std::cout << "Input your deal product, skip: ~\n";
     std::cin >> deal_product;
-    manager.add_client({email, name, phone, deal_product});
+    Client client(email, name, phone, deal_product);
+    UseCaseAddClient ucAddClient(std::make_unique<ClientFileSystem>());//!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ucAddClient.addClient(client, manager);
     std::cout << "Ready? - 1\n";
     int number;
     std::cin >> number;
     assert(number == 1);
-    cilents_window(manager);
+    clients_window(manager);
     assert(false);
 }
 
 void manager_window(people::Manager &manager) {
     // open window
     std::cout << "Hello, ";
-    std::cout << manager.get_name() << '\n';
-    std::cout << "Your personal info: " << manager.get_info() << '\n';
+    std::cout << manager.name << '\n';
+    //    TODO
+    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
+    std::cout << "Your personal info: " << ucManagerInfo.managerInfo(manager) << '\n';
     std::cout << "Here is a manager window. Here are some options:\n";
     std::cout << "1. Exit\n";
     int number;
@@ -45,9 +54,11 @@ void manager_window(people::Manager &manager) {
 void deal_list_window(people::Manager &manager, int index) {
     // open window
     std::cout << "Here is a deal list window\n";
-    std::cout << "Here is your deal status for: " << manager.list_clients[index].get_info() << '\n';
-    std::vector<std::string> dealInfo = manager.list_clients[index].get_deal_process();
-    for (const auto &s: dealInfo) {
+    UseCaseGetDealProcess ucGetDealProcess(std::make_unique<ClientFileSystem>());//!!!!!!!!!!!!!!!!!!!!!!
+    UseCaseClientInfo ucClientInfo(std::make_unique<ClientFileSystem>());        //!!!!!!!!!!!!!!!!!!!!!!!
+    std::cout << "Here is your deal status for: " << ucClientInfo.clientInfo(manager.listClients[index]) << '\n';
+    std::vector<std::string> dealInfo = ucGetDealProcess.getDealProcess(manager.listClients[index]);
+    for (const auto &s : dealInfo) {
         std::cout << s << '\n';
     }
     std::cout << "Here are some options:\n";
@@ -55,16 +66,17 @@ void deal_list_window(people::Manager &manager, int index) {
     int number;
     std::cin >> number;
     assert(number == 1);
-    cilents_window(manager);
+    clients_window(manager);
     assert(false);
 }
 
-void cilents_window(people::Manager &manager) {
+void clients_window(people::Manager &manager) {
     // open window
     std::cout << "Here is a clients list:\n";
     int index = 1;
-    for (const people::Client &client : manager.list_clients) {
-        std::cout << index++ << ") " << client.get_info() << '\n';
+    for (const people::Client &client : manager.listClients) {
+        UseCaseClientInfo ucClientInfo(std::make_unique<ClientFileSystem>());//!!!!!!!!!!!!!!!!!
+        std::cout << index++ << ") " << ucClientInfo.clientInfo(client) << '\n';
     }
     std::cout << "Here is a clients window. Here are some options:\n";
     std::cout << "1. Change someone (I can realize it only with buttons)\n";
@@ -85,24 +97,28 @@ void cilents_window(people::Manager &manager) {
 }
 
 void login_window() {
-    // open window
+    //    // open window
     std::cout << "Here is a login window. To exit: 0 0. Input email and password\n";
     std::string email, password;
     std::cin >> email >> password;
     if (email == "0" && password == "0") { enter_window(); }// TODO for Arkady: remove this line after Qt
     //    TODO for Anna: add exit button in Qt
     //    TODO for Arkady: after Qt, check the no-spaces
-    people::Manager manager;
     try {
-        people::get_manager(manager, email);
-    } catch (const std::exception& e) {
+        //        TODO
+        UseCaseIsCorrectPassword ucIsCorrectPassword(std::make_unique<ManagerFileSystem>());//!!!!!!!!!!!!!!!!!!!!!!
+        if (!ucIsCorrectPassword.isCorrectPassword(email, password)) {
+            std::cerr << "Incorrect password\n";
+            login_window();
+        }
+    } catch (const std::exception &e) {
         std::cerr << "Such user is not exists. Try again\n";
         login_window();
     }
-    if (!people::is_correct_password(email, password)) {
-        std::cerr << "Incorrect password\n";
-        login_window();
-    }
+    Manager manager;
+    //    TODO
+    UseCaseGetManager ucGetManager(std::make_unique<ManagerFileSystem>());
+    ucGetManager.getManager(manager, email);
     std::cout << "Welcome\n";
     general_window(manager);
     assert(false);
@@ -114,20 +130,23 @@ void registration_window() {
     //    TODO for Anna: add exit button in Qt
     std::string email, name, phone, password;
     std::cin >> email >> name >> phone >> password;
-    people::Manager manager(email, password, name, phone);
+    Manager manager(email, password, name, phone);
     try {
-        people::add_manager(manager);
-    } catch (...) {
+        //        TODO
+        UseCaseAddManager ucAddManager(std::make_unique<ManagerFileSystem>());
+        ucAddManager.addManager(manager);
+    } catch (const std::exception &e) {
         std::cerr << "Account already exists\n";
         registration_window();
     }
     std::cout << "User created\n";
     std::cout << "Welcome\n";
     general_window(manager);
+    //    assert(false);
 }
 
 void enter_window() {
-    // open window
+    //     open window
     std::cout << "Log In - 0, register - 1\n";
     int number;
     std::cin >> number;
@@ -136,8 +155,8 @@ void enter_window() {
     assert(false);
 }
 
-void general_window(people::Manager &manager) {
-    // open window
+void general_window([[maybe_unused]] people::Manager &manager) {
+    //     open window
     std::cout << "Here is a general window. Here are some options:\n";
     std::cout << "1. Go to your manager account (button)\n";
     std::cout << "2. Go to the clients window (button)\n";
@@ -145,11 +164,22 @@ void general_window(people::Manager &manager) {
     int number;
     std::cin >> number;
     if (number == 1) { manager_window(manager); }
-    if (number == 2) { cilents_window(manager); }
+    if (number == 2) { clients_window(manager); }
     if (number == 3) { enter_window(); }
     assert(false);
 }
 
 int main() {
+//    std::shared_ptr<ManagerRepository> managerRepository = std::make_shared<ManagerFileSystem>();
+//    std::shared_ptr<ClientRepository> clientRepository = std::make_shared<ClientFileSystem>();
+//    UseCaseGetManager ucGetManager(std::make_unique<ManagerFileSystem>());
+//    UseCaseAddManager ucAddManager(std::make_unique<ManagerFileSystem>());
+//    UseCaseIsCorrectPassword ucIsCorrectPassword(std::make_unique<ManagerFileSystem>());
+//    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
+//    UseCaseAddClient ucAddClient(std::make_unique<ClientFileSystem>());
+//    UseCaseDeleteClient ucDeleteClient(std::make_unique<ClientFileSystem>());
+//    UseCaseUpdateAllClients ucUpdateAllClients(std::make_unique<ClientFileSystem>());
+//    UseCaseClientInfo ucClientInfo(std::make_unique<ClientFileSystem>());
+//    UseCaseGetDealProcess ucGetDealProcess(std::make_unique<ClientFileSystem>());
     enter_window();
 }

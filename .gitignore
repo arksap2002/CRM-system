@@ -29,11 +29,11 @@
 *.exe
 *.out
 *.app
-/cmake-build-debug/
+cmake-build-debug/
 .idea/
-/CMakeFiles/
-/resources/
-
-
-
+CMakeFiles/
+resources/
+cmake_install.cmake
+CRM_system.cbp
 Makefile
+CRM_system_autogen/

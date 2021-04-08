@@ -3,7 +3,7 @@ name: CRM-system
 on:
   push:
     branches:
-      - 'Arkady'
+      - 'Virtual'
 
 jobs:
   build:
