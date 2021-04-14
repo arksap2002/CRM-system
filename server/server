@@ -1,0 +1,83 @@
+service CRMService {
+    rpc AddManager(AddManagerRequest) returns (AddManagerResponse) {}
+    rpc GetManager(GetManagerRequest) returns (GetManagerResponse) {}
+    rpc IsCorrectPassword(IsCorrectPasswordRequest) returns (IsCorrectPasswordResponse) {}
+    rpc ManagerInfo(ManagerInfoRequest) returns (ManagerInfoResponse) {}
+    rpc AddClient(AddClientRequest) returns (AddClientResponse) {}
+    rpc DeleteClient(DeleteClientRequest) returns (DeleteClientResponse) {}
+    rpc UpdateAllClients(UpdateAllClientsRequest) returns (UpdateAllClientsResponse) {}
+    rpc ClientInfo(ClientInfoRequest) returns (ClientInfoResponse) {}
+    rpc GetDealProcess(GetDealProcessRequest) returns (GetDealProcessResponse) {}
+}
+
+message AddManagerRequest {
+
+}
+
+message AddManagerResponse {
+
+}
+
+message GetManagerRequest {
+
+}
+
+message GetManagerResponse {
+
+}
+
+message IsCorrectPasswordRequest {
+
+}
+
+message IsCorrectPasswordResponse {
+
+}
+
+message ManagerInfoRequest {
+
+}
+
+message ManagerInfoResponse {
+
+}
+
+message AddClientRequest {
+
+}
+
+message AddClientResponse {
+
+}
+
+message DeleteClientRequest {
+
+}
+
+message DeleteClientResponse {
+
+}
+
+message UpdateAllClientsRequest {
+
+}
+
+message UpdateAllClientsResponse {
+
+}
+
+message ClientInfoRequest {
+
+}
+
+message ClientInfoResponse {
+
+}
+
+message GetDealProcessRequest {
+
+}
+
+message GetDealProcessResponse {
+
+}
