@@ -11,73 +11,77 @@ service CRMService {
 }
 
 message AddManagerRequest {
-
+    people::Manager &manager = 1;
 }
 
 message AddManagerResponse {
-
+    int64 managerId = 1;
 }
 
 message GetManagerRequest {
-
+    people::Manager &inputManager = 1;
+    std::string &inputEmail = 2;
 }
 
 message GetManagerResponse {
-
+    people::Manager &inputEmail = 1; //???
 }
 
 message IsCorrectPasswordRequest {
-
+    std::string &inputEmail = 1;
+    std::string &inputPassword = 2;
 }
 
 message IsCorrectPasswordResponse {
-
+    bool find = 1;
 }
 
 message ManagerInfoRequest {
-
+    people::Manager &manager = 1;
 }
 
 message ManagerInfoResponse {
-
+    std::string managerInfo = 1;
 }
 
 message AddClientRequest {
-
+    people::Client &client = 1;
+    std::string &managerEmail = 2;
 }
 
 message AddClientResponse {
-
+    int64 managerId = 1;
 }
 
 message DeleteClientRequest {
-
+    std::string &clientEmail = 1;
+    std::string &managerEmail = 2;
 }
 
 message DeleteClientResponse {
-
+    // ???
 }
 
 message UpdateAllClientsRequest {
-
+    people::Manager &manager = 1;
 }
 
 message UpdateAllClientsResponse {
-
+    // ???
 }
 
 message ClientInfoRequest {
-
+    people::Client &client = 1;
 }
 
 message ClientInfoResponse {
-
+    std::string clientInfo = 1;
 }
 
 message GetDealProcessRequest {
-
+    people::Client &client = 1;
 }
 
 message GetDealProcessResponse {
-
+    std::vector<std::string> dealProcessInfo = 1;
 }
