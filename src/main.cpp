@@ -181,9 +181,12 @@ int main(int argc, char *argv[]) {
     //GeneralWindow general_window(&main_window);
     //ClientsList clients_list_window(&main_window);
 
-    main_window.addTab(&start_window, "Start");
-    main_window.addTab(&login_window, "Login");
-    main_window.addTab(&register_window, "Registration");
+    main_window.stackedWidget->addWidget(&start_window);
+    main_window.stackedWidget->addWidget(&login_window);
+    main_window.stackedWidget->addWidget(&register_window);
+    //main_window.addTab(&start_window, "Start");
+    //main_window.addTab(&login_window, "Login");
+    //main_window.addTab(&register_window, "Registration");
     //main_window.addTab(&general_window, "Main menu");
     //main_window.addTab(&clients_list_window, "ClientsList");
 

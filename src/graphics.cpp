@@ -40,6 +40,7 @@ RegisterWindow::RegisterWindow(MainWindow *parent)
     : QWidget(parent) {
 
     mainwind = parent;
+    mainwind->stackedWidget->addWidget(this);
 
     reginfo = new QLabel("Here is a registration window. Input email, name, phone, password", this);
     auto *email = new QLabel("Email:", this);
@@ -101,6 +102,7 @@ LoginWindow::LoginWindow(MainWindow *parent)
     : QWidget(parent) {
 
     mainwind = parent;
+    mainwind->stackedWidget->addWidget(this);
 
     logininfo = new QLabel("Here is a login window. Input email/login and password", this);
     auto *email = new QLabel("Email:", this);
@@ -141,6 +143,8 @@ QString LoginWindow::getPassword() const {
 StartWindow::StartWindow(MainWindow *parent)
     : QWidget(parent) {
 
+    parent->stackedWidget->addWidget(this);
+
     auto *log_in_button = new QPushButton("Log in", this);
     auto *register_button = new QPushButton("Register", this);
 
@@ -156,29 +160,32 @@ StartWindow::StartWindow(MainWindow *parent)
 }
 
 
-MainWindow::MainWindow(QWidget *parent) : QTabWidget(parent) {
+MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(stackedWidget);
+    setLayout(layout);
 }
 
 void MainWindow::ChangeToStart() {
-    setCurrentIndex(start_window_num);
+    stackedWidget->setCurrentIndex(start_window_num);
 }
 
 void MainWindow::ChangeToLogIn() {
-    setCurrentIndex(login_window_num);
+    stackedWidget->setCurrentIndex(login_window_num);
 }
 
 void MainWindow::ChangeToRegister() {
-    setCurrentIndex(registration_window_num);
+    stackedWidget->setCurrentIndex(registration_window_num);
 }
 
 void MainWindow::ChangeToGeneral() {
     general_window.redraw();
-    addTab(&general_window, "General");
-    setCurrentIndex(general_window_num);
+    stackedWidget->addWidget(&general_window);
+    stackedWidget->setCurrentIndex(general_window_num);
 }
 
 void MainWindow::ChangeToClients() {
-    setCurrentIndex(clients_window_num);
+    stackedWidget->setCurrentIndex(clients_window_num);
 }
 // TODO clang-tidy, can be static?
 void MainWindow::SetManager(const people::Manager &manager_) {

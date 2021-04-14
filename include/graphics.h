@@ -10,6 +10,7 @@
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QWidget>
+#include <QStackedWidget>
 
 
 class ErrorWindow : public QWidget {
@@ -73,9 +74,10 @@ public:
 
 };//окно основного взаимодействия
 
-class MainWindow : public QTabWidget {
+class MainWindow : public QWidget {
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    QStackedWidget *stackedWidget = new QStackedWidget;
     void ChangeToStart();
     void ChangeToLogIn();
     void ChangeToRegister();
@@ -83,7 +85,7 @@ public:
     void ChangeToClients();
     void SetManager(const people::Manager &);
     GeneralWindow general_window;
-};//главное окно, куда я добавляю все табы, между которыми переключаемся
+};//главное окно, куда я добавляю в стек все окна
 
 class StartWindow : public QWidget {
 
