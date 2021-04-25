@@ -1,20 +1,22 @@
+package helloworld;
+
 service CRMService {
-    rpc AddManager(AddManagerRequest) returns (AddManagerResponse) {}
-    rpc GetManager(GetManagerRequest) returns (GetManagerResponse) {}
-    rpc IsCorrectPassword(IsCorrectPasswordRequest) returns (IsCorrectPasswordResponse) {}
-    rpc ManagerInfo(ManagerInfoRequest) returns (ManagerInfoResponse) {}
-    rpc AddClient(AddClientRequest) returns (AddClientResponse) {}
-    rpc DeleteClient(DeleteClientRequest) returns (DeleteClientResponse) {}
-    rpc UpdateAllClients(UpdateAllClientsRequest) returns (UpdateAllClientsResponse) {}
-    rpc ClientInfo(ClientInfoRequest) returns (ClientInfoResponse) {}
-    rpc GetDealProcess(GetDealProcessRequest) returns (GetDealProcessResponse) {}
+    rpc AddManager(AddManagerRequest) returns (AddManagerReply) {}
+    rpc GetManager(GetManagerRequest) returns (GetManagerReply) {}
+    rpc IsCorrectPassword(IsCorrectPasswordRequest) returns (IsCorrectPasswordReply) {}
+    rpc ManagerInfo(ManagerInfoRequest) returns (ManagerInfoReply) {}
+    rpc AddClient(AddClientRequest) returns (AddClientReply) {}
+    rpc DeleteClient(DeleteClientRequest) returns (DeleteClientReply) {}
+    rpc UpdateAllClients(UpdateAllClientsRequest) returns (UpdateAllClientsReply) {}
+    rpc ClientInfo(ClientInfoRequest) returns (ClientInfoReply) {}
+    rpc GetDealProcess(GetDealProcessRequest) returns (GetDealProcessReply) {}
 }
 
 message AddManagerRequest {
     people::Manager &manager = 1;
 }
 
-message AddManagerResponse {
+message AddManagerReply {
     int64 managerId = 1;
 }
 
@@ -23,7 +25,7 @@ message GetManagerRequest {
     std::string &inputEmail = 2;
 }
 
-message GetManagerResponse {
+message GetManagerReply {
     people::Manager &inputEmail = 1; //???
 }
 
@@ -32,7 +34,7 @@ message IsCorrectPasswordRequest {
     std::string &inputPassword = 2;
 }
 
-message IsCorrectPasswordResponse {
+message IsCorrectPasswordReply {
     bool find = 1;
 }
 
@@ -40,7 +42,7 @@ message ManagerInfoRequest {
     people::Manager &manager = 1;
 }
 
-message ManagerInfoResponse {
+message ManagerInfoReply {
     std::string managerInfo = 1;
 }
 
@@ -49,7 +51,7 @@ message AddClientRequest {
     std::string &managerEmail = 2;
 }
 
-message AddClientResponse {
+message AddClientReply {
     int64 managerId = 1;
 }
 
@@ -58,7 +60,7 @@ message DeleteClientRequest {
     std::string &managerEmail = 2;
 }
 
-message DeleteClientResponse {
+message DeleteClientReply {
     // ???
 }
 
@@ -66,7 +68,7 @@ message UpdateAllClientsRequest {
     people::Manager &manager = 1;
 }
 
-message UpdateAllClientsResponse {
+message UpdateAllClientsReply {
     // ???
 }
 
@@ -74,7 +76,7 @@ message ClientInfoRequest {
     people::Client &client = 1;
 }
 
-message ClientInfoResponse {
+message ClientInfoReply {
     std::string clientInfo = 1;
 }
 
@@ -82,6 +84,6 @@ message GetDealProcessRequest {
     people::Client &client = 1;
 }
 
-message GetDealProcessResponse {
+message GetDealProcessReply {
     std::vector<std::string> dealProcessInfo = 1;
 }
