@@ -87,6 +87,7 @@ namespace useCases {
     UseCaseGetDealProcess::UseCaseGetDealProcess(std::unique_ptr<repositories::ClientRepository> clientRepository_)
         : clientRepository(std::move(clientRepository_)) {
     }
+
     std::vector<std::string> UseCaseGetDealProcess::getDealProcess(const people::Client &client) const {
         return clientRepository->getDealProcess(client);
     }
