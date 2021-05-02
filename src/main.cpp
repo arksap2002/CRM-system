@@ -106,14 +106,14 @@ void LoginWindow::LoginManager() {
             error_window_login.errinfo->setText("Incorrect password");
             error_window_login.errinfo->update();
             error_window_login.show();
-            //std::cerr << "Incorrect password\n";
-            //login_window();
         } else {
             Manager manager;
+            UseCaseGetManager ucGetManager(std::make_unique<ManagerFileSystem>());
+            ucGetManager.getManager(manager, email);
             mainwind->SetManager(manager);
             mainwind->ChangeToGeneral();
         }
-    } catch (const std::exception &e) {
+    } catch (...) {
         error_window_login.resize(1000, 1000);
         error_window_login.setWindowTitle("Error");
         error_window_login.errinfo->setText("Such user is not exists. Try again");
