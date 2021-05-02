@@ -144,6 +144,8 @@ void RegisterWindow::RegisterManager() {
     try {
         UseCaseAddManager ucAddManager(std::make_unique<ManagerFileSystem>());
         ucAddManager.addManager(manager);
+        mainwind->SetManager(manager);
+        mainwind->ChangeToGeneral();
     } catch (...) {
         error_window_register.resize(1000, 1000);
         error_window_register.setWindowTitle("Error");
@@ -153,8 +155,6 @@ void RegisterWindow::RegisterManager() {
         mainwind->ChangeToStart();
         //throw;
     }
-    mainwind->SetManager(manager);
-    mainwind->ChangeToGeneral();
 }
 
 
