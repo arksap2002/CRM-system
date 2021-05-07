@@ -181,6 +181,7 @@ int main(int argc, char *argv[]) {
     GeneralWindow general_window(&main_window);
     ManagersWindow managers_window(&main_window);
     ClientsList clients_list_window(&main_window);
+    AddClientsWindow add_clients_window(&main_window);
 
 
     main_window.stackedWidget->addWidget(&start_window);
@@ -189,6 +190,7 @@ int main(int argc, char *argv[]) {
     main_window.stackedWidget->addWidget(&general_window);
     main_window.stackedWidget->addWidget(&managers_window);
     main_window.stackedWidget->addWidget(&clients_list_window);
+    main_window.stackedWidget->addWidget(&add_clients_window);
 
     main_window.resize(2000, 1200);
     main_window.setWindowTitle("CRM-system");
