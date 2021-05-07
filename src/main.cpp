@@ -178,17 +178,17 @@ int main(int argc, char *argv[]) {
     StartWindow start_window(&main_window);
     LoginWindow login_window(&main_window);
     RegisterWindow register_window(&main_window);
-    //GeneralWindow general_window(&main_window);
-    //ClientsList clients_list_window(&main_window);
+    GeneralWindow general_window(&main_window);
+    ManagersWindow managers_window(&main_window);
+    ClientsList clients_list_window(&main_window);
+
 
     main_window.stackedWidget->addWidget(&start_window);
     main_window.stackedWidget->addWidget(&login_window);
     main_window.stackedWidget->addWidget(&register_window);
-    //main_window.addTab(&start_window, "Start");
-    //main_window.addTab(&login_window, "Login");
-    //main_window.addTab(&register_window, "Registration");
-    //main_window.addTab(&general_window, "Main menu");
-    //main_window.addTab(&clients_list_window, "ClientsList");
+    main_window.stackedWidget->addWidget(&general_window);
+    main_window.stackedWidget->addWidget(&managers_window);
+    main_window.stackedWidget->addWidget(&clients_list_window);
 
     main_window.resize(2000, 1200);
     main_window.setWindowTitle("CRM-system");

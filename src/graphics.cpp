@@ -13,13 +13,23 @@ using namespace people;
 using namespace repositories;
 using namespace useCases;
 
+void redraw(QWidget *page) {
 
-//TODO maybe enum?
-int start_window_num = 0;
-int login_window_num = 1;
-int registration_window_num = 2;
-int general_window_num = 3;
-int clients_window_num = 4;
+    if (auto *d = dynamic_cast<GeneralWindow *>(page); d != nullptr) {
+
+    }
+}
+
+
+enum Windows {
+    start_window_num = 0,
+    login_window_num = 1,
+    registration_window_num = 2,
+    general_window_num = 3,
+    info_window_num = 4,
+    clients_list_window_num = 5,
+    add_clients_window_num = 6,
+};
 
 
 people::Manager manager = people::Manager();
@@ -35,6 +45,25 @@ ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
     grid->addWidget(errinfo);
     setLayout(grid);
 }
+
+StartWindow::StartWindow(MainWindow *parent)
+        : QWidget(parent) {
+
+    parent->stackedWidget->addWidget(this);
+
+    auto *log_in_button = new QPushButton("Log in", this);
+    auto *register_button = new QPushButton("Register", this);
+
+    auto *grid = new QGridLayout(this);
+    grid->addWidget(log_in_button, 0, 0);
+    grid->addWidget(register_button, 0, 1);
+
+    setLayout(grid);
+
+    connect(log_in_button, &QPushButton::clicked, parent, &MainWindow::ChangeToLogIn);
+    connect(register_button, &QPushButton::clicked, parent, &MainWindow::ChangeToRegister);
+}
+
 
 RegisterWindow::RegisterWindow(MainWindow *parent)
     : QWidget(parent) {
@@ -140,25 +169,6 @@ QString LoginWindow::getPassword() const {
     return password_->text();
 }
 
-StartWindow::StartWindow(MainWindow *parent)
-    : QWidget(parent) {
-
-    parent->stackedWidget->addWidget(this);
-
-    auto *log_in_button = new QPushButton("Log in", this);
-    auto *register_button = new QPushButton("Register", this);
-
-    auto *grid = new QGridLayout(this);
-    grid->addWidget(log_in_button, 0, 0);
-    grid->addWidget(register_button, 0, 1);
-
-    setLayout(grid);
-
-
-    connect(log_in_button, &QPushButton::clicked, parent, &MainWindow::ChangeToLogIn);
-    connect(register_button, &QPushButton::clicked, parent, &MainWindow::ChangeToRegister);
-}
-
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     QVBoxLayout *layout = new QVBoxLayout;
@@ -179,20 +189,34 @@ void MainWindow::ChangeToRegister() {
 }
 
 void MainWindow::ChangeToGeneral() {
-    general_window.redraw();
-    stackedWidget->addWidget(&general_window);
+    stackedWidget->widget(general_window_num)->redraw();
+    //general_window.redraw();
+    //stackedWidget->addWidget(&general_window);
     stackedWidget->setCurrentIndex(general_window_num);
 }
 
-void MainWindow::ChangeToClients() {
-    stackedWidget->setCurrentIndex(clients_window_num);
+void MainWindow::ChangeToInfo() {
+    stackedWidget->setCurrentIndex(info_window_num);
 }
+
+void MainWindow::ChangeToClientsList() {
+    stackedWidget->setCurrentIndex(clients_list_window_num);
+}
+
+void MainWindow::ChangeToAddClients() {
+    stackedWidget->setCurrentIndex(add_clients_window_num);
+}
+
 // TODO clang-tidy, can be static?
 void MainWindow::SetManager(const people::Manager &manager_) {
     manager = manager_;
 }
+
 // TODO why unused?
-GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {
+GeneralWindow::GeneralWindow(MainWindow *parent) : QWidget(parent) {
+
+    parent->stackedWidget->addWidget(this);
+
     if (manager.name.empty()) {
         manager_name = new QLabel("error. need to update", this);
     } else {
@@ -238,7 +262,10 @@ void GeneralWindow::OpenClientsWindow() {
     clients_window.show();
 }
 // TODO why unused?
-ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
+ManagersWindow::ManagersWindow(MainWindow *parent) : QWidget(parent) {
+
+    parent->stackedWidget->addWidget(this);
+
     UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
     // TODO WTF why you did'n check only the name like in manager redraw; and why it can be empty?))
     if (!ucManagerInfo.managerInfo(manager).empty()) {
@@ -267,7 +294,9 @@ void ManagersWindow::redraw() {
     info->update();
 }
 // TODO why unused?
-AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
+AddClientsWindow::AddClientsWindow(MainWindow *parent) : QWidget(parent) {
+
+    parent->stackedWidget->addWidget(this);
 
     auto *email = new QLabel("Input email:", this);
     email->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -306,6 +335,7 @@ AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
 }
 
 void AddClientsWindow::AddClient() {
+
     UseCaseAddClient ucAddClient(std::make_unique<ClientFileSystem>());
     ucAddClient.addClient({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
                  deal_product_->text().toStdString()}, manager);
@@ -318,7 +348,9 @@ void AddClientsWindow::AddClient() {
     this->close();
 }
 // TODO why unused?
-ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
+ClientsList::ClientsList(MainWindow *parent) : QWidget(parent) {
+
+    parent->stackedWidget->addWidget(this);
 
     clients_data->setShowGrid(true);
     clients_data->setSelectionMode(QAbstractItemView::SingleSelection);
