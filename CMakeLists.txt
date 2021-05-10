@@ -1,24 +1,39 @@
-cmake_minimum_required(VERSION 3.16.3)
+# Minimum CMake required
+cmake_minimum_required(VERSION 3.13)
 
-project(CRM_system)
-
+project(grpc_CRM-system VERSION 0.0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -Werror -DLOCAL -DDEBUG")
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.14.0\\5.14.0\\mingw73_32\\")
+set(CMAKE_BUILD_TYPE RelWithDebInfo)
 
-include_directories(include)
-#include_directories(testing)
+set(protobuf_MODULE_COMPATIBLE TRUE)
+find_package(Protobuf CONFIG REQUIRED)
+message(STATUS "Using protobuf ${Protobuf_VERSION}")
+
+set(_PROTOBUF_LIBPROTOBUF protobuf::libprotobuf)
+set(_REFLECTION gRPC::grpc++_reflection)
+if(CMAKE_CROSSCOMPILING)
+  find_program(_PROTOBUF_PROTOC protoc)
+else()
+  set(_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
+endif()
+
+# Find gRPC installation
+# Looks for gRPCConfig.cmake file installed by gRPC's cmake installation.
+find_package(gRPC CONFIG REQUIRED)
+message(STATUS "Using gRPC ${gRPC_VERSION}")
 
 find_package(Qt5Widgets REQUIRED)
 
+set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
 
+set(_GRPC_GRPCPP gRPC::grpc++)
+if(CMAKE_CROSSCOMPILING)
+  find_program(_GRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+else()
+  set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
+endif()
 
-add_executable(CRM_system src/people.cpp src/graphics.cpp src/main.cpp include/graphics.h src/storageFileSystem.cpp src/useCases.cpp server/CRM_server.cpp include/storageDataBase.h src/storageDataBase.cpp)
-
-target_link_libraries(CRM_system Qt5::Widgets)
-#add_executable(CRM-file_structure_tests src/people.cpp testing/doctest_main.cpp testing/file_structure_test.cpp include/fwd.h)
+# Add example projects
+add_subdirectory(CRM-system)

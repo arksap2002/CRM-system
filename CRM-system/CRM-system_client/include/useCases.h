@@ -45,7 +45,7 @@ namespace useCases {
     struct UseCaseUpdateAllClients {
         std::unique_ptr<repositories::ClientRepository> clientRepository;
         explicit UseCaseUpdateAllClients(std::unique_ptr<repositories::ClientRepository> clientRepository_);
-        void updateAllClients(const people::Manager &manager) const;
+        void updateAllClients(people::Manager &manager) const;
     };
 
     struct UseCaseClientInfo {
