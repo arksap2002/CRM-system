@@ -11,6 +11,7 @@
 #include <QTableWidget>
 #include <QWidget>
 #include <QStackedWidget>
+#include <QHeaderView>
 
 void redraw(QWidget *page);
 

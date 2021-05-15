@@ -54,6 +54,9 @@ void redraw(QWidget *page) {
             }
         }
         v->clients_data->update();
+        v->clients_data->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+        v->clients_data->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+        v->clients_data->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     }
 }
 
@@ -383,5 +386,6 @@ void ClientsList::CreateTable(const QStringList &headers) const {
         clients_data->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(client.phone)));
         i++;
     }
+    clients_data->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     clients_data->resizeColumnsToContents();
 }
