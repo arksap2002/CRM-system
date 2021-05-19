@@ -35,5 +35,14 @@ else()
   set(_GRPC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:gRPC::grpc_cpp_plugin>)
 endif()
 
+# Connect SQL libraries
+find_package(Boost 1.71.0)
+include_directories(${Boost_INCLUDE_DIR})
+
+set(MY_SQL_CONNECTOR_DIR "/usr/local")
+include_directories(${MY_SQL_CONNECTOR_DIR}/include)
+link_directories(${MY_SQL_CONNECTOR_DIR}/lib)
+
+
 # Add example projects
 add_subdirectory(CRM-system)
