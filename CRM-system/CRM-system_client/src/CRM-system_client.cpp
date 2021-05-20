@@ -53,6 +53,7 @@ namespace {
             ClientGRPC *clientGrpc = managerGrpc->add_listclients();
             set_ClientGRPC(clientGrpc, client);
         }
+        managerGrpc->set_num_clients(manager.listClients.size());
     }
 
     void set_people_client(people::Client &client, const ClientGRPC* clientGrpc) {

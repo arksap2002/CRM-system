@@ -16,12 +16,15 @@
 #include "CRM-system.grpc.pb.h"
 
 namespace storageSQL{
-    struct crmSystemDataBase{
+
+    using namespace crm_system;
+
+    struct CrmSystemDataBase{
         sql::Driver *driver;
         sql::Connection *con;
-        crmSystemDataBase();
+        CrmSystemDataBase();
         int addManager(const AddManagerRequest *request);
-        ~crmSystemDataBase();
+        ~CrmSystemDataBase();
     };
 }
 

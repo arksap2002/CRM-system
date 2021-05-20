@@ -34,6 +34,7 @@ message ManagerGRPC{
     string name = 3;
     string phone = 4;
     repeated ClientGRPC listClients = 5;
+    int32 num_clients = 6;
 }
 
 message AddManagerRequest {

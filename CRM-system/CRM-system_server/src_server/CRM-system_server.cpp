@@ -7,9 +7,12 @@ using grpc::Status;
 
 using namespace crm_system;
 
+CRM_ServiceImpl::CRM_ServiceImpl() : csdb(std::make_shared<storageSQL::CrmSystemDataBase>()), ucsAddManager(csdb){}
+
 Status CRM_ServiceImpl::AddManager(ServerContext *context, const AddManagerRequest *request, AddManagerReply *reply) {
-    std::cout << "Add manager\n";
-    reply->set_managerid(42);
+    std::cout << "Add manager" << std::endl;
+    int id = ucsAddManager.addManager(request);
+    reply->set_managerid(id);
     return Status::OK;
 }
 

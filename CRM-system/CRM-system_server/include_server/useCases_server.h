@@ -6,13 +6,16 @@
 #include <grpc++/grpc++.h>
 
 #include "CRM-system.grpc.pb.h"
+#include "storageDataBase.h"
 
 namespace useCasesServer{
 
+    using namespace crm_system;
+
     struct UseCaseServerAddManager {
-        std::unique_ptr<repositories::ManagerRepository> managerRepository;
-        explicit UseCaseServerAddManager(std::unique_ptr<repositories::ManagerRepository> managerRepository_);
-        void addManager(const people::Manager &manager) const;
+        std::shared_ptr<storageSQL::CrmSystemDataBase> database;
+        explicit UseCaseServerAddManager(std::shared_ptr<storageSQL::CrmSystemDataBase> database_);
+        int addManager(const AddManagerRequest *request) const;
     };
 
 }

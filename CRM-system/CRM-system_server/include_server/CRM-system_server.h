@@ -18,6 +18,11 @@ namespace service {
     using namespace crm_system;
 
     class CRM_ServiceImpl final : public CRMService::Service {
+        std::shared_ptr<storageSQL::CrmSystemDataBase> csdb;
+        useCasesServer::UseCaseServerAddManager ucsAddManager;
+    public:
+        CRM_ServiceImpl();
+    private:
         Status AddManager(ServerContext *context, const AddManagerRequest *request, AddManagerReply *reply) override;
 
         Status GetManager(ServerContext *context, const GetManagerRequest *request,
