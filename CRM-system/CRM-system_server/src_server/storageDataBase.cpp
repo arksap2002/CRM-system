@@ -1,5 +1,6 @@
 #include "storageDataBase.h"
-
+#include <typeinfo>
+#include <boost/core/demangle.hpp>
 namespace storageSQL{
 
     using namespace crm_system;
@@ -44,26 +45,50 @@ namespace storageSQL{
         try{
             sql::Statement *stmt = con->createStatement();
             std::cout << "***\n";
-            std::cout << "SELECT * FROM Managers WHERE email=" << request->manager().email() << "'" << std::endl;
+            std::cout << "SELECT * FROM Managers WHERE email='" << request->manager().email() << "'" << std::endl;
             sql::ResultSet *res = stmt->executeQuery("SELECT * FROM Managers WHERE email='" + request->manager().email() + "'");
-            if (res->next()){
+            /*if (res->next()){
                 std::cout << "Alarm!" << std::endl;
                 std::cout << "Manager already exists" << std::endl;
                 delete res;
                 delete stmt;
                 throw std::runtime_error("Manager already exists");
-            }
-            std::cout << "!!!";
-            stmt->execute("INSERT INTO Managers(email, password, name, phone) VALUES("
-                 + request->manager().email() + ", "
-                 + request->manager().password() + ", "
-                 + request->manager().name() + ", "
+            }*/
+            std::cout << "!!!\n";
+           /* stmt->execute("INSERT INTO Managers(email, password, name, phone) VALUES('"
+                 + request->manager().email() + "', '"
+                 + request->manager().password() + "', '"
+                 + request->manager().name() + "', '"
                  + request->manager().phone()
-                 + ")"
-            );
-            std::cout << "???";
-            std::string client_repository = "_" + request->manager().email();
-            stmt->execute("CREATE TABLE " + client_repository + "("
+                 + "')"
+            );*/
+            delete res;
+//            std::cout << "SELECT id FROM Managers WHERE email='" + request->manager().email() + "'" << std::endl;
+//            res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manager().email() + "'");
+//            if (!res->next()){
+//                throw std::runtime_error("Can not find id");
+//            }
+//            auto s = res->getString(1);
+//                std::cout << res->getString(1) << ' ';
+//            const std::type_info& inf = typeid(s);
+//            std::cout << s << ' ' << inf.name() << '\n';
+//            std::cout << boost::core::demangle(inf.name()) << '\n';
+//            std::cout << "???\n";
+//            std::string clients_repository = "Clients_" + res->getString(1);
+//            std::string clients_repository = "Clients_" + std::string(s.c_str());
+            std::string clients_repository = "Clients_" + request->manager().email();
+            for (char x : {'@', '.'}){
+                std::cout << x << '\n';
+                std::size_t found = clients_repository.find(x);
+                clients_repository[found] = 'a';
+                std::cout << found << '\n';
+//                while (found != std::string::npos){
+//                    clients_repository[found] = 'a';
+//                    std::size_t found = clients_repository.find(x);
+//                    std::cout << found << '\n';
+//                }
+            }
+            /*stmt->execute("CREATE TABLE " + clients_repository + "("
                  "    id int NOT NULL AUTO_INCREMENT,"
                  "    email varchar(1000) NOT NULL,"
                  "    name varchar(1000) NOT NULL,"
@@ -72,24 +97,26 @@ namespace storageSQL{
                  "    dealProcess int NOT NULL,"
                  "    PRIMARY KEY (id)"
                  ")"
-            );
+            );*/
             int dealProcess = 0;
             for (int i = 0; i < request->manager().num_clients(); ++i){
                 for (int j = 0; j < 3; ++j){
                     dealProcess |= request->manager().listclients(i).dealprocess(j).completed() << j;
                 }
-                stmt->execute("INSERT INTO _" + client_repository + "(email, name, phone, dealProduct, dealProcess) VALUES("
-                    + request->manager().listclients(i).email() + ", "
-                    + request->manager().listclients(i).name() + ", "
-                    + request->manager().listclients(i).phone() + ", "
-                    + request->manager().listclients(i).dealproduct() + ", "
+                stmt->execute("INSERT INTO " + clients_repository + "(email, name, phone, dealProduct, dealProcess) VALUES('"
+                    + request->manager().listclients(i).email() + "', '"
+                    + request->manager().listclients(i).name() + "', '"
+                    + request->manager().listclients(i).phone() + "', '"
+                    + request->manager().listclients(i).dealproduct() + "', "
                     + std::to_string(dealProcess) + ")"
                 );
             }
-            delete res;
-            res = stmt->executeQuery("SELECT id FROM Managers WHERE email=" + request->manager().email());
+//            delete res;
+//            res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manager().email() + "'");
 //            int returning_id = atoi(static_cast<std::string>(res->getInt(1)));
-            int returning_id = res->getInt(1);
+            res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manager().email() + "'");
+            auto s = res->getString(1);
+            int returning_id = atoi(s.c_str());
             delete res;
             delete stmt;
             return returning_id;
