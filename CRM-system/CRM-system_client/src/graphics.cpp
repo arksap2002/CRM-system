@@ -2,6 +2,7 @@
 #include "storage.h"
 #include "storageFileSystem.h"
 #include "useCases.h"
+#include "CRM-system_client.h"
 
 //TODO make just one manager later, remove all sets (Done?)
 //TODO think about "QLayout: Attempting to add QLayout "" to QWidget "", which already has a layout" problem
@@ -232,7 +233,7 @@ void GeneralWindow::OpenClientsWindow() {
 }
 // TODO why unused?
 ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
-    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
+    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerDataBase_client>());
     // TODO WTF why you did'n check only the name like in manager redraw; and why it can be empty?))
     if (!ucManagerInfo.managerInfo(manager).empty()) {
         info = new QLabel(
@@ -249,7 +250,7 @@ ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
 }
 // TODO clang-tidy, can be const?
 void ManagersWindow::redraw() {
-    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
+    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerDataBase_client>());
     //TODO WTF: Manager name may be empty?
     if (!manager.name.empty()) {
         info->setText(
@@ -299,7 +300,7 @@ AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
 }
 
 void AddClientsWindow::AddClient() {
-    UseCaseAddClient ucAddClient(std::make_unique<ClientFileSystem>());
+    UseCaseAddClient ucAddClient(std::make_unique<ClientDataBase_client>());
     ucAddClient.addClient({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
                  deal_product_->text().toStdString()}, manager);
     //manager.add_client({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),

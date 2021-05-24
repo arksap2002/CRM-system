@@ -119,7 +119,9 @@ namespace {
         request.set_manageremail(managerEmail);
         AddClientReply reply;
         ClientContext context;
+        std::cout << "Server start add client\n";
         Status status = stub_->AddClient(&context, request, &reply);
+        std::cout << "Server finish add client\n";
         if (!status.ok()) {
             throw ClientException("Server error. Can't add the client");
         }

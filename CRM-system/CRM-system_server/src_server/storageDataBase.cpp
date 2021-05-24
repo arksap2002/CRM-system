@@ -183,13 +183,15 @@ namespace storageSQL{
         try{
             sql::Statement *stmt = con->createStatement();
             std::string clients_table = make_clients_table(request->manageremail());
-            sql::ResultSet *res = stmt->executeQuery("SHOW TABLES LIKE " + clients_table);
+            std::cout << "SHOW TABLES LIKE '" << clients_table << "'\n";
+            sql::ResultSet *res = stmt->executeQuery("SHOW TABLES LIKE '" + clients_table + "'");
             if(!res->next()){
                 reply->set_fail_table(true);
                 throw std::runtime_error("Can not find table");
             }
             reply->set_fail_table(false);
             delete res;
+            std::cout << "SELECT * FROM " << clients_table << " WHERE email='" << request->client().email() << "'\n";
             res = stmt->executeQuery("SELECT * FROM " + clients_table + " WHERE email='" + request->client().email() + "'");
             if (res->next()){
                 reply->set_fail_client(true);
@@ -201,6 +203,12 @@ namespace storageSQL{
             for (int j = 0; j < 3; ++j){
                 dealProcess |= request->client().dealprocess(j).completed() << j;
             }
+            std::cout << ("INSERT INTO " + clients_table + "(email, name, phone, dealProduct, dealProcess) VALUES('"
+                          + request->client().email() + "', '"
+                          + request->client().name() + "', '"
+                          + request->client().phone() + "', '"
+                          + request->client().dealproduct() + "', "
+                          + std::to_string(dealProcess) + ")\n");
             stmt->execute("INSERT INTO " + clients_table + "(email, name, phone, dealProduct, dealProcess) VALUES('"
                           + request->client().email() + "', '"
                           + request->client().name() + "', '"
@@ -208,10 +216,14 @@ namespace storageSQL{
                           + request->client().dealproduct() + "', "
                           + std::to_string(dealProcess) + ")"
             );
+            std::cout << ("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'\n");
             res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'");
             res->next(); reply->set_managerid(res->getInt(1));
+            delete res;
+            std::cout << ("SELECT id FROM " + clients_table + " WHERE email='" + request->client().email() + "'\n");
             res = stmt->executeQuery("SELECT id FROM " + clients_table + " WHERE email='" + request->client().email() + "'");
             res->next(); reply->set_clientid(res->getInt(1));
+            delete res;
             delete stmt;
             return reply->clientid();
         }
@@ -224,7 +236,7 @@ namespace storageSQL{
         try{
             sql::Statement *stmt = con->createStatement();
             std::string clients_table = make_clients_table(request->manageremail());
-            sql::ResultSet *res = stmt->executeQuery("SHOW TABLES LIKE " + clients_table);
+            sql::ResultSet *res = stmt->executeQuery("SHOW TABLES LIKE '" + clients_table + "'");
             if(!res->next()){
                 reply->set_fail_table(true);
                 throw std::runtime_error("Can not find table");
@@ -240,9 +252,11 @@ namespace storageSQL{
             delete res;
             res = stmt->executeQuery("SELECT id FROM " + clients_table + " WHERE email='" + request->clientemail() + "'");
             res->next(); reply->set_clientid(res->getInt(1));
+            delete res;
             stmt->execute("DELETE FROM " + clients_table + " WHERE email=" + request->clientemail());
             res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'");
             res->next(); reply->set_managerid(res->getInt(1));
+            delete res;
             delete stmt;
             return reply->clientid();
         }
@@ -255,7 +269,7 @@ namespace storageSQL{
         try{
             sql::Statement *stmt = con->createStatement();
             std::string clients_table = make_clients_table(request->manageremail());
-            sql::ResultSet *res = stmt->executeQuery("SHOW TABLES LIKE " + clients_table);
+            sql::ResultSet *res = stmt->executeQuery("SHOW TABLES LIKE '" + clients_table + "'");
             if(!res->next()){
                 reply->set_fail(true);
                 throw std::runtime_error("Can not find table");

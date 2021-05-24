@@ -71,7 +71,9 @@ namespace useCasesServer{
     int UseCaseServerAddClient::addClient(const AddClientRequest *request, AddClientReply *reply) const {
         int id = 0;
         try{
+            std::cout << "UseCase start addClient\n";
             id = database->addClient(request, reply);
+            std::cout << "UseCase finish addClient\n";
             if (reply->fail_table() || reply->fail_client()){
                 std::cout << "Can not add client\n";
             }

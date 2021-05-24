@@ -100,7 +100,7 @@ void LoginWindow::LoginManager() {
     email = getEmail().toStdString();
     password = getPassword().toStdString();
     try {
-        UseCaseIsCorrectPassword ucIsCorrectPassword(std::make_unique<ManagerFileSystem>());
+        UseCaseIsCorrectPassword ucIsCorrectPassword(std::make_unique<ManagerDataBase_client>());
         if (!ucIsCorrectPassword.isCorrectPassword(email, password)) {
             error_window_login.resize(500, 500);
             error_window_login.setWindowTitle("Error");
