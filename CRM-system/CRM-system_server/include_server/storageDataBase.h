@@ -19,11 +19,26 @@ namespace storageSQL{
 
     using namespace crm_system;
 
+    struct dataBaseError : std::runtime_error{
+        dataBaseError(const std::string& file, const std::string& function, const sql::SQLException& e);
+    };
+
     struct CrmSystemDataBase{
         sql::Driver *driver;
         sql::Connection *con;
         CrmSystemDataBase();
-        int addManager(const AddManagerRequest *request);
+        int addManager(const AddManagerRequest *request,
+                       AddManagerReply *reply);
+        int getManager(const GetManagerRequest *request,
+                       GetManagerReply *reply);
+        int isCorrectPassword(const IsCorrectPasswordRequest *request,
+                              IsCorrectPasswordReply *reply);
+        int addClient(const AddClientRequest *request,
+                      AddClientReply *reply);
+        int deleteClient(const DeleteClientRequest *request,
+                         DeleteClientReply *reply);
+        int updateAllClients(const UpdateAllClientsRequest *request,
+                             UpdateAllClientsReply *reply);
         ~CrmSystemDataBase();
     };
 }

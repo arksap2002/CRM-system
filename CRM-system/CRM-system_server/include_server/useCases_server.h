@@ -15,9 +15,8 @@ namespace useCasesServer{
     struct UseCaseServerAddManager {
         std::shared_ptr<storageSQL::CrmSystemDataBase> database;
         explicit UseCaseServerAddManager(std::shared_ptr<storageSQL::CrmSystemDataBase> database_);
-        int addManager(const AddManagerRequest *request) const;
+        int addManager(const AddManagerRequest *request, AddManagerReply *reply) const;
     };
-
 }
 
 #endif //GRPC_CRM_SYSTEM_USECASES_SERVER_H

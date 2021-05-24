@@ -18,7 +18,7 @@ namespace service {
     using namespace crm_system;
 
     class CRM_ServiceImpl final : public CRMService::Service {
-        std::shared_ptr<storageSQL::CrmSystemDataBase> csdb;
+        std::shared_ptr<storageSQL::CrmSystemDataBase> CrmSystemStorage;
         useCasesServer::UseCaseServerAddManager ucsAddManager;
     public:
         CRM_ServiceImpl();

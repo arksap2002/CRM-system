@@ -43,6 +43,7 @@ message AddManagerRequest {
 
 message AddManagerReply {
     int64 managerId = 1;
+    bool fail = 2;
 }
 
 message GetManagerRequest {
@@ -53,6 +54,7 @@ message GetManagerReply {
 //    people::Manager &inputEmail = 1; //???
 //    int64 managerId = 1;
     ManagerGRPC inputManager = 1;
+    bool fail = 2;
 }
 
 message IsCorrectPasswordRequest {
@@ -62,6 +64,7 @@ message IsCorrectPasswordRequest {
 
 message IsCorrectPasswordReply {
     bool find = 1;
+    bool fail = 2;
 }
 
 //message ManagerInfoRequest {
@@ -80,6 +83,7 @@ message AddClientRequest {
 message AddClientReply {
     int64 managerId = 1;
     int64 clientId = 2;
+    bool fail = 3;
 }
 
 message DeleteClientRequest {
@@ -91,6 +95,7 @@ message DeleteClientReply {
     // ???
     int64 managerId = 1;
     int64 clientId = 2;
+    bool fail = 3;
 }
 
 message UpdateAllClientsRequest {
@@ -103,6 +108,7 @@ message UpdateAllClientsReply {
     int64 managerId = 1;
     repeated ClientGRPC listClients = 2;
     int64 count_clients = 3;
+    bool fail = 4;
 }
 
 //message ClientInfoRequest {

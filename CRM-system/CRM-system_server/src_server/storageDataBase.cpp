@@ -5,12 +5,29 @@ namespace storageSQL{
 
     using namespace crm_system;
 
-    void show_error(const std::string &file, const std::string &function, int line, sql::SQLException& e){
-        std::cout << "# ERR: SQLException in " << file;
-        std::cout << "(" << function << ") on line " << line << std::endl;
-        std::cout << "# ERR: " << e.what();
-        std::cout << " (MySQL error code: " << e.getErrorCode();
-        std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+    dataBaseError::dataBaseError(const std::string& file, const std::string& function, const sql::SQLException& e) :
+        std::runtime_error("# ERR: SQLException in " + file + "(" + function + ")\n"
+                      "# ERR: " + e.what() + " (MySQL error code: " + std::to_string(e.getErrorCode())
+                      + ", SQLState: " + e.getSQLState() + " )") {}
+
+//    void show_error(const std::string &file, const std::string &function, int line, sql::SQLException& e){
+//        std::cout << "# ERR: SQLException in " << file;
+//        std::cout << "(" << function << ") on line " << line << std::endl;
+//        std::cout << "# ERR: " << e.what();
+//        std::cout << " (MySQL error code: " << e.getErrorCode();
+//        std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
+//    }
+
+    std::string make_clients_table(const std::string& email){
+        std::string clients_table = "Clients_" + email;
+        for (char x : {'@', '.', ' '}){
+            std::size_t found = clients_table.find(x);
+            while (found != std::string::npos){
+                clients_table[found] = 'a';
+                found = clients_table.find(x);
+            }
+        }
+        return clients_table;
     }
 
     CrmSystemDataBase::CrmSystemDataBase() {
@@ -31,22 +48,23 @@ namespace storageSQL{
                               ")");
             }
         }
-        catch (sql::SQLException& e){
-            std::cout << "Can not establish a connection" << std::endl;
-            show_error(__FILE__, __FUNCTION__, __LINE__, e);
+        catch (const sql::SQLException& e){
+//            std::cout << "Can not establish a connection" << std::endl;
+//            show_error(__FILE__, __FUNCTION__, __LINE__, e);
+            throw dataBaseError(__FILE__, __FUNCTION__, e);
         }
     }
 
-    int CrmSystemDataBase::addManager(const AddManagerRequest *request){
+    int CrmSystemDataBase::addManager(const AddManagerRequest *request, AddManagerReply *reply){
         try{
             sql::Statement *stmt = con->createStatement();
-//            std::cout << "SELECT * FROM Managers WHERE email='" << request->manager().email() << "'" << std::endl;
             sql::ResultSet *res = stmt->executeQuery("SELECT * FROM Managers WHERE email='" + request->manager().email() + "'");
             if (res->next()){
                 std::cout << "Alarm!" << std::endl;
                 std::cout << "Manager already exists" << std::endl;
                 delete res;
                 delete stmt;
+                reply->set_fail(true);
                 throw std::runtime_error("Manager already exists");
             }
             stmt->execute("INSERT INTO Managers(email, password, name, phone) VALUES('"
@@ -57,19 +75,8 @@ namespace storageSQL{
                  + "')"
             );
             delete res;
-            std::string clients_repository = "Clients_" + request->manager().email();
-            for (char x : {'@', '.'}){
-//                std::cout << x << ' ';
-                std::size_t found = clients_repository.find(x);
-                clients_repository[found] = 'a';
-//                std::cout << found << '\n';
-//                while (found != std::string::npos){
-//                    clients_repository[found] = 'a';
-//                    std::size_t found = clients_repository.find(x);
-//                    std::cout << found << '\n';
-//                }
-            }
-            stmt->execute("CREATE TABLE " + clients_repository + "("
+            std::string clients_table = make_clients_table(request->manager().email());
+            stmt->execute("CREATE TABLE " + clients_table + "("
                  "    id int NOT NULL AUTO_INCREMENT,"
                  "    email varchar(1000) NOT NULL,"
                  "    name varchar(1000) NOT NULL,"
@@ -84,7 +91,7 @@ namespace storageSQL{
                 for (int j = 0; j < 3; ++j){
                     dealProcess |= request->manager().listclients(i).dealprocess(j).completed() << j;
                 }
-                stmt->execute("INSERT INTO " + clients_repository + "(email, name, phone, dealProduct, dealProcess) VALUES('"
+                stmt->execute("INSERT INTO " + clients_table + "(email, name, phone, dealProduct, dealProcess) VALUES('"
                     + request->manager().listclients(i).email() + "', '"
                     + request->manager().listclients(i).name() + "', '"
                     + request->manager().listclients(i).phone() + "', '"
@@ -92,20 +99,93 @@ namespace storageSQL{
                     + std::to_string(dealProcess) + ")"
                 );
             }
-            std::cout << "SELECT id FROM Managers WHERE email='" + request->manager().email() + "'\n";
             res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manager().email() + "'");
             res->next();
-            int returning_id = res->getInt(1);
-            std::cout << returning_id << '\n';
+            reply->set_managerid(res->getInt(1));
+            reply->set_fail(false);
             delete res;
             delete stmt;
-            return returning_id;
+            return reply->managerid();
         }
         catch (sql::SQLException& e){
-            std::cout << "Can not add manager" << std::endl;
-            show_error(__FILE__, __FUNCTION__, __LINE__, e);
-            return -1;
+//            std::cout << "Can not add manager" << std::endl;
+//            show_error(__FILE__, __FUNCTION__, __LINE__, e);
+//            return -1;
+            throw dataBaseError(__FILE__, __FUNCTION__, e);
         }
+    }
+
+    int CrmSystemDataBase::getManager(const GetManagerRequest *request, GetManagerReply *reply){
+        try{
+            sql::Statement *stmt = con->createStatement();
+            sql::ResultSet *res = stmt->executeQuery("SELECT * FROM Managers WHERE email='" + request->inputemail() + "'");
+            if (!res->next()){
+                reply->set_fail(true);
+                throw std::runtime_error("Con not find manager");
+            }
+            ManagerGRPC* managerGrpc = new ManagerGRPC();
+            managerGrpc->set_email(res->getString(1));
+            managerGrpc->set_password(res->getString(2));
+            managerGrpc->set_name(res->getString(3));
+            managerGrpc->set_phone(res->getString(4));
+            delete res;
+            std::string clients_table = make_clients_table(request->inputemail());
+            res = stmt->executeQuery("SELECT * FROM " + clients_table);
+            while(res->next()){
+                ClientGRPC* clientGrpc = managerGrpc->add_listclients();
+                clientGrpc->set_email(res->getString(1));
+                clientGrpc->set_name(res->getString(2));
+                clientGrpc->set_phone(res->getString(3));
+                clientGrpc->set_dealproduct(res->getString(4));
+                for (int i = 0; i < 3; ++i){
+                    DealProcessGRPC *dealProcessGrpc = clientGrpc->add_dealprocess();
+                    dealProcessGrpc->set_completed(res->getInt(5) & (1 << i));
+                }
+            }
+            reply->set_allocated_inputmanager(managerGrpc);
+            reply->set_fail(false);
+            delete res;
+            delete stmt;
+            res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->inputemail() + "'");
+            res->next();
+            return res->getInt(1);
+        }
+        catch (sql::SQLException& e){
+            throw dataBaseError(__FILE__, __FUNCTION__, e);
+        }
+    }
+
+    int CrmSystemDataBase::isCorrectPassword(const IsCorrectPasswordRequest *request, IsCorrectPasswordReply *reply){
+        try{
+            sql::Statement *stmt = con->createStatement();
+            sql::ResultSet *res = stmt->executeQuery("SELECT password FROM Managers WHERE email='" + request->inputemail() + "'");
+            if(!res->next()){
+                reply->set_fail(true);
+                throw std::runtime_error("Can not find Manager");
+            }
+            reply->set_fail(true);
+            reply->set_find(res->getString(1) == request->inputpassword());
+            delete res;
+            delete stmt;
+            res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->inputemail() + "'");
+            res->next();
+            return res->getInt(1);
+        }
+        catch (sql::SQLException& e){
+            throw dataBaseError(__FILE__, __FUNCTION__, e);
+        }
+    }
+
+    int CrmSystemDataBase::addClient(const AddClientRequest *request, AddClientReply *reply){
+        return 1;
+    }
+
+    int CrmSystemDataBase::deleteClient(const DeleteClientRequest *request, DeleteClientReply *reply){
+        return 1;
+    }
+
+    int CrmSystemDataBase::updateAllClients(const UpdateAllClientsRequest *request, UpdateAllClientsReply *reply){
+        return 1;
     }
 
     CrmSystemDataBase::~CrmSystemDataBase(){
