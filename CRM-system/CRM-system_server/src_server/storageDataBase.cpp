@@ -98,6 +98,7 @@ namespace storageSQL{
                     + request->manager().listclients(i).dealproduct() + "', "
                     + std::to_string(dealProcess) + ")"
                 );
+                dealProcess = 0;
             }
             res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manager().email() + "'");
             res->next();
@@ -177,11 +178,73 @@ namespace storageSQL{
     }
 
     int CrmSystemDataBase::addClient(const AddClientRequest *request, AddClientReply *reply){
-        return 1;
+        try{
+            sql::Statement *stmt = con->createStatement();
+            std::string clients_table = make_clients_table(request->manageremail());
+            sql::ResultSet *res = stmt->executeQuery("SHOW TABLES LIKE " + clients_table);
+            if(!res->next()){
+                reply->set_fail_table(true);
+                throw std::runtime_error("Can not find table");
+            }
+            reply->set_fail_table(false);
+            delete res;
+            res = stmt->executeQuery("SELECT * FROM " + clients_table + " WHERE email='" + request->client().email() + "'");
+            if (res->next()){
+                reply->set_fail_client(true);
+                throw std::runtime_error("Client already exists");
+            }
+            reply->set_fail_client(false);
+            delete res;
+            int dealProcess = 0;
+            for (int j = 0; j < 3; ++j){
+                dealProcess |= request->client().dealprocess(j).completed() << j;
+            }
+            stmt->execute("INSERT INTO " + clients_table + "(email, name, phone, dealProduct, dealProcess) VALUES('"
+                          + request->client().email() + "', '"
+                          + request->client().name() + "', '"
+                          + request->client().phone() + "', '"
+                          + request->client().dealproduct() + "', "
+                          + std::to_string(dealProcess) + ")"
+            );
+            res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'");
+            res->next(); reply->set_managerid(res->getInt(1));
+            res = stmt->executeQuery("SELECT id FROM " + clients_table + " WHERE email='" + request->client().email() + "'");
+            res->next(); reply->set_clientid(res->getInt(1));
+            return reply->clientid();
+        }
+        catch (sql::SQLException& e){
+            throw dataBaseError(__FILE__, __FUNCTION__, e);
+        }
     }
 
     int CrmSystemDataBase::deleteClient(const DeleteClientRequest *request, DeleteClientReply *reply){
-        return 1;
+        try{
+            sql::Statement *stmt = con->createStatement();
+            std::string clients_table = make_clients_table(request->manageremail());
+            sql::ResultSet *res = stmt->executeQuery("SHOW TABLES LIKE " + clients_table);
+            if(!res->next()){
+                reply->set_fail_table(true);
+                throw std::runtime_error("Can not find table");
+            }
+            reply->set_fail_table(false);
+            delete res;
+            res = stmt->executeQuery("SELECT * FROM " + clients_table + " WHERE email='" + request->clientemail() + "'");
+            if (!res->next()){
+                reply->set_fail_client(true);
+                throw std::runtime_error("Client is not exists");
+            }
+            reply->set_fail_client(false);
+            delete res;
+            res = stmt->executeQuery("SELECT id FROM " + clients_table + " WHERE email='" + request->clientemail() + "'");
+            res->next(); reply->set_clientid(res->getInt(1));
+            stmt->execute("DELETE FROM " + clients_table + " WHERE email=" + request->clientemail());
+            res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'");
+            res->next(); reply->set_managerid(res->getInt(1));
+            return reply->clientid();
+        }
+        catch (sql::SQLException& e){
+            throw dataBaseError(__FILE__, __FUNCTION__, e);
+        }
     }
 
     int CrmSystemDataBase::updateAllClients(const UpdateAllClientsRequest *request, UpdateAllClientsReply *reply){
