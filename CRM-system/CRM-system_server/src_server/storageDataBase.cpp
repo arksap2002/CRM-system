@@ -131,6 +131,8 @@ namespace storageSQL{
             managerGrpc->set_phone(res->getString(4));
             delete res;
             std::string clients_table = make_clients_table(request->inputemail());
+            res = stmt->executeQuery("SELECT count(*) FROM " + clients_table);
+            res->next(); managerGrpc->set_num_clients(res->getInt(1)); delete res;
             res = stmt->executeQuery("SELECT * FROM " + clients_table);
             while(res->next()){
                 ClientGRPC* clientGrpc = managerGrpc->add_listclients();
@@ -210,6 +212,7 @@ namespace storageSQL{
             res->next(); reply->set_managerid(res->getInt(1));
             res = stmt->executeQuery("SELECT id FROM " + clients_table + " WHERE email='" + request->client().email() + "'");
             res->next(); reply->set_clientid(res->getInt(1));
+            delete stmt;
             return reply->clientid();
         }
         catch (sql::SQLException& e){
@@ -240,6 +243,7 @@ namespace storageSQL{
             stmt->execute("DELETE FROM " + clients_table + " WHERE email=" + request->clientemail());
             res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'");
             res->next(); reply->set_managerid(res->getInt(1));
+            delete stmt;
             return reply->clientid();
         }
         catch (sql::SQLException& e){
@@ -248,7 +252,40 @@ namespace storageSQL{
     }
 
     int CrmSystemDataBase::updateAllClients(const UpdateAllClientsRequest *request, UpdateAllClientsReply *reply){
-        return 1;
+        try{
+            sql::Statement *stmt = con->createStatement();
+            std::string clients_table = make_clients_table(request->manageremail());
+            sql::ResultSet *res = stmt->executeQuery("SHOW TABLES LIKE " + clients_table);
+            if(!res->next()){
+                reply->set_fail(true);
+                throw std::runtime_error("Can not find table");
+            }
+            reply->set_fail(false);
+            delete res;
+            res = stmt->executeQuery("SELECT count(*) FROM " + clients_table);
+            res->next(); reply->set_count_clients(res->getInt(1));
+            delete res;
+            res = stmt->executeQuery("SELECT * FROM " + clients_table);
+            while(res->next()){
+                ClientGRPC *clientGrpc = reply->add_listclients();
+                clientGrpc->set_email(res->getString(1));
+                clientGrpc->set_name(res->getString(2));
+                clientGrpc->set_phone(res->getString(3));
+                clientGrpc->set_dealproduct(res->getString(4));
+                for (int i = 0; i < 3; ++i){
+                    DealProcessGRPC *dealProcessGrpc = clientGrpc->add_dealprocess();
+                    dealProcessGrpc->set_completed(res->getInt(5) & (1 << i));
+                }
+            }
+            res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'");
+            res->next(); reply->set_managerid(res->getInt(1));
+            delete res;
+            delete stmt;
+            return reply->managerid();
+        }
+        catch (sql::SQLException& e){
+            throw dataBaseError(__FILE__, __FUNCTION__, e);
+        }
     }
 
     CrmSystemDataBase::~CrmSystemDataBase(){

@@ -20,6 +20,12 @@ namespace service {
     class CRM_ServiceImpl final : public CRMService::Service {
         std::shared_ptr<storageSQL::CrmSystemDataBase> CrmSystemStorage;
         useCasesServer::UseCaseServerAddManager ucsAddManager;
+        useCasesServer::UseCaseServerGetManager ucsGetManager;
+        useCasesServer::UseCaseServerIsCorrectPassword ucsIsCorrectPassword;
+        useCasesServer::UseCaseServerAddClient ucsAddClient;
+        useCasesServer::UseCaseServerDeleteClient ucsDeleteClient;
+        useCasesServer::UseCaseServerUpdateAllClients ucsUpdateAllClients;
+
     public:
         CRM_ServiceImpl();
     private:
