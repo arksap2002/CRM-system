@@ -38,7 +38,9 @@ namespace useCasesServer{
     int UseCaseServerGetManager::getManager(const GetManagerRequest *request, GetManagerReply *reply) const {
         int id = 0;
         try{
+//            std::cout << "UseCase start getManager\n";
             id = database->getManager(request, reply);
+//            std::cout << "UseCase finish getManager\n";
             if (reply->fail()){
                 std::cout << "Can not get manager\n";
             }
@@ -57,7 +59,9 @@ namespace useCasesServer{
     int UseCaseServerIsCorrectPassword::isCorrectPassword(const IsCorrectPasswordRequest *request, IsCorrectPasswordReply *reply) const{
         int id = 0;
         try{
+//            std::cout << "UseCase start isCorrectPassword\n";
             id = database->isCorrectPassword(request, reply);
+//            std::cout << "UseCase finish isCorrectPassword\n";
             if (reply->fail()){
                 std::cout << "Can not check password\n";
             }
@@ -71,9 +75,9 @@ namespace useCasesServer{
     int UseCaseServerAddClient::addClient(const AddClientRequest *request, AddClientReply *reply) const {
         int id = 0;
         try{
-            std::cout << "UseCase start addClient\n";
+//            std::cout << "UseCase start addClient\n";
             id = database->addClient(request, reply);
-            std::cout << "UseCase finish addClient\n";
+//            std::cout << "UseCase finish addClient\n";
             if (reply->fail_table() || reply->fail_client()){
                 std::cout << "Can not add client\n";
             }
@@ -87,7 +91,9 @@ namespace useCasesServer{
     int UseCaseServerDeleteClient::deleteClient(const DeleteClientRequest *request, DeleteClientReply *reply) const {
         int id = 0;
         try{
+//            std::cout << "UseCase start deleteClient\n";
             id = database->deleteClient(request, reply);
+//            std::cout << "UseCase start deleteClient\n";
             if (reply->fail_table() || reply->fail_client()){
                 std::cout << "Can not delete client\n";
             }
@@ -101,7 +107,9 @@ namespace useCasesServer{
     int UseCaseServerUpdateAllClients::updateAllClients(const UpdateAllClientsRequest *request, UpdateAllClientsReply *reply) const{
         int id = 0;
         try{
+//            std::cout << "UseCase start updateAllClients\n";
             id = database->updateAllClients(request, reply);
+//            std::cout << "UseCase finish updateAllClient\n";
             if (reply->fail()){
                 std::cout << "Can not update all clients\n";
             }

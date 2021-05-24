@@ -75,8 +75,9 @@ namespace {
         request.set_allocated_manager(managerGrpc);
         AddManagerReply reply;
         ClientContext context;
+//        std::cout << "Server start addManager\n";
         Status status = stub_->AddManager(&context, request, &reply);
-        std::cout << "OKEY\n";
+//        std::cout << "Server finish addManager\n";
         if (!status.ok()) {
             throw ManagerException("Server error. Can't add the manager");
         }
@@ -88,7 +89,9 @@ namespace {
         request.set_inputemail(inputEmail);
         GetManagerReply reply;
         ClientContext context;
+//        std::cout << "Server start getManager\n";
         Status status = stub_->GetManager(&context, request, &reply);
+//        std::cout << "Server finish getManager\n";
         if (!status.ok()) {
             throw ManagerException("Server error. Can't get the manager");
         }
@@ -100,7 +103,9 @@ namespace {
         request.set_inputpassword(inputPassword);
         IsCorrectPasswordReply reply;
         ClientContext context;
+//        std::cout << "Server start isCorrectPassword\n";
         Status status = stub_->IsCorrectPassword(&context, request, &reply);
+//        std::cout << "Server finish isCorrectPassword\n";
         if (!status.ok()) {
             throw ManagerException("Server error. Can't check the password");
         }
@@ -119,9 +124,9 @@ namespace {
         request.set_manageremail(managerEmail);
         AddClientReply reply;
         ClientContext context;
-        std::cout << "Server start add client\n";
+//        std::cout << "Server start add client\n";
         Status status = stub_->AddClient(&context, request, &reply);
-        std::cout << "Server finish add client\n";
+//        std::cout << "Server finish add client\n";
         if (!status.ok()) {
             throw ClientException("Server error. Can't add the client");
         }
@@ -133,7 +138,9 @@ namespace {
         request.set_manageremail(managerEmail);
         DeleteClientReply reply;
         ClientContext context;
+//        std::cout << "Server start deleteClient\n";
         Status status = stub_->DeleteClient(&context, request, &reply);
+//        std::cout << "Server finish deleteClient\n";
         if (!status.ok()) {
             throw ClientException("Server error. Can't delete the client");
         }
@@ -144,7 +151,9 @@ namespace {
         request.set_manageremail(manager.email);
         UpdateAllClientsReply reply;
         ClientContext context;
+//        std::cout << "Server start updateAllClients\n";
         Status status = stub_->UpdateAllClients(&context, request, &reply);
+//        std::cout << "Server finish updateAllClients\n";
         if (!status.ok()) {
             throw ClientException("Server error. Can't update all clients");
         }

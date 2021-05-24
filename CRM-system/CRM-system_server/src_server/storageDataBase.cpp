@@ -119,6 +119,7 @@ namespace storageSQL{
     int CrmSystemDataBase::getManager(const GetManagerRequest *request, GetManagerReply *reply){
         try{
             sql::Statement *stmt = con->createStatement();
+//            std::cout << ("SELECT * FROM Managers WHERE email='" + request->inputemail() + "'\n");
             sql::ResultSet *res = stmt->executeQuery("SELECT * FROM Managers WHERE email='" + request->inputemail() + "'");
             if (!res->next()){
                 reply->set_fail(true);
@@ -131,8 +132,10 @@ namespace storageSQL{
             managerGrpc->set_phone(res->getString(4));
             delete res;
             std::string clients_table = make_clients_table(request->inputemail());
+//            std::cout << ("SELECT count(*) FROM " + clients_table + "\n");
             res = stmt->executeQuery("SELECT count(*) FROM " + clients_table);
             res->next(); managerGrpc->set_num_clients(res->getInt(1)); delete res;
+//            std::cout << ("SELECT * FROM " + clients_table + "\n");
             res = stmt->executeQuery("SELECT * FROM " + clients_table);
             while(res->next()){
                 ClientGRPC* clientGrpc = managerGrpc->add_listclients();
@@ -149,6 +152,7 @@ namespace storageSQL{
             reply->set_fail(false);
             delete res;
             delete stmt;
+//            std::cout << ("SELECT id FROM Managers WHERE email='" + request->inputemail() + "'\n");
             res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->inputemail() + "'");
             res->next();
             return res->getInt(1);
@@ -161,18 +165,24 @@ namespace storageSQL{
     int CrmSystemDataBase::isCorrectPassword(const IsCorrectPasswordRequest *request, IsCorrectPasswordReply *reply){
         try{
             sql::Statement *stmt = con->createStatement();
+//            std::cout << ("SELECT password FROM Managers WHERE email='" + request->inputemail() + "'\n");
             sql::ResultSet *res = stmt->executeQuery("SELECT password FROM Managers WHERE email='" + request->inputemail() + "'");
             if(!res->next()){
                 reply->set_fail(true);
                 throw std::runtime_error("Can not find Manager");
             }
-            reply->set_fail(true);
+            reply->set_fail(false);
             reply->set_find(res->getString(1) == request->inputpassword());
             delete res;
-            delete stmt;
+//            std::cout << ("SELECT id FROM Managers WHERE email='" + request->inputemail() + "'\n");
             res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->inputemail() + "'");
+//            std::cout << "selected...\n";
             res->next();
-            return res->getInt(1);
+//            std::cout << res->getInt(1) << "\n";
+            int id = res->getInt(1);
+            delete res;
+            delete stmt;
+            return id;
         }
         catch (sql::SQLException& e){
             throw dataBaseError(__FILE__, __FUNCTION__, e);
@@ -183,7 +193,7 @@ namespace storageSQL{
         try{
             sql::Statement *stmt = con->createStatement();
             std::string clients_table = make_clients_table(request->manageremail());
-            std::cout << "SHOW TABLES LIKE '" << clients_table << "'\n";
+//            std::cout << "SHOW TABLES LIKE '" << clients_table << "'\n";
             sql::ResultSet *res = stmt->executeQuery("SHOW TABLES LIKE '" + clients_table + "'");
             if(!res->next()){
                 reply->set_fail_table(true);
@@ -191,7 +201,7 @@ namespace storageSQL{
             }
             reply->set_fail_table(false);
             delete res;
-            std::cout << "SELECT * FROM " << clients_table << " WHERE email='" << request->client().email() << "'\n";
+//            std::cout << "SELECT * FROM " << clients_table << " WHERE email='" << request->client().email() << "'\n";
             res = stmt->executeQuery("SELECT * FROM " + clients_table + " WHERE email='" + request->client().email() + "'");
             if (res->next()){
                 reply->set_fail_client(true);
@@ -203,12 +213,12 @@ namespace storageSQL{
             for (int j = 0; j < 3; ++j){
                 dealProcess |= request->client().dealprocess(j).completed() << j;
             }
-            std::cout << ("INSERT INTO " + clients_table + "(email, name, phone, dealProduct, dealProcess) VALUES('"
+            /*std::cout << ("INSERT INTO " + clients_table + "(email, name, phone, dealProduct, dealProcess) VALUES('"
                           + request->client().email() + "', '"
                           + request->client().name() + "', '"
                           + request->client().phone() + "', '"
                           + request->client().dealproduct() + "', "
-                          + std::to_string(dealProcess) + ")\n");
+                          + std::to_string(dealProcess) + ")\n");*/
             stmt->execute("INSERT INTO " + clients_table + "(email, name, phone, dealProduct, dealProcess) VALUES('"
                           + request->client().email() + "', '"
                           + request->client().name() + "', '"
@@ -216,11 +226,11 @@ namespace storageSQL{
                           + request->client().dealproduct() + "', "
                           + std::to_string(dealProcess) + ")"
             );
-            std::cout << ("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'\n");
+//            std::cout << ("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'\n");
             res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'");
             res->next(); reply->set_managerid(res->getInt(1));
             delete res;
-            std::cout << ("SELECT id FROM " + clients_table + " WHERE email='" + request->client().email() + "'\n");
+//            std::cout << ("SELECT id FROM " + clients_table + " WHERE email='" + request->client().email() + "'\n");
             res = stmt->executeQuery("SELECT id FROM " + clients_table + " WHERE email='" + request->client().email() + "'");
             res->next(); reply->set_clientid(res->getInt(1));
             delete res;
