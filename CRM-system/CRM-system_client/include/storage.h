@@ -16,7 +16,7 @@ namespace repositories {
     struct ClientRepository {
         virtual void addClient(const people::Client &client, const std::string &managerEmail) const = 0;
         virtual void deleteClient(const std::string &clientEmail, const std::string &managerEmail) const = 0;
-        virtual void updateAllClients(const people::Manager &manager) const = 0;
+        virtual void updateAllClients(people::Manager &manager) const = 0;
         [[nodiscard]] virtual std::string clientInfo(const people::Client &client) const = 0;
         [[nodiscard]] virtual std::vector<std::string> getDealProcess(const people::Client &client) const = 0;
         virtual ~ClientRepository() = default;

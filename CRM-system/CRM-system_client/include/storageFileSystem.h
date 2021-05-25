@@ -32,7 +32,7 @@ namespace repositories {
         ClientFileSystem();
         void addClient(const people::Client &client, const std::string &managerEmail) const override;
         void deleteClient(const std::string &clientEmail, const std::string &managerEmail) const override;
-        void updateAllClients(const people::Manager &manager) const override;
+        void updateAllClients(people::Manager &manager) const override;
         [[nodiscard]] std::string clientInfo(const people::Client &client) const override;
         [[nodiscard]] std::vector<std::string> getDealProcess(const people::Client &client) const override;
         ~ClientFileSystem() override = default;

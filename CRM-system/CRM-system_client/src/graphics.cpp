@@ -389,3 +389,4 @@ void ClientsList::CreateTable(const QStringList &headers) const {
     clients_data->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     clients_data->resizeColumnsToContents();
 }
+

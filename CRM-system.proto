@@ -1,0 +1,130 @@
+syntax = "proto3";
+package crm_system;
+
+service CRMService {
+    //rpc OutputHuman(HumanRequest) returns (HumanReply) {}
+
+    rpc AddManager(AddManagerRequest) returns (AddManagerReply) {}
+    rpc GetManager(GetManagerRequest) returns (GetManagerReply) {}
+    rpc IsCorrectPassword(IsCorrectPasswordRequest) returns (IsCorrectPasswordReply) {}
+    //rpc ManagerInfo(ManagerInfoRequest) returns (ManagerInfoReply) {}
+    rpc AddClient(AddClientRequest) returns (AddClientReply) {}
+    rpc DeleteClient(DeleteClientRequest) returns (DeleteClientReply) {}
+    rpc UpdateAllClients(UpdateAllClientsRequest) returns (UpdateAllClientsReply) {}
+    //rpc ClientInfo(ClientInfoRequest) returns (ClientInfoReply) {}
+    //rpc GetDealProcess(GetDealProcessRequest) returns (GetDealProcessReply) {}
+}
+
+message DealProcessGRPC{
+    string title = 1;
+    bool completed = 2;
+}
+
+message ClientGRPC{
+    string email = 1;
+    string name = 2;
+    string phone = 3;
+    string dealProduct = 4;
+    repeated DealProcessGRPC dealProcess = 5;
+}
+
+message ManagerGRPC{
+    string email = 1;
+    string password = 2;
+    string name = 3;
+    string phone = 4;
+    repeated ClientGRPC listClients = 5;
+    int32 num_clients = 6;
+}
+
+message AddManagerRequest {
+    ManagerGRPC manager = 1;
+}
+
+message AddManagerReply {
+    int64 managerId = 1;
+    bool fail = 2;
+}
+
+message GetManagerRequest {
+    string inputEmail = 1;
+}
+
+message GetManagerReply {
+//    people::Manager &inputEmail = 1; //???
+//    int64 managerId = 1;
+    ManagerGRPC inputManager = 1;
+    bool fail = 2;
+}
+
+message IsCorrectPasswordRequest {
+    string inputEmail = 1;
+    string inputPassword = 2;
+}
+
+message IsCorrectPasswordReply {
+    bool find = 1;
+    bool fail = 2;
+}
+
+//message ManagerInfoRequest {
+//    ManagerGRPC manager = 1;
+//}
+//
+//message ManagerInfoReply {
+//    string managerInfo = 1;
+//}
+
+message AddClientRequest {
+    ClientGRPC client = 1;
+    string managerEmail = 2;
+}
+
+message AddClientReply {
+    int64 managerId = 1;
+    int64 clientId = 2;
+    bool fail_table = 3;
+    bool fail_client = 4;
+}
+
+message DeleteClientRequest {
+    string clientEmail = 1;
+    string managerEmail = 2;
+}
+
+message DeleteClientReply {
+    // ???
+    int64 managerId = 1;
+    int64 clientId = 2;
+    bool fail_table = 3;
+    bool fail_client = 4;
+}
+
+message UpdateAllClientsRequest {
+//    ManagerGRPC manager = 1;
+    string managerEmail = 1;
+}
+
+message UpdateAllClientsReply {
+    // ???
+    int64 managerId = 1;
+    repeated ClientGRPC listClients = 2;
+    int64 count_clients = 3;
+    bool fail = 4;
+}
+
+//message ClientInfoRequest {
+//    ClientGRPC client = 1;
+//}
+//
+//message ClientInfoReply {
+//    string clientInfo = 1;
+//}
+//
+//message GetDealProcessRequest {
+//    ClientGRPC client = 1;
+//}
+//
+//message GetDealProcessReply {
+//    vector<string> dealProcessInfo = 1;
+//}
