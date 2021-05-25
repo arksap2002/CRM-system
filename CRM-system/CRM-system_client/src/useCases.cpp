@@ -72,8 +72,8 @@ namespace useCases {
         : clientRepository(std::move(clientRepository_)) {
     }
 
-    void UseCaseUpdateAllClients::updateAllClients(const people::Manager &manager) const {
-        return clientRepository->updateAllClients(manager);
+    void UseCaseUpdateAllClients::updateAllClients(people::Manager &manager) const {
+        clientRepository->updateAllClients(manager);
     }
 
     UseCaseClientInfo::UseCaseClientInfo(std::unique_ptr<repositories::ClientRepository> clientRepository_)
@@ -87,6 +87,7 @@ namespace useCases {
     UseCaseGetDealProcess::UseCaseGetDealProcess(std::unique_ptr<repositories::ClientRepository> clientRepository_)
         : clientRepository(std::move(clientRepository_)) {
     }
+
     std::vector<std::string> UseCaseGetDealProcess::getDealProcess(const people::Client &client) const {
         return clientRepository->getDealProcess(client);
     }

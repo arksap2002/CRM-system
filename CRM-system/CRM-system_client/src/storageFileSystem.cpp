@@ -120,7 +120,7 @@ namespace repositories {
         fs::remove(path);
     }
 
-    void ClientFileSystem::updateAllClients(const people::Manager &manager) const {
+    void ClientFileSystem::updateAllClients(people::Manager &manager) const {
         std::string path = static_cast<std::string>(fs::current_path()) + "/" + CLIENTS_RESORCES + "/" + manager.email;
         for (auto &p : fs::directory_iterator(path)) {
             fs::remove(p.path());

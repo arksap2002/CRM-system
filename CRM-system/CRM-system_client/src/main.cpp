@@ -2,6 +2,7 @@
 #include "people.h"
 #include "useCases.h"
 #include <string>
+#include "CRM-system_client.h"
 
 using namespace people;
 using namespace repositories;
@@ -99,7 +100,7 @@ void LoginWindow::LoginManager() {
     email = getEmail().toStdString();
     password = getPassword().toStdString();
     try {
-        UseCaseIsCorrectPassword ucIsCorrectPassword(std::make_unique<ManagerFileSystem>());
+        UseCaseIsCorrectPassword ucIsCorrectPassword(std::make_unique<ManagerDataBase_client>());
         if (!ucIsCorrectPassword.isCorrectPassword(email, password)) {
             error_window_login.resize(500, 500);
             error_window_login.setWindowTitle("Error");
@@ -142,7 +143,7 @@ void RegisterWindow::RegisterManager() {
     }
     Manager manager(email, pass, name, phone);
     try {
-        UseCaseAddManager ucAddManager(std::make_unique<ManagerFileSystem>());
+        UseCaseAddManager ucAddManager(std::make_unique<ManagerDataBase_client>());
         ucAddManager.addManager(manager);
     } catch (...) {
         error_window_register.resize(1000, 1000);
