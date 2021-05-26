@@ -134,22 +134,28 @@ RegisterWindow::RegisterWindow(MainWindow *parent)
 
 
 QString RegisterWindow::getName() const {
-    return name_->text();
+    QString name = name_->text();
+    name_->clear();
+    return name;
 }
 
 QString RegisterWindow::getPhone() const {
-    return phone_->text();
+    QString phone = phone_->text();
+    phone_->clear();
+    return phone;
 }
 
 QString RegisterWindow::getEmail() const {
-    return email_->text();
+    QString email = email_->text();
+    email_->clear();
+    return email;
 }
 
 QString RegisterWindow::getPassword() const {
-    return password_->text();
+    QString pass = password_->text();
+    password_->clear();
+    return pass;
 }
-
-
 LoginWindow::LoginWindow(MainWindow *parent)
         : QWidget(parent) {
 
@@ -186,11 +192,15 @@ LoginWindow::LoginWindow(MainWindow *parent)
 }
 
 QString LoginWindow::getEmail() const {
-    return email_->text();
+    QString email = email_->text();
+    email_->clear();
+    return email;
 }
 
 QString LoginWindow::getPassword() const {
-    return password_->text();
+    QString pass = password_->text();
+    password_->clear();
+    return pass;
 }
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
@@ -246,6 +256,7 @@ GeneralWindow::GeneralWindow(MainWindow *parent) : QWidget(parent) {
 
     auto *managers_window_button = new QPushButton("Open managers window", this);
     auto *clients_list_button = new QPushButton("Open clients list", this);
+    auto *exit_button = new QPushButton("Log out", this);
 
     grid = new QGridLayout(this);
     grid->setVerticalSpacing(40);
@@ -254,11 +265,13 @@ GeneralWindow::GeneralWindow(MainWindow *parent) : QWidget(parent) {
     grid->addWidget(manager_name, 0, 0);
     grid->addWidget(managers_window_button, 1, 0);
     grid->addWidget(clients_list_button, 2, 0);
+    grid->addWidget(exit_button, 3, 0);
 
     setLayout(grid);
 
     connect(managers_window_button, &QPushButton::clicked, parent, &MainWindow::ChangeToInfo);
     connect(clients_list_button, &QPushButton::clicked, parent, &MainWindow::ChangeToClientsList);
+    connect(exit_button, &QPushButton::clicked, parent, &MainWindow::ChangeToStart);
 }
 
 ManagersWindow::ManagersWindow(MainWindow *parent) : QWidget(parent) {
