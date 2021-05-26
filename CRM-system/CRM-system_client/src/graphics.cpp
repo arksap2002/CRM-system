@@ -1,29 +1,65 @@
 #include "graphics.h"
+#include "CRM-system_client.h"
 #include "storage.h"
 #include "storageFileSystem.h"
 #include "useCases.h"
-#include "CRM-system_client.h"
 
-//TODO make just one manager later, remove all sets (Done?)
 //TODO think about "QLayout: Attempting to add QLayout "" to QWidget "", which already has a layout" problem
 //TODO think about global var manager, we have to implement it here, because multiply definition in graphics.h
 //TODO remove graphics.h from add_executable in CMake
-//TODO remove tabs
 
 using namespace people;
 using namespace repositories;
 using namespace useCases;
 
-
-//TODO maybe enum?
-int start_window_num = 0;
-int login_window_num = 1;
-int registration_window_num = 2;
-int general_window_num = 3;
-int clients_window_num = 4;
-
+enum Windows {
+    start_window_num = 0,
+    login_window_num = 1,
+    registration_window_num = 2,
+    general_window_num = 3,
+    info_window_num = 4,
+    clients_list_window_num = 5,
+    add_clients_window_num = 6,
+};
 
 people::Manager manager = people::Manager();
+
+void redraw(QWidget *page) {
+
+    if (auto *d = dynamic_cast<GeneralWindow *>(page); d != nullptr) {
+        if (!manager.name.empty()) {
+            d->manager_name->setText(QString::fromStdString(
+                    "Hello, " + manager.name + "! Here is a general window. Here are some options:"));
+            d->manager_name->update();
+        }
+    } else if (auto *k = dynamic_cast<ManagersWindow *>(page); k != nullptr) {
+        UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerDataBase_client>());
+        if (!manager.name.empty()) {
+            k->info->setText(
+                    QString::fromStdString("Hello " + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)));
+        } else {
+            k->info->setText("Error");
+        }
+        k->info->update();
+    } else if (auto *v = dynamic_cast<ClientsList *>(page); v != nullptr) {
+
+        int t = v->clients_data->rowCount();
+
+        if (static_cast<int>(manager.listClients.size()) > t) {
+            for (; t < static_cast<int>(manager.listClients.size()); t++) {
+                v->clients_data->insertRow(t);
+                const people::Client &client = manager.listClients[t];
+                v->clients_data->setItem(t, 0, new QTableWidgetItem(QString::fromStdString(client.email)));
+                v->clients_data->setItem(t, 1, new QTableWidgetItem(QString::fromStdString(client.name)));
+                v->clients_data->setItem(t, 2, new QTableWidgetItem(QString::fromStdString(client.phone)));
+            }
+        }
+        v->clients_data->update();
+        v->clients_data->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+        v->clients_data->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+        v->clients_data->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    }
+}
 
 //TODO it later
 ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
@@ -37,10 +73,30 @@ ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
     setLayout(grid);
 }
 
+StartWindow::StartWindow(MainWindow *parent)
+    : QWidget(parent) {
+
+    parent->stackedWidget->addWidget(this);
+
+    auto *log_in_button = new QPushButton("Log in", this);
+    auto *register_button = new QPushButton("Register", this);
+
+    auto *grid = new QGridLayout(this);
+    grid->addWidget(log_in_button, 0, 0);
+    grid->addWidget(register_button, 0, 1);
+
+    setLayout(grid);
+
+    connect(log_in_button, &QPushButton::clicked, parent, &MainWindow::ChangeToLogIn);
+    connect(register_button, &QPushButton::clicked, parent, &MainWindow::ChangeToRegister);
+}
+
+
 RegisterWindow::RegisterWindow(MainWindow *parent)
     : QWidget(parent) {
 
     mainwind = parent;
+    mainwind->stackedWidget->addWidget(this);
 
     reginfo = new QLabel("Here is a registration window. Input email, name, phone, password", this);
     auto *email = new QLabel("Email:", this);
@@ -102,6 +158,7 @@ LoginWindow::LoginWindow(MainWindow *parent)
     : QWidget(parent) {
 
     mainwind = parent;
+    mainwind->stackedWidget->addWidget(this);
 
     logininfo = new QLabel("Here is a login window. Input email/login and password", this);
     auto *email = new QLabel("Email:", this);
@@ -139,54 +196,53 @@ QString LoginWindow::getPassword() const {
     return password_->text();
 }
 
-StartWindow::StartWindow(MainWindow *parent)
-    : QWidget(parent) {
-
-    auto *log_in_button = new QPushButton("Log in", this);
-    auto *register_button = new QPushButton("Register", this);
-
-    auto *grid = new QGridLayout(this);
-    grid->addWidget(log_in_button, 0, 0);
-    grid->addWidget(register_button, 0, 1);
-
-    setLayout(grid);
-
-
-    connect(log_in_button, &QPushButton::clicked, parent, &MainWindow::ChangeToLogIn);
-    connect(register_button, &QPushButton::clicked, parent, &MainWindow::ChangeToRegister);
+MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
+    auto *layout = new QVBoxLayout;
+    layout->addWidget(stackedWidget);
+    setLayout(layout);
 }
 
-
-MainWindow::MainWindow(QWidget *parent) : QTabWidget(parent) {
+void MainWindow::ChangeToStart() const {
+    stackedWidget->setCurrentIndex(start_window_num);
 }
 
-void MainWindow::ChangeToStart() {
-    setCurrentIndex(start_window_num);
+void MainWindow::ChangeToLogIn() const {
+    stackedWidget->setCurrentIndex(login_window_num);
 }
 
-void MainWindow::ChangeToLogIn() {
-    setCurrentIndex(login_window_num);
+void MainWindow::ChangeToRegister() const {
+    stackedWidget->setCurrentIndex(registration_window_num);
 }
 
-void MainWindow::ChangeToRegister() {
-    setCurrentIndex(registration_window_num);
+void MainWindow::ChangeToGeneral() const {
+    ::redraw(stackedWidget->widget(general_window_num));
+    stackedWidget->setCurrentIndex(general_window_num);
 }
 
-void MainWindow::ChangeToGeneral() {
-    general_window.redraw();
-    addTab(&general_window, "General");
-    setCurrentIndex(general_window_num);
+void MainWindow::ChangeToInfo() const {
+    ::redraw(stackedWidget->widget(info_window_num));
+    stackedWidget->setCurrentIndex(info_window_num);
 }
 
-void MainWindow::ChangeToClients() {
-    setCurrentIndex(clients_window_num);
+void MainWindow::ChangeToClientsList() const {
+    ::redraw(stackedWidget->widget(clients_list_window_num));
+    stackedWidget->setCurrentIndex(clients_list_window_num);
 }
+
+void MainWindow::ChangeToAddClients() const {
+    stackedWidget->setCurrentIndex(add_clients_window_num);
+}
+
 // TODO clang-tidy, can be static?
 void MainWindow::SetManager(const people::Manager &manager_) {
     manager = manager_;
 }
+
 // TODO why unused?
-GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {
+GeneralWindow::GeneralWindow(MainWindow *parent) : QWidget(parent) {
+
+    parent->stackedWidget->addWidget(this);
+
     if (manager.name.empty()) {
         manager_name = new QLabel("error. need to update", this);
     } else {
@@ -206,33 +262,15 @@ GeneralWindow::GeneralWindow(QWidget *parent) : QWidget(parent) {
 
     setLayout(grid);
 
-    connect(managers_window_button, &QPushButton::clicked, this, &GeneralWindow::OpenManagersAccount);
-    connect(clients_list_button, &QPushButton::clicked, this, &GeneralWindow::OpenClientsWindow);
-}
-// TODO clang-tidy, can be const?
-void GeneralWindow::redraw() {
-    if (!manager.name.empty()) {
-        manager_name->setText(QString::fromStdString(
-                "Hello, " + manager.name + "! Here is a general window. Here are some options:"));
-        manager_name->update();
-    }
+    connect(managers_window_button, &QPushButton::clicked, parent, &MainWindow::ChangeToInfo);
+    connect(clients_list_button, &QPushButton::clicked, parent, &MainWindow::ChangeToClientsList);
 }
 
-void GeneralWindow::OpenManagersAccount() {
-    managers_window.redraw();
-    managers_window.resize(1000, 700);
-    managers_window.setWindowTitle("Your account");
-    managers_window.show();
-}
-
-void GeneralWindow::OpenClientsWindow() {
-    clients_window.redraw();
-    clients_window.resize(1000, 700);
-    clients_window.setWindowTitle("Your clients list");
-    clients_window.show();
-}
 // TODO why unused?
-ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
+ManagersWindow::ManagersWindow(MainWindow *parent) : QWidget(parent) {
+
+    parent->stackedWidget->addWidget(this);
+
     UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerDataBase_client>());
     // TODO WTF why you did'n check only the name like in manager redraw; and why it can be empty?))
     if (!ucManagerInfo.managerInfo(manager).empty()) {
@@ -240,28 +278,25 @@ ManagersWindow::ManagersWindow(QWidget *parent) : QWidget(parent) {
                 QString::fromStdString("Hello" + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)),
                 this);
     } else {
-        info = new QLabel("No manager. Error", this); // TODO think about this)))
+        info = new QLabel("No manager. Error", this);// TODO think about this)))
     }
+
+    auto *exit_button = new QPushButton("Exit", this);
+
     grid = new QGridLayout(this);
     grid->setVerticalSpacing(40);
     grid->setHorizontalSpacing(10);
     grid->addWidget(info, 0, 0);
+    grid->addWidget(exit_button, 2, 1);
     setLayout(grid);
+
+    connect(exit_button, &QPushButton::clicked, parent, &MainWindow::ChangeToGeneral);
 }
-// TODO clang-tidy, can be const?
-void ManagersWindow::redraw() {
-    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerDataBase_client>());
-    //TODO WTF: Manager name may be empty?
-    if (!manager.name.empty()) {
-        info->setText(
-                QString::fromStdString("Hello " + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)));
-    } else {
-        info->setText("Error");
-    }
-    info->update();
-}
+
 // TODO why unused?
-AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
+AddClientsWindow::AddClientsWindow(MainWindow *parent) : QWidget(parent) {
+
+    parent->stackedWidget->addWidget(this);
 
     auto *email = new QLabel("Input email:", this);
     email->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -278,10 +313,11 @@ AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
     deal_product_ = new QLineEdit(this);
 
     auto *add_button = new QPushButton("Add", this);
+    auto *exit_button = new QPushButton("Exit", this);
 
     auto *grid = new QGridLayout(this);
 
-    grid->setVerticalSpacing(40);
+    grid->setVerticalSpacing(20);
     grid->setHorizontalSpacing(10);
 
     grid->addWidget(email, 1, 0);
@@ -292,27 +328,33 @@ AddClientsWindow::AddClientsWindow(QWidget *parent) : QWidget(parent) {
     grid->addWidget(phone_, 3, 1);
     grid->addWidget(deal_product, 4, 0);
     grid->addWidget(deal_product_, 4, 1);
-    grid->addWidget(add_button, 5, 2);
+    grid->addWidget(add_button, 5, 1);
+    grid->addWidget(exit_button, 5, 2);
 
     setLayout(grid);
 
     connect(add_button, &QPushButton::clicked, this, &AddClientsWindow::AddClient);
+    connect(exit_button, &QPushButton::clicked, parent, &MainWindow::ChangeToClientsList);
 }
 
-void AddClientsWindow::AddClient() {
+void AddClientsWindow::AddClient() const {
+
     UseCaseAddClient ucAddClient(std::make_unique<ClientDataBase_client>());
     ucAddClient.addClient({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
-                 deal_product_->text().toStdString()}, manager);
-    //manager.add_client({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
-    //                            deal_product_->text().toStdString()});
+                           deal_product_->text().toStdString()},
+                          manager);
+
     email_->clear();
     name_->clear();
     phone_->clear();
     deal_product_->clear();
-    this->close();
+
+    //TODO написать выход... я не знаю как
 }
 // TODO why unused?
-ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
+ClientsList::ClientsList(MainWindow *parent) : QWidget(parent) {
+
+    parent->stackedWidget->addWidget(this);
 
     clients_data->setShowGrid(true);
     clients_data->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -324,39 +366,19 @@ ClientsList::ClientsList(QWidget *parent) : QWidget(parent) {
     }
 
     auto *add_client_button = new QPushButton("Add client", this);
-    auto *update_button = new QPushButton("Update", this);
+    auto *exit_button = new QPushButton("Exit", this);
 
     grid = new QGridLayout(this);
     grid->addWidget(clients_data, 0, 0);
     grid->addWidget(add_client_button, 1, 1);
-    grid->addWidget(update_button, 1, 2);
+    grid->addWidget(exit_button, 1, 2);
     grid = new QGridLayout(this);
 
-    connect(add_client_button, &QPushButton::clicked, this, &ClientsList::OpenAddClientWindow);
-    connect(update_button, &QPushButton::clicked, this, &ClientsList::redraw);
+    connect(add_client_button, &QPushButton::clicked, parent, &MainWindow::ChangeToAddClients);
+    connect(exit_button, &QPushButton::clicked, parent, &MainWindow::ChangeToGeneral);
 }
 
-void ClientsList::OpenAddClientWindow() {
-    add_clients_window.show();
-}
-// TODO clang-tidy, can be const?
-void ClientsList::redraw() {
-    //CreateTable(QStringList() << trUtf8("email") << trUtf8("name") << trUtf8("phone"));
-    int t = clients_data->rowCount();
-
-    if (static_cast<int>(manager.listClients.size()) > t) {
-        for (; t < static_cast<int>(manager.listClients.size()); t++) {
-            clients_data->insertRow(t);
-            const people::Client &client = manager.listClients[t];
-            clients_data->setItem(t, 0, new QTableWidgetItem(QString::fromStdString(client.email)));
-            clients_data->setItem(t, 1, new QTableWidgetItem(QString::fromStdString(client.name)));
-            clients_data->setItem(t, 2, new QTableWidgetItem(QString::fromStdString(client.phone)));
-        }
-    }
-    clients_data->update();
-}
-// TODO clang-tidy, can be const?
-void ClientsList::CreateTable(const QStringList &headers) {
+void ClientsList::CreateTable(const QStringList &headers) const {
     int i = 0;
     clients_data->setHorizontalHeaderLabels(headers);
     for (const people::Client &client : manager.listClients) {
@@ -366,5 +388,6 @@ void ClientsList::CreateTable(const QStringList &headers) {
         clients_data->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(client.phone)));
         i++;
     }
+    clients_data->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     clients_data->resizeColumnsToContents();
 }
