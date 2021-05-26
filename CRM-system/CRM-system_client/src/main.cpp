@@ -1,8 +1,8 @@
+#include "CRM-system_client.h"
 #include "graphics.h"
 #include "people.h"
 #include "useCases.h"
 #include <string>
-#include "CRM-system_client.h"
 
 using namespace people;
 using namespace repositories;
@@ -24,7 +24,7 @@ void LoginWindow::LoginManager() {
             error_window_login.show();
         } else {
             Manager manager;
-            UseCaseGetManager ucGetManager(std::make_unique<ManagerFileSystem>());
+            UseCaseGetManager ucGetManager(std::make_unique<ManagerDataBase_client>());
             ucGetManager.getManager(manager, email);
             mainwind->SetManager(manager);
             mainwind->ChangeToGeneral();

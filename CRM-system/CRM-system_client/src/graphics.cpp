@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "CRM-system_client.h"
 #include "storage.h"
 #include "storageFileSystem.h"
 #include "useCases.h"
@@ -32,7 +33,7 @@ void redraw(QWidget *page) {
             d->manager_name->update();
         }
     } else if (auto *k = dynamic_cast<ManagersWindow *>(page); k != nullptr) {
-        UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
+        UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerDataBase_client>());
         if (!manager.name.empty()) {
             k->info->setText(
                     QString::fromStdString("Hello " + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)));
@@ -73,7 +74,7 @@ ErrorWindow::ErrorWindow(QWidget *parent) : QWidget(parent) {
 }
 
 StartWindow::StartWindow(MainWindow *parent)
-        : QWidget(parent) {
+    : QWidget(parent) {
 
     parent->stackedWidget->addWidget(this);
 
@@ -270,14 +271,14 @@ ManagersWindow::ManagersWindow(MainWindow *parent) : QWidget(parent) {
 
     parent->stackedWidget->addWidget(this);
 
-    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
+    UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerDataBase_client>());
     // TODO WTF why you did'n check only the name like in manager redraw; and why it can be empty?))
     if (!ucManagerInfo.managerInfo(manager).empty()) {
         info = new QLabel(
                 QString::fromStdString("Hello" + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)),
                 this);
     } else {
-        info = new QLabel("No manager. Error", this); // TODO think about this)))
+        info = new QLabel("No manager. Error", this);// TODO think about this)))
     }
 
     auto *exit_button = new QPushButton("Exit", this);
@@ -338,9 +339,10 @@ AddClientsWindow::AddClientsWindow(MainWindow *parent) : QWidget(parent) {
 
 void AddClientsWindow::AddClient() const {
 
-    UseCaseAddClient ucAddClient(std::make_unique<ClientFileSystem>());
+    UseCaseAddClient ucAddClient(std::make_unique<ClientDataBase_client>());
     ucAddClient.addClient({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
-                 deal_product_->text().toStdString()}, manager);
+                           deal_product_->text().toStdString()},
+                          manager);
 
     email_->clear();
     name_->clear();
@@ -389,4 +391,3 @@ void ClientsList::CreateTable(const QStringList &headers) const {
     clients_data->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
     clients_data->resizeColumnsToContents();
 }
-

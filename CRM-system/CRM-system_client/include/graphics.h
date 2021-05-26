@@ -4,14 +4,14 @@
 #include "people.h"
 #include <QApplication>
 #include <QGridLayout>
+#include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QStackedWidget>
 #include <QTabWidget>
 #include <QTableWidget>
 #include <QWidget>
-#include <QStackedWidget>
-#include <QHeaderView>
 
 void redraw(QWidget *page);
 
