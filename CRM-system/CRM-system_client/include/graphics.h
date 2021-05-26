@@ -27,7 +27,6 @@ public:
     void ChangeToClientsList() const;
     void ChangeToAddClients() const;
     void SetManager(const people::Manager &);
-    //GeneralWindow general_window;
 };//главное окно, куда я добавляю в стек все окна
 
 class ErrorWindow : public QWidget {
@@ -46,7 +45,7 @@ public:
 
 class LoginWindow : public QWidget {
     MainWindow *mainwind;
-Q_OBJECT
+    Q_OBJECT
 public:
     explicit LoginWindow(MainWindow *parent = nullptr);
     [[nodiscard]] QString getEmail() const;
@@ -59,9 +58,9 @@ public:
 };//окно где новый пользователь входит в систему
 
 class RegisterWindow : public QWidget {
-Q_OBJECT
+    Q_OBJECT
 
-    MainWindow *mainwind;
+            MainWindow *mainwind;
 
 public:
     explicit RegisterWindow(MainWindow *parent = nullptr);
@@ -93,28 +92,39 @@ public:
 
 };//окно добавления клиента
 
+
 class ClientsList : public QWidget {
+
+    Q_OBJECT
 
 public:
     explicit ClientsList(MainWindow *parent = nullptr);
-    //AddClientsWindow add_clients_window;
     QGridLayout *grid;
+    //ClientsWindow *clients_window;
     QTableWidget *clients_data = new QTableWidget(this);
     void CreateTable(const QStringList &headers) const;
+    void OpenClientsWindow(const QModelIndex &index);
 
 };//окно со списком клиентов
 
+class ClientsWindow : public QWidget {
+    Q_OBJECT
+
+public:
+    QLabel *info;
+    explicit ClientsWindow(MainWindow *parent = nullptr);
+    void SetInfo(const QString& name, const QString& email, const QString& phone);
+
+};//карточка клиента
 
 class ManagersWindow : public QWidget {
     Q_OBJECT
 
 public:
-    QGridLayout *grid;
     QLabel *info;
     explicit ManagersWindow(MainWindow *parent = nullptr);
 
-};//окно менеджера загадка что там и как оно достигается
-
+};//окно менеджера
 
 class GeneralWindow : public QWidget {
     Q_OBJECT
@@ -125,6 +135,5 @@ public:
     QGridLayout *grid;
 
 };//окно основного взаимодействия
-
 
 #endif//CRM_SYSTEM_GRAPHICS_H
