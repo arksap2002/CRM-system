@@ -32,25 +32,24 @@ void redraw(QWidget *page) {
         UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
         if (!manager.name.empty()) {
             k->info->setText(
-                    QString::fromStdString("Hello " + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)));
+                    QString::fromStdString(
+                            "Hello " + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)));
         } else {
             k->info->setText("Error");
         }
         k->info->update();
     } else if (auto *v = dynamic_cast<ClientsList *>(page); v != nullptr) {
-
-        int t = v->clients_data->rowCount();
-
-        if (static_cast<int>(manager.listClients.size()) > t) {
-            for (; t < static_cast<int>(manager.listClients.size()); t++) {
-                v->clients_data->insertRow(t);
-                const people::Client &client = manager.listClients[t];
-                v->clients_data->setItem(t, 0, new QTableWidgetItem(QString::fromStdString(client.email)));
-                v->clients_data->setItem(t, 1, new QTableWidgetItem(QString::fromStdString(client.name)));
-                v->clients_data->setItem(t, 2, new QTableWidgetItem(QString::fromStdString(client.phone)));
-            }
+        int i = 0;
+        v->clients_data->clearContents();
+        v->clients_data->model()->removeRows(0, v->clients_data->rowCount());
+        v->clients_data->setRowCount(0);
+        for (const people::Client &client : manager.listClients) {
+            v->clients_data->insertRow(i);
+            v->clients_data->setItem(i, 0, new QTableWidgetItem(QString::fromStdString(client.email)));
+            v->clients_data->setItem(i, 1, new QTableWidgetItem(QString::fromStdString(client.name)));
+            v->clients_data->setItem(i, 2, new QTableWidgetItem(QString::fromStdString(client.phone)));
+            i++;
         }
-        v->clients_data->update();
         v->clients_data->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
         v->clients_data->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
         v->clients_data->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
@@ -156,6 +155,7 @@ QString RegisterWindow::getPassword() const {
     password_->clear();
     return pass;
 }
+
 LoginWindow::LoginWindow(MainWindow *parent)
         : QWidget(parent) {
 
@@ -281,7 +281,8 @@ ManagersWindow::ManagersWindow(MainWindow *parent) : QWidget(parent) {
 
     if (!ucManagerInfo.managerInfo(manager).empty()) {
         info = new QLabel(
-                QString::fromStdString("Hello" + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)),
+                QString::fromStdString(
+                        "Hello" + manager.name + "!\n You personal info: " + ucManagerInfo.managerInfo(manager)),
                 this);
     } else {
         info = new QLabel("No manager. Error", this);
@@ -413,17 +414,29 @@ void ClientsList::CreateTable(const QStringList &headers) const {
 
 ClientsWindow::ClientsWindow(MainWindow *parent) : QWidget(parent) {
 
-    auto *grid = new QGridLayout(this);
-
     info = new QLabel(QString::fromStdString("Clients info:"), this);
+    auto *delete_button = new QPushButton("Delete this client", this);
 
+    auto *grid = new QGridLayout(this);
     grid->addWidget(info, 0, 0);
-
+    grid->addWidget(delete_button, 1, 0);
     setLayout(grid);
+
+    connect(delete_button, &QPushButton::clicked, this, &ClientsWindow::DeleteClient);
 }
 
-void ClientsWindow::SetInfo(const QString& name, const QString& email, const QString& phone) {
+void ClientsWindow::SetInfo(const QString &name, const QString &email, const QString &phone) {
     info->setText(QString::fromStdString("Clients info:\nName: ") + name +
-                  QString::fromStdString("\nEmail: ")+ email +
-                  QString::fromStdString("\nPhone: ")+ phone);
+                  QString::fromStdString("\nEmail: ") + email +
+                  QString::fromStdString("\nPhone: ") + phone);
+    clients_email = email;
+}
+
+
+void ClientsWindow::DeleteClient() {
+    UseCaseDeleteClient ucDeleteClient(std::make_unique<ClientFileSystem>());
+    ucDeleteClient.deleteClient(clients_email.toStdString(), manager.email);
+    this->close();
+    /*UseCaseDeleteClient ucDeleteClient(unique_ptr<ClientFileSystem>()
+    ucDeleteClient.deleteClient(clientEmail, managerEmail)*/
 }
