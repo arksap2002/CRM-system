@@ -18,56 +18,56 @@ namespace repositories {
     using namespace crm_system;
 
     ManagerDataBase_client::ManagerDataBase_client()
-    : stub_(CRMService::NewStub(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))) {
+            : stub_(CRMService::NewStub(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))) {
     }
 
     ManagerDataBase_client::ManagerDataBase_client(std::shared_ptr<Channel> channel) : stub_(CRMService::NewStub(channel)) {
     }
 
     ClientDataBase_client::ClientDataBase_client()
-    : stub_(CRMService::NewStub(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))) {
+            : stub_(CRMService::NewStub(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))) {
     }
 
     ClientDataBase_client::ClientDataBase_client(std::shared_ptr<Channel> channel): stub_(CRMService::NewStub(channel)) {
     }
 
-namespace {
-    void set_ClientGRPC(ClientGRPC *&clientGrpc, const people::Client &client) {
-        clientGrpc->set_email(client.email);
-        clientGrpc->set_name(client.name);
-        clientGrpc->set_phone(client.phone);
-        clientGrpc->set_dealproduct(client.dealProduct);
-        for (auto &pointProcess : client.dealProcess) {
-            DealProcessGRPC *dealProcessGrpc = clientGrpc->add_dealprocess();
-            dealProcessGrpc->set_title(pointProcess.first);
-            dealProcessGrpc->set_completed(pointProcess.second);
+    namespace {
+        void set_ClientGRPC(ClientGRPC *&clientGrpc, const people::Client &client) {
+            clientGrpc->set_email(client.email);
+            clientGrpc->set_name(client.name);
+            clientGrpc->set_phone(client.phone);
+            clientGrpc->set_dealproduct(client.dealProduct);
+            for (auto &pointProcess : client.dealProcess) {
+                DealProcessGRPC *dealProcessGrpc = clientGrpc->add_dealprocess();
+                dealProcessGrpc->set_title(pointProcess.first);
+                dealProcessGrpc->set_completed(pointProcess.second);
+            }
         }
-    }
 
-    void set_ManagerGRPC(ManagerGRPC *&managerGrpc, const people::Manager &manager) {
-        managerGrpc->set_email(manager.email);
-        managerGrpc->set_password(manager.password);
-        managerGrpc->set_name(manager.name);
-        managerGrpc->set_phone(manager.phone);
-        for (const people::Client &client : manager.listClients) {
-            ClientGRPC *clientGrpc = managerGrpc->add_listclients();
-            set_ClientGRPC(clientGrpc, client);
+        void set_ManagerGRPC(ManagerGRPC *&managerGrpc, const people::Manager &manager) {
+            managerGrpc->set_email(manager.email);
+            managerGrpc->set_password(manager.password);
+            managerGrpc->set_name(manager.name);
+            managerGrpc->set_phone(manager.phone);
+            for (const people::Client &client : manager.listClients) {
+                ClientGRPC *clientGrpc = managerGrpc->add_listclients();
+                set_ClientGRPC(clientGrpc, client);
+            }
+            managerGrpc->set_num_clients(manager.listClients.size());
         }
-        managerGrpc->set_num_clients(manager.listClients.size());
-    }
 
-    void set_people_client(people::Client &client, const ClientGRPC* clientGrpc) {
-        client.email = clientGrpc->email();
-        client.name = clientGrpc->name();
-        client.phone = clientGrpc->phone();
-        client.dealProduct = clientGrpc->dealproduct();
-        client.dealProcess.resize(3);
-        for (int i = 0; i < 3; ++i){
-            client.dealProcess[i].first = clientGrpc->dealprocess(i).title();
-            client.dealProcess[i].second = clientGrpc->dealprocess(i).completed();
+        void set_people_client(people::Client &client, const ClientGRPC& clientGrpc) {
+            client.email = clientGrpc.email();
+            client.name = clientGrpc.name();
+            client.phone = clientGrpc.phone();
+            client.dealProduct = clientGrpc.dealproduct();
+            client.dealProcess.resize(3);
+            for (int i = 0; i < 3; ++i){
+//            client.dealProcess[i].first = clientGrpc->dealprocess(i).title();
+                client.dealProcess[i].second = clientGrpc.dealprocess(i).completed();
+            }
         }
     }
-}
     void ManagerDataBase_client::addManager(const people::Manager &manager) const {
         AddManagerRequest request;
         ManagerGRPC* managerGrpc = new ManagerGRPC();
@@ -89,10 +89,21 @@ namespace {
         request.set_inputemail(inputEmail);
         GetManagerReply reply;
         ClientContext context;
-        std::cout << "Server start getManager\n";
+//        std::cout << "Server start getManager\n";
         Status status = stub_->GetManager(&context, request, &reply);
-        std::cout << "Server finish getManager\n";
-        
+//        std::cout << "Server finish getManager\n";
+        inputManager.email = reply.inputmanager().email();
+        inputManager.password = reply.inputmanager().password();
+        inputManager.name = reply.inputmanager().name();
+        inputManager.phone = reply.inputmanager().phone();
+        inputManager.listClients.resize(reply.inputmanager().num_clients());
+        for (size_t i = 0; i < inputManager.listClients.size(); ++i){
+            inputManager.listClients[i].dealProcess.resize(3);
+            inputManager.listClients[i].dealProcess[0].first = "Connection with client";
+            inputManager.listClients[i].dealProcess[1].first = "Concluding the contract";
+            inputManager.listClients[i].dealProcess[2].first = "Deal is completed";
+            set_people_client(inputManager.listClients[i], reply.inputmanager().listclients(i));
+        }
         if (!status.ok()) {
             throw ManagerException("Server error. Can't get the manager");
         }
@@ -118,6 +129,9 @@ namespace {
     }
 
     void ClientDataBase_client::addClient(const people::Client &client, const std::string &managerEmail) const {
+        for (int i = 0; i < 3; ++i){
+            std::cout << client.dealProcess[i].first << " " << client.dealProcess[i].second << "\n";
+        }
         AddClientRequest request;
         ClientGRPC* clientGrpc = new ClientGRPC();
         set_ClientGRPC(clientGrpc, client);
@@ -160,7 +174,11 @@ namespace {
         }
         manager.listClients.resize(reply.count_clients());
         for (int i = 0; i < reply.count_clients(); ++i){
-            set_people_client(manager.listClients[i], &(reply.listclients(i)));
+            manager.listClients[i].dealProcess.resize(3);
+            manager.listClients[i].dealProcess[0].first = "Connection with client";
+            manager.listClients[i].dealProcess[1].first = "Concluding the contract";
+            manager.listClients[i].dealProcess[2].first = "Deal is completed";
+            set_people_client(manager.listClients[i], reply.listclients(i));
         }
     }
 

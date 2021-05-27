@@ -132,17 +132,17 @@ namespace storageSQL{
     int CrmSystemDataBase::getManager(const GetManagerRequest *request, GetManagerReply *reply){
         try{
             sql::Statement *stmt = con->createStatement();
-//            std::cout << ("SELECT * FROM Managers WHERE email='" + request->inputemail() + "'\n");
+            std::cout << ("SELECT * FROM Managers WHERE email='" + request->inputemail() + "'\n");
             sql::ResultSet *res = stmt->executeQuery("SELECT * FROM Managers WHERE email='" + request->inputemail() + "'");
             if (!res->next()){
                 reply->set_fail(true);
                 throw std::runtime_error("Manager is not exists");
             }
             ManagerGRPC* managerGrpc = new ManagerGRPC();
-            managerGrpc->set_email(res->getString(1));
-            managerGrpc->set_password(res->getString(2));
-            managerGrpc->set_name(res->getString(3));
-            managerGrpc->set_phone(res->getString(4));
+            managerGrpc->set_email(res->getString(2));
+            managerGrpc->set_password(res->getString(3));
+            managerGrpc->set_name(res->getString(4));
+            managerGrpc->set_phone(res->getString(5));
             delete res;
 //            std::string clients_table = make_clients_table(request->inputemail());
             std::cout << ("SELECT count(*) FROM Clients WHERE manager_email='" + request->inputemail() +"'\n");
@@ -155,25 +155,25 @@ namespace storageSQL{
             while(res->next()){
                 std::cout << "make clientGrpc\n";
                 ClientGRPC* clientGrpc = managerGrpc->add_listclients();
-                std::cout << "make email\n";
-                clientGrpc->set_email(res->getString(1));
-                std::cout << "make name\n";
-                clientGrpc->set_name(res->getString(2));
-                std::cout << "make phone\n";
-                clientGrpc->set_phone(res->getString(3));
-                std::cout << "make dealproduct\n";
-                clientGrpc->set_dealproduct(res->getString(4));
-                std::cout << "make dealProcess\n";
+                std::cout << "make email " + res->getString(3) + "\n";
+                clientGrpc->set_email(res->getString(3));
+                std::cout << "make name " + res->getString(4) + "\n";
+                clientGrpc->set_name(res->getString(4));
+                std::cout << "make phone " + res->getString(5) + "\n";
+                clientGrpc->set_phone(res->getString(5));
+                std::cout << "make dealproduct " + res->getString(6) + "\n";
+                clientGrpc->set_dealproduct(res->getString(6));
+                std::cout << "make dealProcess " + res->getString(7) + "\n";
                 for (int i = 0; i < 3; ++i){
                     DealProcessGRPC *dealProcessGrpc = clientGrpc->add_dealprocess();
-                    std::cout << (res->getInt(5) & (1 << i)) << " ";
-                    dealProcessGrpc->set_completed(res->getInt(5) & (1 << i));
+                    std::cout << (res->getInt(7) & (1 << i)) << " ";
+                    dealProcessGrpc->set_completed(res->getInt(7) & (1 << i));
                 }
                 std::cout << "\n";
             }
-            std::cout << "set manager\n";
+//            std::cout << "set manager\n";
             reply->set_allocated_inputmanager(managerGrpc);
-            std::cout << "set_fail\n";
+//            std::cout << "set_fail\n";
             reply->set_fail(false);
             delete res;
 //            std::cout << ("SELECT id FROM Managers WHERE email='" + request->inputemail() + "'\n");
