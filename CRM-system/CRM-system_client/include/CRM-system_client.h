@@ -34,7 +34,7 @@ namespace repositories {
         std::unique_ptr<CRMService::Stub> stub_;
     public:
         ManagerDataBase_client();
-        ManagerDataBase_client(std::shared_ptr<Channel> channel);
+//        ManagerDataBase_client(std::shared_ptr<Channel> channel);
         void addManager(const people::Manager &manager) const override;
         void getManager(people::Manager &inputManager, const std::string &inputEmail) const override;
         [[nodiscard]] bool isCorrectPassword(const std::string &inputEmail, const std::string &inputPassword) const override;
@@ -47,7 +47,7 @@ namespace repositories {
         std::unique_ptr<CRMService::Stub> stub_;
     public:
         ClientDataBase_client();
-        ClientDataBase_client(std::shared_ptr<Channel> channel);
+//        ClientDataBase_client(std::shared_ptr<Channel> channel);
         void addClient(const people::Client &client, const std::string &managerEmail) const override;
         void deleteClient(const std::string &clientEmail, const std::string &managerEmail) const override;
         void updateAllClients(people::Manager &manager) const override;

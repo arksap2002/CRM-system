@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <filesystem>
 
 namespace repositories {
 
@@ -17,19 +18,43 @@ namespace repositories {
 
     using namespace crm_system;
 
-    ManagerDataBase_client::ManagerDataBase_client()
-            : stub_(CRMService::NewStub(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))) {
+    namespace{
+        namespace fs = std::filesystem;
+
+        std::string get_hosts_client(){
+            std::string path = fs::current_path();
+            path += "/hosts_dir";
+            if (!fs::exists(path)) { fs::create_directory(path); }
+            if (!fs::exists(path + "/client_host")){
+                std::ofstream out(path + "/client_host");
+                out << "localhost:50051";
+                out.close();
+            }
+            std::ifstream in(path + "/client_host");
+            std::string host;
+            getline(in, host);
+            in.close();
+            return host;
+        }
     }
 
-    ManagerDataBase_client::ManagerDataBase_client(std::shared_ptr<Channel> channel) : stub_(CRMService::NewStub(channel)) {
+    ManagerDataBase_client::ManagerDataBase_client()
+    /*: stub_(CRMService::NewStub(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials())))*/ {
+        std::string host = get_hosts_client();
+        stub_ = CRMService::NewStub(grpc::CreateChannel(host, grpc::InsecureChannelCredentials()));
     }
+
+//    ManagerDataBase_client::ManagerDataBase_client(std::shared_ptr<Channel> channel) : stub_(CRMService::NewStub(channel)) {
+//    }
 
     ClientDataBase_client::ClientDataBase_client()
-            : stub_(CRMService::NewStub(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()))) {
+    /*: stub_(CRMService::NewStub(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials())))*/ {
+        std::string host = get_hosts_client();
+        stub_ = CRMService::NewStub(grpc::CreateChannel(host, grpc::InsecureChannelCredentials()));
     }
 
-    ClientDataBase_client::ClientDataBase_client(std::shared_ptr<Channel> channel): stub_(CRMService::NewStub(channel)) {
-    }
+//    ClientDataBase_client::ClientDataBase_client(std::shared_ptr<Channel> channel): stub_(CRMService::NewStub(channel)) {
+//    }
 
     namespace {
         void set_ClientGRPC(ClientGRPC *&clientGrpc, const people::Client &client) {
@@ -78,6 +103,9 @@ namespace repositories {
 //        std::cout << "Server start addManager\n";
         Status status = stub_->AddManager(&context, request, &reply);
 //        std::cout << "Server finish addManager\n";
+        if (reply.fail()){
+            throw ManagerException("Such user already exists");
+        }
         if (!status.ok()) {
             throw ManagerException("Server error. Can't add the manager");
         }
@@ -91,6 +119,9 @@ namespace repositories {
         ClientContext context;
 //        std::cout << "Server start getManager\n";
         Status status = stub_->GetManager(&context, request, &reply);
+        if (reply.fail()){
+            throw ManagerException("Such user is not exists");
+        }
 //        std::cout << "Server finish getManager\n";
         inputManager.email = reply.inputmanager().email();
         inputManager.password = reply.inputmanager().password();
@@ -118,6 +149,9 @@ namespace repositories {
 //        std::cout << "Server start isCorrectPassword\n";
         Status status = stub_->IsCorrectPassword(&context, request, &reply);
 //        std::cout << "Server finish isCorrectPassword\n";
+        if (reply.fail()){
+            throw ManagerException("Such user is not exists");
+        }
         if (!status.ok()) {
             throw ManagerException("Server error. Can't check the password");
         }
@@ -142,6 +176,9 @@ namespace repositories {
 //        std::cout << "Server start add client\n";
         Status status = stub_->AddClient(&context, request, &reply);
 //        std::cout << "Server finish add client\n";
+        if (reply.fail()){
+            throw ClientException("Such client already exists");
+        }
         if (!status.ok()) {
             throw ClientException("Server error. Can't add the client");
         }
@@ -156,6 +193,9 @@ namespace repositories {
 //        std::cout << "Server start deleteClient\n";
         Status status = stub_->DeleteClient(&context, request, &reply);
 //        std::cout << "Server finish deleteClient\n";
+        if (reply.fail()){
+            throw ClientException("Such client is not exists");
+        }
         if (!status.ok()) {
             throw ClientException("Server error. Can't delete the client");
         }
@@ -169,6 +209,9 @@ namespace repositories {
 //        std::cout << "Server start updateAllClients\n";
         Status status = stub_->UpdateAllClients(&context, request, &reply);
 //        std::cout << "Server finish updateAllClients\n";
+        if (reply.fail()){
+            throw ClientException("Can not update clients");
+        }
         if (!status.ok()) {
             throw ClientException("Server error. Can't update all clients");
         }
