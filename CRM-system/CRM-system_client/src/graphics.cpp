@@ -29,7 +29,7 @@ void redraw(QWidget *page) {
             d->manager_name->update();
         }
     } else if (auto *k = dynamic_cast<ManagersWindow *>(page); k != nullptr) {
-        UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerFileSystem>());
+        UseCaseManagerInfo ucManagerInfo(std::make_unique<ManagerDataBase_client>());
         if (!manager.name.empty()) {
             k->info->setText(
                     QString::fromStdString(
@@ -432,11 +432,8 @@ void ClientsWindow::SetInfo(const QString &name, const QString &email, const QSt
     clients_email = email;
 }
 
-
 void ClientsWindow::DeleteClient() {
-    UseCaseDeleteClient ucDeleteClient(std::make_unique<ClientFileSystem>());
+    UseCaseDeleteClient ucDeleteClient(unique_ptr<ClientDataBase_client>());
     ucDeleteClient.deleteClient(clients_email.toStdString(), manager.email);
     this->close();
-    /*UseCaseDeleteClient ucDeleteClient(unique_ptr<ClientFileSystem>()
-    ucDeleteClient.deleteClient(clientEmail, managerEmail)*/
 }
