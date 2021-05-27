@@ -83,8 +83,9 @@ message AddClientRequest {
 message AddClientReply {
     int64 managerId = 1;
     int64 clientId = 2;
-    bool fail_table = 3;
-    bool fail_client = 4;
+//    bool fail_table = 3;
+//    bool fail_client = 4;
+    bool fail = 3;
 }
 
 message DeleteClientRequest {
@@ -96,8 +97,9 @@ message DeleteClientReply {
     // ???
     int64 managerId = 1;
     int64 clientId = 2;
-    bool fail_table = 3;
-    bool fail_client = 4;
+//    bool fail_table = 3;
+//    bool fail_client = 4;
+    bool fail = 3;
 }
 
 message UpdateAllClientsRequest {
