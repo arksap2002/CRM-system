@@ -18,18 +18,18 @@ namespace storageSQL{
 //        std::cout << ", SQLState: " << e.getSQLState() << " )" << std::endl;
 //    }
 
-    std::string make_clients_table(const std::string& email){
-        std::string clients_table = "Clients_" + email;
-        for (char x : {'@', '.', ' '}){
-            std::size_t found = clients_table.find(x);
-            while (found != std::string::npos){
-                clients_table[found] = 'a';
-                found = clients_table.find(x);
-            }
-        }
-        return clients_table;
-    }
-
+//    std::string make_clients_table(const std::string& email){
+//        std::string clients_table = "Clients_" + email;
+//        for (char x : {'@', '.', ' '}){
+//            std::size_t found = clients_table.find(x);
+//            while (found != std::string::npos){
+//                clients_table[found] = 'a';
+//                found = clients_table.find(x);
+//            }
+//        }
+//        return clients_table;
+//    }
+//
     CrmSystemDataBase::CrmSystemDataBase() {
         try{
             driver = get_driver_instance();
@@ -77,7 +77,8 @@ namespace storageSQL{
                 delete res;
                 delete stmt;
                 reply->set_fail(true);
-                throw std::runtime_error("Manager already exists");
+//                throw std::runtime_error("Manager already exists");
+                return -1;
             }
             stmt->execute("INSERT INTO Managers(email, password, name, phone) VALUES('"
                  + request->manager().email() + "', '"
@@ -132,7 +133,7 @@ namespace storageSQL{
     int CrmSystemDataBase::getManager(const GetManagerRequest *request, GetManagerReply *reply){
         try{
             sql::Statement *stmt = con->createStatement();
-            std::cout << ("SELECT * FROM Managers WHERE email='" + request->inputemail() + "'\n");
+//            std::cout << ("SELECT * FROM Managers WHERE email='" + request->inputemail() + "'\n");
             sql::ResultSet *res = stmt->executeQuery("SELECT * FROM Managers WHERE email='" + request->inputemail() + "'");
             if (!res->next()){
                 reply->set_fail(true);
@@ -145,31 +146,31 @@ namespace storageSQL{
             managerGrpc->set_phone(res->getString(5));
             delete res;
 //            std::string clients_table = make_clients_table(request->inputemail());
-            std::cout << ("SELECT count(*) FROM Clients WHERE manager_email='" + request->inputemail() +"'\n");
+//            std::cout << ("SELECT count(*) FROM Clients WHERE manager_email='" + request->inputemail() +"'\n");
 //            res = stmt->executeQuery("SELECT count(*) FROM " + clients_table);
             res = stmt->executeQuery("SELECT count(*) FROM Clients WHERE manager_email='" + request->inputemail() +"'");
             res->next(); managerGrpc->set_num_clients(res->getInt(1)); delete res;
 //            std::cout << ("SELECT * FROM " + clients_table + "\n");
-            std::cout << ("SELECT * FROM Clients WHERE manager_email='" + request->inputemail() +"'\n");
+//            std::cout << ("SELECT * FROM Clients WHERE manager_email='" + request->inputemail() +"'\n");
             res = stmt->executeQuery("SELECT * FROM Clients WHERE manager_email='" + request->inputemail() + "'");
             while(res->next()){
-                std::cout << "make clientGrpc\n";
+//                std::cout << "make clientGrpc\n";
                 ClientGRPC* clientGrpc = managerGrpc->add_listclients();
-                std::cout << "make email " + res->getString(3) + "\n";
+//                std::cout << "make email " + res->getString(3) + "\n";
                 clientGrpc->set_email(res->getString(3));
-                std::cout << "make name " + res->getString(4) + "\n";
+//                std::cout << "make name " + res->getString(4) + "\n";
                 clientGrpc->set_name(res->getString(4));
-                std::cout << "make phone " + res->getString(5) + "\n";
+//                std::cout << "make phone " + res->getString(5) + "\n";
                 clientGrpc->set_phone(res->getString(5));
-                std::cout << "make dealproduct " + res->getString(6) + "\n";
+//                std::cout << "make dealproduct " + res->getString(6) + "\n";
                 clientGrpc->set_dealproduct(res->getString(6));
-                std::cout << "make dealProcess " + res->getString(7) + "\n";
+//                std::cout << "make dealProcess " + res->getString(7) + "\n";
                 for (int i = 0; i < 3; ++i){
                     DealProcessGRPC *dealProcessGrpc = clientGrpc->add_dealprocess();
-                    std::cout << (res->getInt(7) & (1 << i)) << " ";
+//                    std::cout << (res->getInt(7) & (1 << i)) << " ";
                     dealProcessGrpc->set_completed(res->getInt(7) & (1 << i));
                 }
-                std::cout << "\n";
+//                std::cout << "\n";
             }
 //            std::cout << "set manager\n";
             reply->set_allocated_inputmanager(managerGrpc);
@@ -196,7 +197,8 @@ namespace storageSQL{
             sql::ResultSet *res = stmt->executeQuery("SELECT password FROM Managers WHERE email='" + request->inputemail() + "'");
             if(!res->next()){
                 reply->set_fail(true);
-                throw std::runtime_error("Can not find Manager");
+//                throw std::runtime_error("Can not find Manager");
+                return -1;
             }
             reply->set_fail(false);
             reply->set_find(res->getString(1) == request->inputpassword());
@@ -233,7 +235,8 @@ namespace storageSQL{
                                                      + "' AND email='" + request->client().email() + "'");
             if (res->next()){
                 reply->set_fail(true);
-                throw std::runtime_error("Client already exists");
+//                throw std::runtime_error("Client already exists");
+                return -1;
             }
             reply->set_fail(false);
             delete res;
@@ -287,7 +290,8 @@ namespace storageSQL{
                                                     + "' AND email='" + request->clientemail() + "'");
             if (!res->next()){
                 reply->set_fail(true);
-                throw std::runtime_error("Client is not exists");
+//                throw std::runtime_error("Client is not exists");
+                return -1;
             }
             reply->set_fail(false);
             delete res;

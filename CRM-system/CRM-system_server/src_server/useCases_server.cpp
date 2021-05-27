@@ -38,12 +38,12 @@ namespace useCasesServer{
     int UseCaseServerGetManager::getManager(const GetManagerRequest *request, GetManagerReply *reply) const {
         int id = 0;
         try{
-            std::cout << "UseCase start getManager\n";
+//            std::cout << "UseCase start getManager\n";
             id = database->getManager(request, reply);
-            std::cout << "UseCase finish getManager\n";
-            if (reply->fail()){
-                std::cout << "Can not get manager\n";
-            }
+//            std::cout << "UseCase finish getManager\n";
+//            if (reply->fail()){
+//                std::cout << "Can not get manager\n";
+//            }
 //            for (int i = 0; i < reply->inputmanager().num_clients(); ++i){
 //                reply->inputmanager().listclients(i).dealprocess(0).set_title("Connection with client");
 //                reply->inputmanager().listclients(i).dealprocess(1).set_title("Concluding the contract");
@@ -62,9 +62,9 @@ namespace useCasesServer{
 //            std::cout << "UseCase start isCorrectPassword\n";
             id = database->isCorrectPassword(request, reply);
 //            std::cout << "UseCase finish isCorrectPassword\n";
-            if (reply->fail()){
-                std::cout << "Can not check password\n";
-            }
+//            if (reply->fail()){
+//                std::cout << "Can not check password\n";
+//            }
         }
         catch(const std::runtime_error& e){
             std::cout << e.what() << std::endl;
@@ -78,9 +78,9 @@ namespace useCasesServer{
 //            std::cout << "UseCase start addClient\n";
             id = database->addClient(request, reply);
 //            std::cout << "UseCase finish addClient\n";
-            if (reply->fail()){
-                std::cout << "Can not add client\n";
-            }
+//            if (reply->fail()){
+//                std::cout << "Can not add client\n";
+//            }
         }
         catch(const std::runtime_error& e){
             std::cout << e.what() << std::endl;
@@ -94,9 +94,9 @@ namespace useCasesServer{
 //            std::cout << "UseCase start deleteClient\n";
             id = database->deleteClient(request, reply);
 //            std::cout << "UseCase start deleteClient\n";
-            if (reply->fail()){
-                std::cout << "Can not delete client\n";
-            }
+//            if (reply->fail()){
+//                std::cout << "Can not delete client\n";
+//            }
         }
         catch(const std::runtime_error& e){
             std::cout << e.what() << std::endl;
@@ -110,9 +110,9 @@ namespace useCasesServer{
 //            std::cout << "UseCase start updateAllClients\n";
             id = database->updateAllClients(request, reply);
 //            std::cout << "UseCase finish updateAllClient\n";
-            if (reply->fail()){
-                std::cout << "Can not update all clients\n";
-            }
+//            if (reply->fail()){
+//                std::cout << "Can not update all clients\n";
+//            }
         }
         catch(const std::runtime_error& e){
             std::cout << e.what() << std::endl;
