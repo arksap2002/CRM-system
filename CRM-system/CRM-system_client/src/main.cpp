@@ -8,7 +8,7 @@ using namespace people;
 using namespace repositories;
 using namespace useCases;
 
-// TODO email sending add
+// TODO fix registation
 void LoginWindow::LoginManager() {
 
     std::string email, password;
@@ -99,3 +99,4 @@ int main(int argc, char *argv[]) {
     main_window.show();
     return app.exec();
 }
+
