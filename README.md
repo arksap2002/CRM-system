@@ -8,7 +8,7 @@
 
 ## Компиляция
 0) `sudo apt update`
-1) распаковать `.zip' файл c библиотекой `grpc`
+1) распаковать `.zip` файл c библиотекой `grpc`
 2) далее выполнить следующие команды:
 ```
 cd grpc
@@ -21,7 +21,7 @@ cd grpc
     make -j${NUM_JOBS}
     make install
 ```
-3) скачать `boost`: ``
+3) скачать `boost`: `sudo apt-get install libboost-all-dev`
 4) скачать `mysql`: `sudo apt install libmysqlcppconn-dev`
 5) в первом окне терминала написать следующие команды:
 ```
