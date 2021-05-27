@@ -89,9 +89,10 @@ namespace {
         request.set_inputemail(inputEmail);
         GetManagerReply reply;
         ClientContext context;
-//        std::cout << "Server start getManager\n";
+        std::cout << "Server start getManager\n";
         Status status = stub_->GetManager(&context, request, &reply);
-//        std::cout << "Server finish getManager\n";
+        std::cout << "Server finish getManager\n";
+        
         if (!status.ok()) {
             throw ManagerException("Server error. Can't get the manager");
         }
