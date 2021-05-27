@@ -18,14 +18,25 @@ void redraw(QWidget *page);
 class MainWindow : public QWidget {
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+
     QStackedWidget *stackedWidget = new QStackedWidget;
+
     void ChangeToStart() const;
+
     void ChangeToLogIn() const;
+
     void ChangeToRegister() const;
+
     void ChangeToGeneral() const;
+
     void ChangeToInfo() const;
+
     void ChangeToClientsList() const;
+
     void ChangeToAddClients() const;
+
+    void UpdateClientsList() const;
+
     void SetManager(const people::Manager &);
 };//главное окно, куда я добавляю в стек все окна
 
@@ -33,6 +44,7 @@ class ErrorWindow : public QWidget {
     Q_OBJECT
 public:
     [[maybe_unused]] explicit ErrorWindow(QWidget *parent = nullptr);
+
     QLabel *errinfo;
 };//окно с сообщением о ошибке
 
@@ -48,26 +60,38 @@ class LoginWindow : public QWidget {
     Q_OBJECT
 public:
     explicit LoginWindow(MainWindow *parent = nullptr);
+
     [[nodiscard]] QString getEmail() const;
+
     [[nodiscard]] QString getPassword() const;
+
     QLineEdit *email_;
     QLineEdit *password_;
     QLabel *logininfo;
+
     void LoginManager();
+
     ErrorWindow error_window_login;
 };//окно где новый пользователь входит в систему
 
 class RegisterWindow : public QWidget {
     Q_OBJECT
 
-            MainWindow *mainwind;
+            MainWindow
+    *
+    mainwind;
 
 public:
     explicit RegisterWindow(MainWindow *parent = nullptr);
+
     [[nodiscard]] QString getName() const;
+
     [[nodiscard]] QString getPhone() const;
+
     [[nodiscard]] QString getEmail() const;
+
     [[nodiscard]] QString getPassword() const;
+
     QLineEdit *email_;
     QLineEdit *name_;
     QLineEdit *phone_;
@@ -76,6 +100,7 @@ public:
 
 private:
     void RegisterManager();
+
     QLabel *reginfo;
 
 };//окно регистрации нового пользователя
@@ -84,7 +109,9 @@ class AddClientsWindow : public QWidget {
 
 public:
     explicit AddClientsWindow(MainWindow *parent = nullptr);
+
     void AddClient() const;
+
     QLineEdit *email_;
     QLineEdit *phone_;
     QLineEdit *name_;
@@ -99,10 +126,13 @@ class ClientsList : public QWidget {
 
 public:
     explicit ClientsList(MainWindow *parent = nullptr);
+
     QGridLayout *grid;
     //ClientsWindow *clients_window;
     QTableWidget *clients_data = new QTableWidget(this);
+
     void CreateTable(const QStringList &headers) const;
+
     void OpenClientsWindow(const QModelIndex &index);
 
 };//окно со списком клиентов
@@ -112,8 +142,13 @@ class ClientsWindow : public QWidget {
 
 public:
     QLabel *info;
+    QString clients_email;
+
     explicit ClientsWindow(MainWindow *parent = nullptr);
-    void SetInfo(const QString& name, const QString& email, const QString& phone);
+
+    void SetInfo(const QString &name, const QString &email, const QString &phone);
+
+    void DeleteClient();
 
 };//карточка клиента
 
@@ -122,6 +157,7 @@ class ManagersWindow : public QWidget {
 
 public:
     QLabel *info;
+
     explicit ManagersWindow(MainWindow *parent = nullptr);
 
 };//окно менеджера
@@ -131,6 +167,7 @@ class GeneralWindow : public QWidget {
 
 public:
     explicit GeneralWindow(MainWindow *parent = nullptr);
+
     QLabel *manager_name;
     QGridLayout *grid;
 
