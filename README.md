@@ -12,14 +12,14 @@
 2) далее выполнить следующие команды:
 ```
 cd grpc
-    mkdir -p cmake/build
-    cd cmake/build
-    cmake -DgRPC_INSTALL=ON \
-        -DgRPC_BUILD_TESTS=OFF \
-        -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR \
-        ../..
-    make -j${NUM_JOBS}
-    make install
+mkdir -p cmake/build
+cd cmake/build
+cmake -DgRPC_INSTALL=ON \
+    -DgRPC_BUILD_TESTS=OFF \
+    -DCMAKE_INSTALL_PREFIX=$MY_INSTALL_DIR \
+    ../..
+make -j${NUM_JOBS}
+make install
 ```
 3) скачать `boost`: `sudo apt-get install libboost-all-dev`
 4) скачать `mysql`: `sudo apt install libmysqlcppconn-dev`

@@ -38,3 +38,4 @@ CRM_system.cbp
 Makefile
 CRM_system_autogen/
 CMakeCache.txt
+build/

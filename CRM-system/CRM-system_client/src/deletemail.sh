@@ -2,9 +2,9 @@
 
 > mail.txt
 
-echo "From: \"CRM system HSE\" <crmsystemhse@gmail.com>" >> mail.txt
+echo "From: \"High CRM\" <crmsystemhse@gmail.com>" >> mail.txt
 echo "To: \"$1\" <$2>" >> mail.txt
-echo "Subject: Registration in CRM system HSE
+echo "Subject: Registration in High CRM
 
 Hi $1,
 your account in the High CRM was successfully deleted!
