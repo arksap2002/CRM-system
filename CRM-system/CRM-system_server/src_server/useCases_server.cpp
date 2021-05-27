@@ -38,9 +38,9 @@ namespace useCasesServer{
     int UseCaseServerGetManager::getManager(const GetManagerRequest *request, GetManagerReply *reply) const {
         int id = 0;
         try{
-//            std::cout << "UseCase start getManager\n";
+            std::cout << "UseCase start getManager\n";
             id = database->getManager(request, reply);
-//            std::cout << "UseCase finish getManager\n";
+            std::cout << "UseCase finish getManager\n";
             if (reply->fail()){
                 std::cout << "Can not get manager\n";
             }
@@ -78,7 +78,7 @@ namespace useCasesServer{
 //            std::cout << "UseCase start addClient\n";
             id = database->addClient(request, reply);
 //            std::cout << "UseCase finish addClient\n";
-            if (reply->fail_table() || reply->fail_client()){
+            if (reply->fail()){
                 std::cout << "Can not add client\n";
             }
         }
@@ -94,7 +94,7 @@ namespace useCasesServer{
 //            std::cout << "UseCase start deleteClient\n";
             id = database->deleteClient(request, reply);
 //            std::cout << "UseCase start deleteClient\n";
-            if (reply->fail_table() || reply->fail_client()){
+            if (reply->fail()){
                 std::cout << "Can not delete client\n";
             }
         }
