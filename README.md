@@ -8,7 +8,7 @@
 
 ## Компиляция
 0) `sudo apt update`
-1) распаковать `.zip` файл c библиотекой `grpc`
+1) распаковать `.zip` файл c библиотекой `grpc` [here](https://drive.google.com/file/d/1MDRKG8vkr3LXCggyRoUdm_LzW-30a8an/view?usp=sharing).
 2) далее выполнить следующие команды:
 ```
 cd grpc
