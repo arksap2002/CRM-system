@@ -405,10 +405,11 @@ void ClientsList::OpenClientsWindow(const QModelIndex &index) {
     QString email = clients_data->item(row, 0)->text();
     QString name = clients_data->item(row, 1)->text();
     QString phone = clients_data->item(row, 2)->text();
+    auto &client = manager.listClients[row];
     auto *wind = new ClientsWindow;
     wind->SetParent(this);
-    wind->SetInfo(name, email, phone);
-    wind->resize(500, 500);
+    wind->SetInfo(name, email, phone, client);
+    wind->resize(600, 600);
     wind->setWindowTitle("Clients info");
     wind->show();
 }
@@ -440,10 +441,19 @@ ClientsWindow::ClientsWindow(MainWindow *parent) : QWidget(parent) {
     connect(delete_button, &QPushButton::clicked, this, &ClientsWindow::DeleteClient);
 }
 
-void ClientsWindow::SetInfo(const QString &name, const QString &email, const QString &phone) {
+void ClientsWindow::SetInfo(const QString &name, const QString &email, const QString &phone, people::Client &client) {
+    UseCaseGetDealProcess ucGetDealProcess(std::make_unique<ClientDataBase_client>());
+    std::vector <std::string> ans = ucGetDealProcess.getDealProcess(client);
     info->setText(QString::fromStdString("Clients info:\nName: ") + name +
                   QString::fromStdString("\nEmail: ") + email +
-                  QString::fromStdString("\nPhone: ") + phone);
+                  QString::fromStdString("\nPhone: ") + phone +
+                  QString::fromStdString("\n" + ans[0].substr(0, ans[0].size() - 2) +
+                                         ((ans[0][ans[0].size() - 1] == '0') ? ": incomplete" : ": complete") + "\n" +
+                                         ans[1].substr(0, ans[1].size() - 2) +
+                                         ((ans[1][ans[1].size() - 1] == '0') ? ": incomplete" : ": complete") + "\n" +
+                                         ans[2].substr(0, ans[2].size() - 2) +
+                                         ((ans[2][ans[2].size() - 1] == '0') ? ": incomplete" : ": complete")));
+
     clients_email = email;
 }
 

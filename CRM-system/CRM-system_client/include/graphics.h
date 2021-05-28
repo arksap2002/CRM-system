@@ -147,7 +147,7 @@ public:
 
     explicit ClientsWindow(MainWindow *parent = nullptr);
 
-    void SetInfo(const QString &name, const QString &email, const QString &phone);
+    void SetInfo(const QString &name, const QString &email, const QString &phone, people::Client &client);
 
     void SetParent(ClientsList *to_redraw_);
 
