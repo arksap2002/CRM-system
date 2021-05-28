@@ -129,7 +129,6 @@ public:
     explicit ClientsList(MainWindow *parent = nullptr);
 
     QGridLayout *grid;
-    //ClientsWindow *clients_window;
     QTableWidget *clients_data = new QTableWidget(this);
 
     void CreateTable(const QStringList &headers) const;
@@ -144,10 +143,13 @@ class ClientsWindow : public QWidget {
 public:
     QLabel *info;
     QString clients_email;
+    ClientsList *to_redraw;
 
     explicit ClientsWindow(MainWindow *parent = nullptr);
 
     void SetInfo(const QString &name, const QString &email, const QString &phone);
+
+    void SetParent(ClientsList *to_redraw_);
 
     void DeleteClient();
 

@@ -345,7 +345,8 @@ AddClientsWindow::AddClientsWindow(MainWindow *parent) : QWidget(parent) {
 
 void AddClientsWindow::AddClient() {
     try {
-        if (email_->text().toStdString().empty() || name_->text().toStdString().empty() || phone_->text().toStdString().empty() || deal_product_->text().toStdString().empty()) {
+        if (email_->text().toStdString().empty() || name_->text().toStdString().empty() ||
+            phone_->text().toStdString().empty() || deal_product_->text().toStdString().empty()) {
             throw std::logic_error("empty");
         }
     } catch (...) {
@@ -405,6 +406,7 @@ void ClientsList::OpenClientsWindow(const QModelIndex &index) {
     QString name = clients_data->item(row, 1)->text();
     QString phone = clients_data->item(row, 2)->text();
     auto *wind = new ClientsWindow;
+    wind->SetParent(this);
     wind->SetInfo(name, email, phone);
     wind->resize(500, 500);
     wind->setWindowTitle("Clients info");
@@ -450,5 +452,10 @@ void ClientsWindow::DeleteClient() {
     ucDeleteClient.deleteClient(clients_email.toStdString(), manager.email);
     UseCaseUpdateAllClients ucUpdateAllClients(std::make_unique<ClientDataBase_client>());
     ucUpdateAllClients.updateAllClients(manager);
+    ::redraw(to_redraw);
     this->close();
+}
+
+void ClientsWindow::SetParent(ClientsList *to_redraw_) {
+    to_redraw = to_redraw_;
 }
