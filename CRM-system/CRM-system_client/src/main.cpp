@@ -62,7 +62,7 @@ void RegisterWindow::RegisterManager() {
         UseCaseAddManager ucAddManager(std::make_unique<ManagerDataBase_client>());
         ucAddManager.addManager(manager);
         mainwind->SetManager(manager);
-        system(("./CRM-system/CRM-system_client/src/sendmail.sh " +  name + " " + email).c_str());
+        //system(("./CRM-system/CRM-system_client/src/sendmail.sh " +  name + " " + email).c_str());
         mainwind->ChangeToGeneral();
     } catch (...) {
         error_window_register.resize(1000, 1000);

@@ -58,7 +58,7 @@ namespace useCases {
 
     void UseCaseDeleteClient::deleteClient(const std::string &client_email, const std::string &managerEmail) const {
         try {
-            return clientRepository->deleteClient(client_email, managerEmail);
+            clientRepository->deleteClient(client_email, managerEmail);
         } catch (const repositories::FileNotExists &fileNotExists) {
             throw fileNotExists;
         }

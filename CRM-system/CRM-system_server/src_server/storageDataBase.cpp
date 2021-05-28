@@ -236,13 +236,13 @@ namespace storageSQL{
                                      + request->manageremail() +"'");
             while(res->next()){
                 ClientGRPC *clientGrpc = reply->add_listclients();
-                clientGrpc->set_email(res->getString(1));
-                clientGrpc->set_name(res->getString(2));
-                clientGrpc->set_phone(res->getString(3));
-                clientGrpc->set_dealproduct(res->getString(4));
+                clientGrpc->set_email(res->getString(3));
+                clientGrpc->set_name(res->getString(4));
+                clientGrpc->set_phone(res->getString(5));
+                clientGrpc->set_dealproduct(res->getString(6));
                 for (int i = 0; i < 3; ++i){
                     DealProcessGRPC *dealProcessGrpc = clientGrpc->add_dealprocess();
-                    dealProcessGrpc->set_completed(res->getInt(5) & (1 << i));
+                    dealProcessGrpc->set_completed(res->getInt(7) & (1 << i));
                 }
             }
             res = stmt->executeQuery("SELECT id FROM Managers WHERE email='" + request->manageremail() + "'");

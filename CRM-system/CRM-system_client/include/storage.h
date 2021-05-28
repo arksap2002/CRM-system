@@ -5,6 +5,8 @@
 
 namespace repositories {
 
+//    struct ManagerException
+
     struct ManagerRepository {
         virtual void addManager(const people::Manager &manager) const = 0;
         virtual void getManager(people::Manager &inputManager, const std::string &inputEmail) const = 0;
