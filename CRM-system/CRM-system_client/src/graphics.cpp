@@ -310,7 +310,7 @@ AddClientsWindow::AddClientsWindow(MainWindow *parent) : QWidget(parent) {
     name->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     auto *phone = new QLabel("Input phone:", this);
     phone->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    auto *deal_product = new QLabel("Input deal_product:", this);
+    auto *deal_product = new QLabel("Input deal product:", this);
     deal_product->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     email_ = new QLineEdit(this);
