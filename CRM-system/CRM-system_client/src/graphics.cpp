@@ -433,7 +433,8 @@ void ClientsWindow::SetInfo(const QString &name, const QString &email, const QSt
 }
 
 void ClientsWindow::DeleteClient() {
-    UseCaseDeleteClient ucDeleteClient(std::unique_ptr<ClientDataBase_client>());
+//    UseCaseDeleteClient ucDeleteClient(std::unique_ptr<ClientDataBase_client>());
+    UseCaseDeleteClient ucDeleteClient(std::make_unique<ClientDataBase_client>());
     ucDeleteClient.deleteClient(clients_email.toStdString(), manager.email);
     this->close();
 }
