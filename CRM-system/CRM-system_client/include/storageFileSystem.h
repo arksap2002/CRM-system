@@ -4,14 +4,12 @@
 
 namespace repositories {
 
-    struct FileExists : std::exception {
-//        static std::string get_name();
-        FileExists() = default;
+    struct FileExists : StorageException {
+        FileExists();
     };
 
-    struct FileNotExists : std::exception {
-//        static std::string get_name();
-        FileNotExists() = default;
+    struct FileNotExists : StorageException{
+        FileNotExists();
     };
 
     struct ManagerFileSystem : ManagerRepository {

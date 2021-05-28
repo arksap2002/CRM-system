@@ -3,6 +3,11 @@
 #include <filesystem>
 
 namespace repositories {
+
+    FileExists::FileExists() : StorageException("File already exists") {}
+
+    FileNotExists::FileNotExists() : StorageException("File is not exists") {}
+
     namespace {
         namespace fs = std::filesystem;
         std::string RESOURCES = "resources";

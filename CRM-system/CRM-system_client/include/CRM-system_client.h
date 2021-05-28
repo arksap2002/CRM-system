@@ -21,12 +21,20 @@ namespace repositories {
 
     using namespace crm_system;
 
+    struct DataExistsException : StorageException{
+        explicit DataExistsException(const std::string& arg);
+    };
+
+    struct DataNotExistsException : StorageException{
+        explicit DataNotExistsException(const std::string& arg);
+    };
+
     struct ManagerException : std::runtime_error{
-        ManagerException(const std::string& arg);
+        explicit ManagerException(const std::string& arg);
     };
 
     struct ClientException : std::runtime_error{
-        ClientException(const std::string& arg);
+        explicit ClientException(const std::string& arg);
     };
 
     struct ManagerDataBase_client : ManagerRepository {

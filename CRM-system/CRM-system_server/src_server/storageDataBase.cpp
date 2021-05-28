@@ -228,7 +228,14 @@ namespace storageSQL{
     int CrmSystemDataBase::updateAllClients(const UpdateAllClientsRequest *request, UpdateAllClientsReply *reply){
         try{
             sql::Statement *stmt = con->createStatement();
-            sql::ResultSet *res = stmt->executeQuery("SELECT count(*) FROM Clients WHERE manager_email='"
+            sql::ResultSet *res = stmt->executeQuery("SELECT * FROM Managers WHERE email='" + request->manageremail() + "'");
+            if (!res->next()){
+                reply->set_fail(true);
+                throw std::runtime_error("Manager is not exists");
+            }
+            reply->set_fail(false);
+
+            res = stmt->executeQuery("SELECT count(*) FROM Clients WHERE manager_email='"
                                                      + request->manageremail() +"'");
             res->next(); reply->set_count_clients(res->getInt(1));
             delete res;

@@ -2,10 +2,13 @@
 #define CRM_SYSTEM_STORAGE_H
 
 #include "people.h"
+#include <stdexcept>
 
 namespace repositories {
 
-//    struct ManagerException
+    struct StorageException : std::runtime_error{
+        explicit StorageException(const std::string& arg);
+    };
 
     struct ManagerRepository {
         virtual void addManager(const people::Manager &manager) const = 0;

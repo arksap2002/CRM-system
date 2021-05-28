@@ -1,4 +1,9 @@
 #include "useCases.h"
+#include "storage.h"
+
+namespace repositories{
+    StorageException::StorageException(const std::string& arg) : std::runtime_error(arg){}
+};
 
 namespace useCases {
     UseCaseAddManager::UseCaseAddManager(std::unique_ptr<repositories::ManagerRepository> managerRepository_)
@@ -8,8 +13,12 @@ namespace useCases {
     void UseCaseAddManager::addManager(const people::Manager &manager) const {
         try {
             managerRepository->addManager(manager);
-        } catch (const repositories::FileExists &fileExists) {
-            throw fileExists;
+        } catch (const repositories::StorageException &e) {
+            std::cout << "Data exception: " << e.what() << "\n";
+            throw e;
+        } catch (const std::runtime_error &e){
+            std::cout << "DataBase exception: " << e.what() << "\n";
+            throw e;
         }
     }
 
@@ -28,8 +37,12 @@ namespace useCases {
     bool UseCaseIsCorrectPassword::isCorrectPassword(const std::string &input_email, const std::string &input_password) const {
         try {
             return managerRepository->isCorrectPassword(input_email, input_password);
-        } catch (const repositories::FileNotExists &fileNotExists) {
-            throw fileNotExists;
+        } catch (const repositories::StorageException &e) {
+            std::cout << "Data exception: " << e.what() << "\n";
+            throw e;
+        } catch (const std::runtime_error &e){
+            std::cout << "DataBase exception: " << e.what() << "\n";
+            throw e;
         }
     }
     UseCaseManagerInfo::UseCaseManagerInfo(std::unique_ptr<repositories::ManagerRepository> managerRepository_)
@@ -47,8 +60,12 @@ namespace useCases {
         try {
             clientRepository->addClient(client, manager.email);
             manager.listClients.push_back(client);
-        } catch (const repositories::FileExists &fileExists) {
-            throw fileExists;
+        } catch (const repositories::StorageException &e) {
+            std::cout << "Data exception: " << e.what() << "\n";
+            throw e;
+        } catch (const std::runtime_error &e){
+            std::cout << "DataBase exception: " << e.what() << "\n";
+            throw e;
         }
     }
 
@@ -59,8 +76,12 @@ namespace useCases {
     void UseCaseDeleteClient::deleteClient(const std::string &client_email, const std::string &managerEmail) const {
         try {
             clientRepository->deleteClient(client_email, managerEmail);
-        } catch (const repositories::FileNotExists &fileNotExists) {
-            throw fileNotExists;
+        } catch (const repositories::StorageException &e) {
+            std::cout << "Data exception: " << e.what() << "\n";
+            throw e;
+        } catch (const std::runtime_error &e){
+            std::cout << "DataBase exception: " << e.what() << "\n";
+            throw e;
         }
     }
 

@@ -6,10 +6,16 @@
 
 namespace repositories {
 
-    ManagerException::ManagerException(const std::string &arg) : runtime_error(arg) {
+    DataExistsException::DataExistsException(const std::string &arg) : StorageException(arg) {
     }
 
-    ClientException::ClientException(const std::string &arg) : runtime_error(arg) {
+    DataNotExistsException::DataNotExistsException(const std::string &arg) : StorageException(arg) {
+    }
+
+    ManagerException::ManagerException(const std::string &arg) : std::runtime_error(arg){
+    }
+
+    ClientException::ClientException(const std::string &arg) : std::runtime_error(arg){
     }
 
     using grpc::Channel;
@@ -93,7 +99,7 @@ namespace repositories {
         ClientContext context;
         Status status = stub_->AddManager(&context, request, &reply);
         if (reply.fail()) {
-            throw ManagerException("Such user already exists");
+            throw DataExistsException("Such user already exists");
         }
         if (!status.ok()) {
             throw ManagerException("Server error. Can't add the manager");
@@ -107,7 +113,7 @@ namespace repositories {
         ClientContext context;
         Status status = stub_->GetManager(&context, request, &reply);
         if (reply.fail()) {
-            throw ManagerException("Such user is not exists");
+            throw DataNotExistsException("Such user is not exists");
         }
         inputManager.email = reply.inputmanager().email();
         inputManager.password = reply.inputmanager().password();
@@ -134,7 +140,7 @@ namespace repositories {
         ClientContext context;
         Status status = stub_->IsCorrectPassword(&context, request, &reply);
         if (reply.fail()) {
-            throw ManagerException("Such user is not exists");
+            throw DataNotExistsException("Such user is not exists");
         }
         if (!status.ok()) {
             throw ManagerException("Server error. Can't check the password");
@@ -147,9 +153,6 @@ namespace repositories {
     }
 
     void ClientDataBase_client::addClient(const people::Client &client, const std::string &managerEmail) const {
-        for (int i = 0; i < 3; ++i) {
-            std::cout << client.dealProcess[i].first << " " << client.dealProcess[i].second << "\n";
-        }
         AddClientRequest request;
         ClientGRPC *clientGrpc = new ClientGRPC();
         set_ClientGRPC(clientGrpc, client);
@@ -159,7 +162,7 @@ namespace repositories {
         ClientContext context;
         Status status = stub_->AddClient(&context, request, &reply);
         if (reply.fail()) {
-            throw ClientException("Such client already exists");
+            throw DataExistsException("Such client already exists");
         }
         if (!status.ok()) {
             throw ClientException("Server error. Can't add the client");
@@ -174,7 +177,7 @@ namespace repositories {
         ClientContext context;
         Status status = stub_->DeleteClient(&context, request, &reply);
         if (reply.fail()) {
-            throw ClientException("Such client is not exists");
+            throw DataNotExistsException("Such client is not exists");
         }
         if (!status.ok()) {
             throw ClientException("Server error. Can't delete the client");
@@ -188,7 +191,7 @@ namespace repositories {
         ClientContext context;
         Status status = stub_->UpdateAllClients(&context, request, &reply);
         if (reply.fail()) {
-            throw ClientException("Can not update clients");
+            throw DataNotExistsException("Can not update clients. Can not find the user");
         }
         if (!status.ok()) {
             throw ClientException("Server error. Can't update all clients");
