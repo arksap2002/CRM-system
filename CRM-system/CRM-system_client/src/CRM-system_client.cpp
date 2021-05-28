@@ -1,15 +1,15 @@
 #include "CRM-system_client.h"
+#include <filesystem>
 #include <iostream>
 #include <memory>
 #include <string>
-#include <filesystem>
 
 namespace repositories {
 
-    ManagerException::ManagerException(const std::string& arg) : runtime_error(arg) {
+    ManagerException::ManagerException(const std::string &arg) : runtime_error(arg) {
     }
 
-    ClientException::ClientException(const std::string& arg) : runtime_error(arg) {
+    ClientException::ClientException(const std::string &arg) : runtime_error(arg) {
     }
 
     using grpc::Channel;
@@ -18,14 +18,14 @@ namespace repositories {
 
     using namespace crm_system;
 
-    namespace{
+    namespace {
         namespace fs = std::filesystem;
 
-        std::string get_hosts_client(){
+        std::string get_hosts_client() {
             std::string path = fs::current_path();
             path += "/hosts_dir";
             if (!fs::exists(path)) { fs::create_directory(path); }
-            if (!fs::exists(path + "/client_host")){
+            if (!fs::exists(path + "/client_host")) {
                 std::ofstream out(path + "/client_host");
                 out << "localhost:50051";
                 out.close();
@@ -36,25 +36,17 @@ namespace repositories {
             in.close();
             return host;
         }
-    }
+    }// namespace
 
-    ManagerDataBase_client::ManagerDataBase_client()
-    /*: stub_(CRMService::NewStub(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials())))*/ {
+    ManagerDataBase_client::ManagerDataBase_client() {
         std::string host = get_hosts_client();
         stub_ = CRMService::NewStub(grpc::CreateChannel(host, grpc::InsecureChannelCredentials()));
     }
 
-//    ManagerDataBase_client::ManagerDataBase_client(std::shared_ptr<Channel> channel) : stub_(CRMService::NewStub(channel)) {
-//    }
-
-    ClientDataBase_client::ClientDataBase_client()
-    /*: stub_(CRMService::NewStub(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials())))*/ {
+    ClientDataBase_client::ClientDataBase_client() {
         std::string host = get_hosts_client();
         stub_ = CRMService::NewStub(grpc::CreateChannel(host, grpc::InsecureChannelCredentials()));
     }
-
-//    ClientDataBase_client::ClientDataBase_client(std::shared_ptr<Channel> channel): stub_(CRMService::NewStub(channel)) {
-//    }
 
     namespace {
         void set_ClientGRPC(ClientGRPC *&clientGrpc, const people::Client &client) {
@@ -81,29 +73,26 @@ namespace repositories {
             managerGrpc->set_num_clients(manager.listClients.size());
         }
 
-        void set_people_client(people::Client &client, const ClientGRPC& clientGrpc) {
+        void set_people_client(people::Client &client, const ClientGRPC &clientGrpc) {
             client.email = clientGrpc.email();
             client.name = clientGrpc.name();
             client.phone = clientGrpc.phone();
             client.dealProduct = clientGrpc.dealproduct();
             client.dealProcess.resize(3);
-            for (int i = 0; i < 3; ++i){
-//            client.dealProcess[i].first = clientGrpc->dealprocess(i).title();
+            for (int i = 0; i < 3; ++i) {
                 client.dealProcess[i].second = clientGrpc.dealprocess(i).completed();
             }
         }
-    }
+    }// namespace
     void ManagerDataBase_client::addManager(const people::Manager &manager) const {
         AddManagerRequest request;
-        ManagerGRPC* managerGrpc = new ManagerGRPC();
+        ManagerGRPC *managerGrpc = new ManagerGRPC();
         set_ManagerGRPC(managerGrpc, manager);
         request.set_allocated_manager(managerGrpc);
         AddManagerReply reply;
         ClientContext context;
-//        std::cout << "Server start addManager\n";
         Status status = stub_->AddManager(&context, request, &reply);
-//        std::cout << "Server finish addManager\n";
-        if (reply.fail()){
+        if (reply.fail()) {
             throw ManagerException("Such user already exists");
         }
         if (!status.ok()) {
@@ -113,22 +102,19 @@ namespace repositories {
 
     void ManagerDataBase_client::getManager(people::Manager &inputManager, const std::string &inputEmail) const {
         GetManagerRequest request;
-//        request.set_inputManager(inputManager);
         request.set_inputemail(inputEmail);
         GetManagerReply reply;
         ClientContext context;
-//        std::cout << "Server start getManager\n";
         Status status = stub_->GetManager(&context, request, &reply);
-        if (reply.fail()){
+        if (reply.fail()) {
             throw ManagerException("Such user is not exists");
         }
-//        std::cout << "Server finish getManager\n";
         inputManager.email = reply.inputmanager().email();
         inputManager.password = reply.inputmanager().password();
         inputManager.name = reply.inputmanager().name();
         inputManager.phone = reply.inputmanager().phone();
         inputManager.listClients.resize(reply.inputmanager().num_clients());
-        for (size_t i = 0; i < inputManager.listClients.size(); ++i){
+        for (size_t i = 0; i < inputManager.listClients.size(); ++i) {
             inputManager.listClients[i].dealProcess.resize(3);
             inputManager.listClients[i].dealProcess[0].first = "Connection with client";
             inputManager.listClients[i].dealProcess[1].first = "Concluding the contract";
@@ -146,10 +132,8 @@ namespace repositories {
         request.set_inputpassword(inputPassword);
         IsCorrectPasswordReply reply;
         ClientContext context;
-//        std::cout << "Server start isCorrectPassword\n";
         Status status = stub_->IsCorrectPassword(&context, request, &reply);
-//        std::cout << "Server finish isCorrectPassword\n";
-        if (reply.fail()){
+        if (reply.fail()) {
             throw ManagerException("Such user is not exists");
         }
         if (!status.ok()) {
@@ -163,20 +147,18 @@ namespace repositories {
     }
 
     void ClientDataBase_client::addClient(const people::Client &client, const std::string &managerEmail) const {
-        for (int i = 0; i < 3; ++i){
+        for (int i = 0; i < 3; ++i) {
             std::cout << client.dealProcess[i].first << " " << client.dealProcess[i].second << "\n";
         }
         AddClientRequest request;
-        ClientGRPC* clientGrpc = new ClientGRPC();
+        ClientGRPC *clientGrpc = new ClientGRPC();
         set_ClientGRPC(clientGrpc, client);
         request.set_allocated_client(clientGrpc);
         request.set_manageremail(managerEmail);
         AddClientReply reply;
         ClientContext context;
-//        std::cout << "Server start add client\n";
         Status status = stub_->AddClient(&context, request, &reply);
-//        std::cout << "Server finish add client\n";
-        if (reply.fail()){
+        if (reply.fail()) {
             throw ClientException("Such client already exists");
         }
         if (!status.ok()) {
@@ -190,10 +172,8 @@ namespace repositories {
         request.set_manageremail(managerEmail);
         DeleteClientReply reply;
         ClientContext context;
-//        std::cout << "Server start deleteClient\n";
         Status status = stub_->DeleteClient(&context, request, &reply);
-//        std::cout << "Server finish deleteClient\n";
-        if (reply.fail()){
+        if (reply.fail()) {
             throw ClientException("Such client is not exists");
         }
         if (!status.ok()) {
@@ -206,17 +186,15 @@ namespace repositories {
         request.set_manageremail(manager.email);
         UpdateAllClientsReply reply;
         ClientContext context;
-//        std::cout << "Server start updateAllClients\n";
         Status status = stub_->UpdateAllClients(&context, request, &reply);
-//        std::cout << "Server finish updateAllClients\n";
-        if (reply.fail()){
+        if (reply.fail()) {
             throw ClientException("Can not update clients");
         }
         if (!status.ok()) {
             throw ClientException("Server error. Can't update all clients");
         }
         manager.listClients.resize(reply.count_clients());
-        for (int i = 0; i < reply.count_clients(); ++i){
+        for (int i = 0; i < reply.count_clients(); ++i) {
             manager.listClients[i].dealProcess.resize(3);
             manager.listClients[i].dealProcess[0].first = "Connection with client";
             manager.listClients[i].dealProcess[1].first = "Concluding the contract";

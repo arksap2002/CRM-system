@@ -9,7 +9,6 @@ namespace useCases {
         try {
             managerRepository->addManager(manager);
         } catch (const repositories::FileExists &fileExists) {
-//            std::cerr << repositories::FileExists::get_name() << "\n";
             throw fileExists;
         }
     }
@@ -30,7 +29,6 @@ namespace useCases {
         try {
             return managerRepository->isCorrectPassword(input_email, input_password);
         } catch (const repositories::FileNotExists &fileNotExists) {
-//            std::cerr << repositories::FileNotExists::get_name() << "\n";
             throw fileNotExists;
         }
     }
@@ -50,7 +48,6 @@ namespace useCases {
             clientRepository->addClient(client, manager.email);
             manager.listClients.push_back(client);
         } catch (const repositories::FileExists &fileExists) {
-//            std::cerr << repositories::FileExists::get_name() << "\n";
             throw fileExists;
         }
     }
@@ -63,7 +60,6 @@ namespace useCases {
         try {
             return clientRepository->deleteClient(client_email, managerEmail);
         } catch (const repositories::FileNotExists &fileNotExists) {
-//            std::cerr << repositories::FileNotExists::get_name() << "\n";
             throw fileNotExists;
         }
     }

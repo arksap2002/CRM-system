@@ -343,7 +343,7 @@ AddClientsWindow::AddClientsWindow(MainWindow *parent) : QWidget(parent) {
     connect(exit_button, &QPushButton::clicked, parent, &MainWindow::ChangeToClientsList);
 }
 
-void AddClientsWindow::AddClient() const {
+void AddClientsWindow::AddClient() {
     try {
         if (email_->text().toStdString().empty() || name_->text().toStdString().empty() || phone_->text().toStdString().empty() || deal_product_->text().toStdString().empty()) {
             throw std::logic_error("empty");

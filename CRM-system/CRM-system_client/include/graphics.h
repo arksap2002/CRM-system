@@ -110,7 +110,7 @@ class AddClientsWindow : public QWidget {
 public:
     explicit AddClientsWindow(MainWindow *parent = nullptr);
 
-    void AddClient() const;
+    void AddClient();
 
     ErrorWindow error_window_add;
     QLineEdit *email_;
