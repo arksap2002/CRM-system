@@ -112,6 +112,7 @@ public:
 
     void AddClient() const;
 
+    ErrorWindow error_window_add;
     QLineEdit *email_;
     QLineEdit *phone_;
     QLineEdit *name_;

@@ -344,6 +344,19 @@ AddClientsWindow::AddClientsWindow(MainWindow *parent) : QWidget(parent) {
 }
 
 void AddClientsWindow::AddClient() const {
+    try {
+        if (email_->text().toStdString().empty() || name_->text().toStdString().empty() || phone_->text().toStdString().empty() || deal_product_->text().toStdString().empty()) {
+            throw std::logic_error("empty");
+        }
+    } catch (...) {
+        error_window_add.resize(1000, 1000);
+        error_window_add.setWindowTitle("Error");
+        error_window_add.errinfo->setText("You have not filled all the fields");
+        error_window_add.errinfo->update();
+        error_window_add.show();
+
+        return;
+    }
 
     UseCaseAddClient ucAddClient(std::make_unique<ClientDataBase_client>());
     ucAddClient.addClient({email_->text().toStdString(), name_->text().toStdString(), phone_->text().toStdString(),
